@@ -10,7 +10,7 @@
 		const formData = new FormData();
 		formData.append('file', file);
 
-		const response = await fetch('/api/upload/papa-parse', {
+		const response = await fetch('/api/pdf-processor', {
 			method: 'POST',
 			body: formData
 		});
