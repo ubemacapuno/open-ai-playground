@@ -12,9 +12,7 @@ export const POST: RequestHandler = async ({ request }) => {
 		const pdfExtract = new PDFExtract();
 		const buffer = await file.arrayBuffer();
 
-		// Extract text from PDF
 		const extractedPdfData: PDFExtractResult = await pdfExtract.extractBuffer(buffer, {});
-
 		let pdfText = '';
 		extractedPdfData.pages.forEach((page) => {
 			page.content.forEach((item) => {
@@ -50,14 +48,25 @@ export const POST: RequestHandler = async ({ request }) => {
 			throw new Error(openaiData.error.message || 'Failed to connect to OpenAI API');
 		}
 
-		// Logging token usage
+		const responseText = openaiData.choices[0].text.trim();
+		const partNumberMatch = responseText.match(/Part Number:\s*(\d+)/i);
+		const descriptionMatch = responseText.match(/Description:\s*([^\n]+)/i);
+		const revisionMatch = responseText.match(/Revision:\s*([A-Z]+)/i);
+
+		// Shape the response data
+		const structuredPdfData = {
+			part_number: partNumberMatch ? partNumberMatch[1] : null,
+			description: descriptionMatch ? descriptionMatch[1].trim() : null,
+			revision: revisionMatch ? revisionMatch[1] : null
+		};
+
 		const totalTokensUsed =
 			inputTokenCount + (openaiData.usage ? openaiData.usage.total_tokens : 0);
 		console.log(
 			`Total tokens used: ${totalTokensUsed} (Input: ${inputTokenCount}, Response: ${openaiData.usage ? openaiData.usage.total_tokens : 0})`
 		);
 
-		return json({ data: openaiData.choices[0].text, tokensUsed: totalTokensUsed });
+		return json({ data: structuredPdfData, tokensUsed: totalTokensUsed });
 	} catch (error) {
 		console.error(error);
 		return json({ error: 'Failed to process PDF' }, { status: 500 });
