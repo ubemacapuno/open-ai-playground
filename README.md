@@ -1,38 +1,45 @@
-# create-svelte
+# Open AI Playground
 
-Everything you need to build a Svelte project, powered by [`create-svelte`](https://github.com/sveltejs/kit/tree/main/packages/create-svelte).
+This repository is designed as a personal project space to experiment with and leverage the capabilities of the OpenAI API. The focus is on parsing and extracting data from various formats, starting with CAD PDF drawings and potentially expanding to other types of documents and data formats.
 
-## Creating a project
+## Features
 
-If you're seeing this, you've probably already done this step. Congrats!
+### CAD PDF Drawing Upload and Parsing
 
-```bash
-# create a new project in the current directory
-npm create svelte@latest
+- **Upload Feature**: Users can upload CAD PDF drawings directly through the UI.
+- **PDF Parsing**: The application parses the uploaded PDFs to extract text.
+- **Data Extraction Using OpenAI API**: Utilizes the OpenAI API to intelligently extract specific fields such as the part name, description, and revision from the parsed PDF text.
 
-# create a new project in my-app
-npm create svelte@latest my-app
-```
+## Future Enhancements
 
-## Developing
+- **CSV File Parsing**: Plans to support uploading and parsing CSV files to extract relevant information using the OpenAI API.
+- **Expanded Data Extraction**: Extend the capabilities to extract additional fields and possibly support more document types beyond PDFs and CSVs.
 
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
+## Getting Started
 
-```bash
-npm run dev
-
-# or start the server and open the app in a new browser tab
-npm run dev -- --open
-```
-
-## Building
-
-To create a production version of your app:
+1. **Clone the Repository**
 
 ```bash
-npm run build
+git clone https://github.com/ubemacapuno/open-ai-playground.git
+cd open-ai-playground
 ```
 
-You can preview the production build with `npm run preview`.
+2. **Install Dependencies**
 
-> To deploy your app, you may need to install an [adapter](https://kit.svelte.dev/docs/adapters) for your target environment.
+```
+pnpm install
+```
+
+3. **Set Up Environment Variables**
+
+See the [official OpenAI API documentation](https://help.openai.com/en/articles/9186755-managing-your-work-in-the-api-platform-with-projects) for setting up an OpenAI API key.
+
+```
+OPENAI_API_KEY=your_openai_api_key_here
+```
+
+4. **Run the Application**
+
+```
+pnpm run dev
+```
