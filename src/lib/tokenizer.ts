@@ -1,5 +1,7 @@
 import GPT3TokenizerImport from 'gpt3-tokenizer';
 
+// @see https://github.com/botisan-ai/gpt3-tokenizer
+
 const GPT3Tokenizer: typeof GPT3TokenizerImport =
 	typeof GPT3TokenizerImport === 'function'
 		? GPT3TokenizerImport

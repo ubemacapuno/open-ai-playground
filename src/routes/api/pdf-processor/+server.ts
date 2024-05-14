@@ -1,4 +1,3 @@
-// src/routes/api/pdf-processor/+server.ts
 import { json } from '@sveltejs/kit';
 import { OPENAI_KEY } from '$env/static/private';
 import { PDFExtract, type PDFExtractResult } from 'pdf.js-extract';
@@ -21,6 +20,7 @@ export const POST: RequestHandler = async ({ request }) => {
 		});
 
 		let inputTokenCount = getTokens(pdfText);
+		// Increase if necessary; capping for now
 		if (inputTokenCount >= 4000) {
 			throw new Error('Query too large');
 		}
@@ -54,6 +54,7 @@ export const POST: RequestHandler = async ({ request }) => {
 		const revisionMatch = responseText.match(/Revision:\s*([A-Z]+)/i);
 
 		// Shape the response data
+		// TODO: See if OpenAI can return structured data directly (add this to the prompt?) so we don't have to do this part:
 		const structuredPdfData = {
 			part_number: partNumberMatch ? partNumberMatch[1] : null,
 			description: descriptionMatch ? descriptionMatch[1].trim() : null,

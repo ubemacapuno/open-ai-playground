@@ -1,14 +1,14 @@
 # Open AI Playground
 
-This repository is designed as a personal project space to experiment with and leverage the capabilities of the OpenAI API. The focus is on parsing and extracting data from various formats, starting with CAD PDF drawings and potentially expanding to other types of documents and data formats.
+This repository is designed as a personal project space to experiment with the OpenAI API. The focus is on parsing and extracting data from various file formats, starting with CAD PDF drawings and potentially expanding to other types of documents and data formats.
 
 ## Features
 
 ### CAD PDF Drawing Upload and Parsing
 
-- **Upload Feature**: Users can upload CAD PDF drawings directly through the UI.
-- **PDF Parsing**: The application parses the uploaded PDFs to extract text.
-- **Data Extraction Using OpenAI API**: Utilizes the OpenAI API to intelligently extract specific fields such as the part name, description, and revision from the parsed PDF text.
+- **Upload Feature**: Upload CAD PDF drawings directly through the UI.
+- **PDF Parsing**: Parse the uploaded PDF to extract text.
+- **Data Extraction Using OpenAI API**: Use OpenAI API to extract fields such as the part name, description, and revision from the parsed PDF text. Down the road, suggest necessary operations/steps to design the part (ex: milling, galvanizing, etc.).
 
 ## Future Enhancements
 
