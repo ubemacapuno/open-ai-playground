@@ -38,32 +38,9 @@
 	}
 </script>
 
-<div class="viewer_container">
-	<div class="display_name_container max_width">
-		<h3 class="truncate_text">Viewer</h3>
+<div class="relative mb-4 h-[calc(100vh-4rem)] w-2/3">
+	<div class="absolute right-1 top-1 z-10 rounded-lg bg-gray-800 bg-opacity-70 p-1">
+		<h3 class="truncate">Viewer</h3>
 	</div>
-	<div id="viewer" />
+	<div id="viewer" class="h-full w-full" />
 </div>
-
-<style lang="postcss">
-	.viewer_container {
-		position: relative;
-		height: 100%;
-		width: 100%;
-	}
-
-	.display_name_container {
-		position: absolute;
-		top: var(--gap_smallest);
-		right: var(--gap_smallest);
-		z-index: calc(var(--modal_level) + 1);
-		background-color: hsla(0, 0%, 10%, 70%);
-		border-radius: var(--border_radius);
-		padding: var(--gap_smallest);
-	}
-
-	#viewer {
-		height: 100%;
-		width: 100%;
-	}
-</style>

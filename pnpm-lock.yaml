@@ -26,6 +26,9 @@ importers:
       lodash.startcase:
         specifier: ^4.4.0
         version: 4.4.0
+      mode-watcher:
+        specifier: ^0.3.0
+        version: 0.3.0(svelte@4.2.16)
       online-3d-viewer:
         specifier: ^0.13.0
         version: 0.13.0
@@ -35,6 +38,9 @@ importers:
       pdf.js-extract:
         specifier: ^0.2.1
         version: 0.2.1
+      svelte-radix:
+        specifier: ^1.1.0
+        version: 1.1.0(svelte@4.2.16)
       tailwind-merge:
         specifier: ^2.3.0
         version: 2.3.0
@@ -1250,6 +1256,11 @@ packages:
   mlly@1.7.0:
     resolution: {integrity: sha512-U9SDaXGEREBYQgfejV97coK0UL1r+qnF2SyO9A3qcI8MzKnsIFKHNVEkrDyNncQTKQQumsasmeq84eNMdBfsNQ==}
 
+  mode-watcher@0.3.0:
+    resolution: {integrity: sha512-k8jjuTx94HaaRKWO6JDf8wL761hFatrTIHJKl+E+3JWcnv+GnMBH062zcLsy0lbCI3n7RZxxHaWi66auFnUO4g==}
+    peerDependencies:
+      svelte: ^4.0.0
+
   mri@1.2.0:
     resolution: {integrity: sha512-tzzskb3bG8LvYGFF/mDTpq3jpI6Q9wc3LEmBaghu+DdCssd1FakN7Bc0hVNmEyGq1bq3RgfkCb3cmQLpNPOroA==}
     engines: {node: '>=4'}
@@ -1745,6 +1756,11 @@ packages:
         optional: true
       typescript:
         optional: true
+
+  svelte-radix@1.1.0:
+    resolution: {integrity: sha512-kyE9wZiJV937INGb+wiBkAjmGtQUUYRPkVL2Q+/gj+9Vog1Ewd2wNvNmpNMUd+c+euxoc5u5YZMuCUgky9EUPw==}
+    peerDependencies:
+      svelte: ^3.54.0 || ^4.0.0 || ^5.0.0
 
   svelte@4.2.16:
     resolution: {integrity: sha512-mQwHpqHD2PmFcCyHaZ7XiTqposaLvJ75WpYcyY5/ce3qxbYtwQpZ+M7ZKP+2CG5U6kfnBZBpPLyofhlE6ROrnQ==}
@@ -3100,6 +3116,10 @@ snapshots:
       pkg-types: 1.1.1
       ufo: 1.5.3
 
+  mode-watcher@0.3.0(svelte@4.2.16):
+    dependencies:
+      svelte: 4.2.16
+
   mri@1.2.0: {}
 
   mrmime@2.0.0: {}
@@ -3513,6 +3533,10 @@ snapshots:
       postcss: 8.4.38
       postcss-load-config: 4.0.2(postcss@8.4.38)
       typescript: 5.4.5
+
+  svelte-radix@1.1.0(svelte@4.2.16):
+    dependencies:
+      svelte: 4.2.16
 
   svelte@4.2.16:
     dependencies:

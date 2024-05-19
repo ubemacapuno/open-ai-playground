@@ -6,6 +6,7 @@
 	export let onOpen: (() => void) | undefined = undefined;
 	export let hasToolbar = false;
 	export let view = 'fit';
+	export let fileName = '';
 </script>
 
 <div class="relative w-3/4" style="height: 80vh;">
@@ -32,7 +33,7 @@
 				</button>
 			{/if}
 		</div>
-
+		<p>{fileName}</p>
 		{#key src}
 			<iframe
 				title="PDF Preview"

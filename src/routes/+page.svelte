@@ -1,12 +1,18 @@
 <script lang="ts">
 	import { Button } from '$lib/components/ui/button';
 	import { writable } from 'svelte/store';
-	import { toTitleCase } from '../utilities/transform';
 	import Pdf from '$lib/components/PDF.svelte';
 
+	type PdfData = {
+		part_number: string;
+		description: string;
+		revision: string;
+	};
+
 	let fileInput: HTMLInputElement;
+	let fileName = '';
 	let accept: string = '.pdf';
-	let pdfData = writable(null);
+	let pdfData = writable<PdfData>({ part_number: '', description: '', revision: '' });
 	let isProcessing = false;
 	// Make a var src that holds the path to the pdf file that is uploaded
 	let src = '';
@@ -19,15 +25,18 @@
 			method: 'POST',
 			body: formData
 		});
-
 		if (response.ok) {
+			const result = await response.json();
+			console.log('API Response:', result);
+			if (typeof result.data === 'string') {
+				pdfData.set(JSON.parse(result.data));
+			} else {
+				pdfData.set(result.data);
+			}
 			isProcessing = false;
-			const { data } = await response.json();
-			console.log('Parsed PDF data:', data);
-			pdfData.set(data);
 		} else {
-			isProcessing = false;
 			console.error('Failed to upload and process PDF:', await response.text());
+			isProcessing = false;
 		}
 	};
 
@@ -39,20 +48,17 @@
 		});
 		src = URL.createObjectURL(currentFiles[0]);
 		input.value = '';
+		fileName = currentFiles[0].name;
 	}
 
 	$: console.log('$pdfData:', $pdfData);
-
-	// Example data for testing
-	// const exampleData = {
-	// 	part_number: '0172',
-	// 	description: 'PBP, Linkage',
-	// 	revision: 'B'
-	// };
+	// $pdfData shape example:
+	// 	{
+	//   "part_number": "0172",
+	//   "description": "PBP, Linkage",
+	//   "revision": "B"
+	// }
 </script>
-
-<h1 class="text-3xl font-bold underline">Welcome to SvelteKit</h1>
-<p>Visit <a href="https://kit.svelte.dev">kit.svelte.dev</a> to read the documentation</p>
 
 <Button on:click={() => fileInput.click()} variant="outline">Import</Button>
 <input on:change={onFilesChange} multiple bind:this={fileInput} type="file" hidden {accept} />
@@ -63,13 +69,14 @@
 <div class="flex justify-between">
 	{#if $pdfData}
 		<ul class="mt-4">
-			{#each Object.entries($pdfData) as [key, value]}
-				<li>
-					<span class="font-bold">{toTitleCase(key)}:</span>
-					{value}
-				</li>
-			{/each}
+			{#if $pdfData && $pdfData.part_number}
+				<div>
+					<p><strong>Part Number:</strong> {$pdfData.part_number}</p>
+					<p><strong>Description:</strong> {$pdfData.description}</p>
+					<p><strong>Revision:</strong> {$pdfData.revision}</p>
+				</div>
+			{/if}
 		</ul>
 	{/if}
-	<Pdf {src} />
+	<Pdf {src} {fileName} />
 </div>

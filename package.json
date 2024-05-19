@@ -44,9 +44,11 @@
 		"gpt3-tokenizer": "^1.1.5",
 		"lodash.camelcase": "^4.3.0",
 		"lodash.startcase": "^4.4.0",
+		"mode-watcher": "^0.3.0",
 		"online-3d-viewer": "^0.13.0",
 		"openai": "^4.45.0",
 		"pdf.js-extract": "^0.2.1",
+		"svelte-radix": "^1.1.0",
 		"tailwind-merge": "^2.3.0",
 		"tailwind-variants": "^0.2.1"
 	}
