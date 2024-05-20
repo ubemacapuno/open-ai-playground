@@ -3,13 +3,18 @@ import { OPENAI_KEY } from '$env/static/private';
 import { PDFExtract, type PDFExtractResult } from 'pdf.js-extract';
 import type { RequestHandler } from '@sveltejs/kit';
 import { getTokens } from '$lib/tokenizer';
+import OpenAI from 'openai';
+
+const openai = new OpenAI({
+	apiKey: OPENAI_KEY
+});
 
 export const POST: RequestHandler = async ({ request }) => {
 	try {
 		const data = await request.formData();
 		const file = data.get('file') as File;
 		const pdfExtract = new PDFExtract();
-		const buffer = await file.arrayBuffer();
+		const buffer = Buffer.from(await file.arrayBuffer());
 
 		const extractedPdfData: PDFExtractResult = await pdfExtract.extractBuffer(buffer, {});
 		let pdfText = '';
@@ -20,54 +25,51 @@ export const POST: RequestHandler = async ({ request }) => {
 		});
 
 		let inputTokenCount = getTokens(pdfText);
-		// Increase if necessary; capping for now
+
 		if (inputTokenCount >= 4000) {
-			throw new Error('Query too large');
+			throw new Error(`Query exceeds the 4000 token limit. Token count was ${inputTokenCount}.`);
 		}
 
-		// OpenAI API fetch configuration
-		const openaiRequestOptions = {
-			model: 'gpt-3.5-turbo-instruct',
-			prompt: `Extract the Part Number, Description, and Revision from the following text: "${pdfText}"`,
-			max_tokens: 100,
-			temperature: 0.5
-		};
-
-		const openaiResponse = await fetch('https://api.openai.com/v1/completions', {
-			method: 'POST',
-			headers: {
-				Authorization: `Bearer ${OPENAI_KEY}`,
-				'Content-Type': 'application/json'
-			},
-			body: JSON.stringify(openaiRequestOptions)
+		const openaiResponse = await openai.chat.completions.create({
+			model: 'gpt-3.5-turbo-1106',
+			messages: [
+				{
+					role: 'system',
+					content:
+						'You are a manufacturing engineer assistant. Extract and respond with the Part Number, Description, Revision, and a list of succinct recommended operations (like milling, galvanizing, laser cutting, bead blasting, etc.) based on the materials and details provided. Return the data in a JSON structure like this: {"part_number": "<Part/Drawing Number>", "description": "<Description/Title>", "revision": "<Revision Number/Letter>", "operations": ["<Operation1>", "<Operation2>", ...]}'
+				},
+				{
+					role: 'user',
+					content: pdfText
+				}
+			]
 		});
 
-		const openaiData = await openaiResponse.json();
-
-		if (!openaiResponse.ok) {
-			throw new Error(openaiData.error.message || 'Failed to connect to OpenAI API');
+		console.log('openaiResponse:', openaiResponse);
+		let responseText = openaiResponse.choices[0].message.content;
+		if (responseText) {
+			responseText = responseText
+				.replace(/```json/g, '')
+				.replace(/```/g, '')
+				.trim();
 		}
 
-		const responseText = openaiData.choices[0].text.trim();
-		const partNumberMatch = responseText.match(/Part Number:\s*(\d+)/i);
-		const descriptionMatch = responseText.match(/Description:\s*([^\n]+)/i);
-		const revisionMatch = responseText.match(/Revision:\s*([A-Z]+)/i);
+		console.log('responseText:', responseText);
+		const responseData = JSON.parse(responseText as string);
 
-		// Shape the response data
-		// TODO: See if OpenAI can return structured data directly (add this to the prompt?) so we don't have to do this part:
-		const structuredPdfData = {
-			part_number: partNumberMatch ? partNumberMatch[1] : null,
-			description: descriptionMatch ? descriptionMatch[1].trim() : null,
-			revision: revisionMatch ? revisionMatch[1] : null
-		};
+		console.log('responseData:', responseData);
 
 		const totalTokensUsed =
-			inputTokenCount + (openaiData.usage ? openaiData.usage.total_tokens : 0);
+			inputTokenCount + (openaiResponse.usage ? openaiResponse.usage.total_tokens : 0);
+
 		console.log(
-			`Total tokens used: ${totalTokensUsed} (Input: ${inputTokenCount}, Response: ${openaiData.usage ? openaiData.usage.total_tokens : 0})`
+			`Total tokens used: ${totalTokensUsed} (Input: ${inputTokenCount}, Response: ${openaiResponse.usage ? openaiResponse.usage.total_tokens : 0})`
 		);
 
-		return json({ data: structuredPdfData, tokensUsed: totalTokensUsed });
+		console.log('responseText:', responseData);
+		console.log('tokensUsed:', totalTokensUsed);
+
+		return json({ data: responseText, tokensUsed: totalTokensUsed });
 	} catch (error) {
 		console.error(error);
 		return json({ error: 'Failed to process PDF' }, { status: 500 });
