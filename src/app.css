@@ -57,3 +57,12 @@
 		@apply bg-background text-foreground;
 	}
 }
+
+@layer utilities {
+	.bg-card {
+		background-color: var(--card);
+	}
+	.text-card-foreground {
+		color: var(--card-foreground);
+	}
+}

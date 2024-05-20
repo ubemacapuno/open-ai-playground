@@ -3,7 +3,7 @@
 	import '../app.css';
 </script>
 
-<div class="p-4">
-	<TopNav />
+<TopNav />
+<div class="mx-4">
 	<slot />
 </div>

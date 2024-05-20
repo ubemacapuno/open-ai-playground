@@ -14,7 +14,7 @@ export const POST: RequestHandler = async ({ request }) => {
 		const data = await request.formData();
 		const file = data.get('file') as File;
 		const pdfExtract = new PDFExtract();
-		const buffer = await file.arrayBuffer();
+		const buffer = Buffer.from(await file.arrayBuffer());
 
 		const extractedPdfData: PDFExtractResult = await pdfExtract.extractBuffer(buffer, {});
 		let pdfText = '';
@@ -27,7 +27,7 @@ export const POST: RequestHandler = async ({ request }) => {
 		let inputTokenCount = getTokens(pdfText);
 
 		if (inputTokenCount >= 4000) {
-			throw new Error('Query too large');
+			throw new Error(`Query exceeds the 4000 token limit. Token count was ${inputTokenCount}.`);
 		}
 
 		const openaiResponse = await openai.chat.completions.create({
@@ -36,7 +36,7 @@ export const POST: RequestHandler = async ({ request }) => {
 				{
 					role: 'system',
 					content:
-						'You are a helpful assistant. Extract and respond with the Part Number, Description, and Revision from the text provided in a JSON structure like this: {"part_number": "<Part Number>", "description": "<Description>", "revision": "<Revision>"}'
+						'You are a manufacturing engineer assistant. Extract and respond with the Part Number, Description, Revision, and a list of succinct recommended operations (like milling, galvanizing, laser cutting, bead blasting, etc.) based on the materials and details provided. Return the data in a JSON structure like this: {"part_number": "<Part/Drawing Number>", "description": "<Description/Title>", "revision": "<Revision Number/Letter>", "operations": ["<Operation1>", "<Operation2>", ...]}'
 				},
 				{
 					role: 'user',
@@ -47,25 +47,21 @@ export const POST: RequestHandler = async ({ request }) => {
 
 		console.log('openaiResponse:', openaiResponse);
 		let responseText = openaiResponse.choices[0].message.content;
-		responseText = responseText
-			.replace(/```json/g, '')
-			.replace(/```/g, '')
-			.trim();
+		if (responseText) {
+			responseText = responseText
+				.replace(/```json/g, '')
+				.replace(/```/g, '')
+				.trim();
+		}
 
 		console.log('responseText:', responseText);
-		const responseData = JSON.parse(responseText);
+		const responseData = JSON.parse(responseText as string);
 
 		console.log('responseData:', responseData);
 
-		// if (!openaiResponse.ok) {
-		// 	throw new Error(openaiData.error.message || 'Failed to connect to OpenAI API');
-		// }
-
-		// Shape the response data
-		// TODO: See if OpenAI can return structured data directly (add this to the prompt?) so we don't have to do this part:
-
 		const totalTokensUsed =
 			inputTokenCount + (openaiResponse.usage ? openaiResponse.usage.total_tokens : 0);
+
 		console.log(
 			`Total tokens used: ${totalTokensUsed} (Input: ${inputTokenCount}, Response: ${openaiResponse.usage ? openaiResponse.usage.total_tokens : 0})`
 		);

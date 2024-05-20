@@ -1,17 +1,19 @@
-<script>
-	import { ModeWatcher } from 'mode-watcher';
+<script lang="ts">
+	import { page } from '$app/stores';
 	import LightSwitch from './LightSwitch.svelte';
+	import { ModeWatcher } from 'mode-watcher';
+
+	let activeRoute = '';
+
+	$: activeRoute = $page.url.pathname;
 </script>
 
-<div class="flex items-center justify-between">
-	<nav class="flex items-center gap-6 text-sm">
-		<a href="/" class="mr-6 flex items-center space-x-2">
-			<span class="hidden font-bold sm:inline-block">Parse</span>
-		</a>
-		<a href="/model-viewer" class="text-foreground/60">Viewer</a>
-	</nav>
+<div
+	class="sticky top-0 z-10 flex h-12 items-center justify-between border-b border-border bg-card bg-opacity-75 px-4 text-card-foreground backdrop-blur-lg backdrop-filter"
+>
+	<span class="hidden font-bold sm:inline-block">ProtoParser 3D</span>
 	<div>
 		<LightSwitch />
-		<ModeWatcher />
+		<ModeWatcher defaultMode={'dark'} />
 	</div>
 </div>
