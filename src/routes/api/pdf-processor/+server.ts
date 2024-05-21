@@ -5,6 +5,8 @@ import type { RequestHandler } from '@sveltejs/kit';
 import { getTokens } from '$lib/tokenizer';
 import OpenAI from 'openai';
 
+// This endpoint processes a PDF file drawing and extracts the Part Number, Description, Revision, and a list of recommended operations based on the materials and details provided.
+
 const openai = new OpenAI({
 	apiKey: OPENAI_KEY
 });
@@ -18,11 +20,23 @@ export const POST: RequestHandler = async ({ request }) => {
 
 		const extractedPdfData: PDFExtractResult = await pdfExtract.extractBuffer(buffer, {});
 		let pdfText = '';
-		extractedPdfData.pages.forEach((page) => {
-			page.content.forEach((item) => {
+
+		// TODO: Determine if we should process all pages or just the first page of the PDF
+
+		// Process all pages of the PDF
+		// extractedPdfData.pages.forEach((page) => {
+		// 	page.content.forEach((item) => {
+		// 		pdfText += item.str + ' ';
+		// 	});
+		// });
+
+		// Process only the first two pages of the PDF
+		const pagesToProcess = 2;
+		for (let i = 0; i < Math.min(pagesToProcess, extractedPdfData.pages.length); i++) {
+			extractedPdfData.pages[i].content.forEach((item) => {
 				pdfText += item.str + ' ';
 			});
-		});
+		}
 
 		let inputTokenCount = getTokens(pdfText);
 
