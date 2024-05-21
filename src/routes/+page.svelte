@@ -5,7 +5,6 @@
 	import { toTitleCase } from '../utilities/transform';
 	import * as Card from '$lib/components/ui/card';
 	import Badge from '$lib/components/ui/badge/badge.svelte';
-	import ThreeDEmbed from '$lib/components/ThreeDEmbed.svelte';
 
 	type PdfData = {
 		part_number: string;
@@ -26,13 +25,6 @@
 	});
 	let isProcessing = false;
 	let src = '';
-
-	// 3D Model Vars
-	let modelSrc = '';
-	let modelFileInput: HTMLInputElement;
-	let modelFileName = '';
-	const fileTypes =
-		'.3dm,.3ds,.3mf,.amf,.bim,.brep,.dae,.fbx,.FCStd,.gltf,.glb,.ifc,.iges,.step,.stl,.obj,.off,.ply,.wrl';
 
 	const onPdfFileUpload = async (file: File) => {
 		console.log('HIT');
@@ -55,17 +47,6 @@
 		} else {
 			console.error('Failed to upload and process PDF:', await response.text());
 			isProcessing = false;
-		}
-	};
-
-	const handleModelFileUpload = (event: Event) => {
-		const input = event.target as HTMLInputElement;
-		if (input.files && input.files[0]) {
-			const file = input.files[0];
-			const fileExtension = file.name.split('.').pop();
-			modelFileName = file.name;
-			modelSrc = URL.createObjectURL(file) + '#.' + fileExtension;
-			input.value = '';
 		}
 	};
 
@@ -136,13 +117,3 @@
 		<Pdf {src} {fileName} />
 	</div>
 {/if}
-
-<Button on:click={() => modelFileInput.click()} variant="outline">Import Model</Button>
-<input
-	type="file"
-	accept={fileTypes}
-	on:change={handleModelFileUpload}
-	bind:this={modelFileInput}
-	style="display: none;"
-/>
-<ThreeDEmbed {modelSrc} {modelFileName} />
