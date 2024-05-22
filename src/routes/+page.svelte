@@ -1,71 +1,89 @@
 <script lang="ts">
-	import { Button } from '$lib/components/ui/button';
-	import { writable } from 'svelte/store';
-	import Pdf from '$lib/components/PDF.svelte';
-	import { toTitleCase } from '../utilities/transform';
-	import * as Card from '$lib/components/ui/card';
-	import Badge from '$lib/components/ui/badge/badge.svelte';
+	import { Button } from '$lib/components/ui/button'
+	import { writable } from 'svelte/store'
+	import Pdf from '$lib/components/PDF.svelte'
+	import { toTitleCase } from '../utilities/transform'
+	import * as Card from '$lib/components/ui/card'
+	import Badge from '$lib/components/ui/badge/badge.svelte'
+	import StepEmbed from '$lib/components/StepEmbed.svelte'
 
 	type PdfData = {
-		part_number: string;
-		description: string;
-		revision: string;
-		operations: string[];
-	};
+		part_number: string
+		description: string
+		revision: string
+		operations: string[]
+	}
 
 	// PDF Vars
-	let fileInput: HTMLInputElement;
-	let fileName = '';
-	let accept: string = '.pdf';
+	let fileInput: HTMLInputElement
+	let fileName = ''
+	let accept: string = '.pdf'
 	let pdfData = writable<PdfData>({
 		part_number: '',
 		description: '',
 		revision: '',
 		operations: []
-	});
-	let isProcessing = false;
-	let src = '';
+	})
+	let isProcessing = false
+	let src = ''
+	let modelLoaded = false
+
+	// 3D Model Vars
+	let modelSrc = ''
+	let modelFileInput: HTMLInputElement
+	let modelFileName = ''
+	const fileTypes = '.stp, .step'
 
 	const onPdfFileUpload = async (file: File) => {
-		console.log('HIT');
-		const formData = new FormData();
-		formData.append('file', file);
-		isProcessing = true;
+		const formData = new FormData()
+		formData.append('file', file)
+		isProcessing = true
 		const response = await fetch('/api/pdf-processor', {
 			method: 'POST',
 			body: formData
-		});
+		})
 		if (response.ok) {
-			const result = await response.json();
-			console.log('API Response:', result);
+			const result = await response.json()
+			console.log('API Response:', result)
 			if (typeof result.data === 'string') {
-				pdfData.set(JSON.parse(result.data));
+				pdfData.set(JSON.parse(result.data))
 			} else {
-				pdfData.set(result.data);
+				pdfData.set(result.data)
 			}
-			isProcessing = false;
+			isProcessing = false
 		} else {
-			console.error('Failed to upload and process PDF:', await response.text());
-			isProcessing = false;
+			console.error('Failed to upload and process PDF:', await response.text())
+			isProcessing = false
 		}
-	};
+	}
+
+	const handleModelFileUpload = (event: Event) => {
+		const input = event.target as HTMLInputElement
+		if (input.files && input.files[0]) {
+			const file = input.files[0]
+
+			modelFileName = file.name
+			modelSrc = URL.createObjectURL(file)
+			console.log('Model file selected:', modelFileName)
+			input.value = ''
+			modelLoaded = true
+		}
+	}
 
 	function onPdfFilesChange(event: Event) {
-		const input = event.target as HTMLInputElement;
-		const currentFiles = Array.from(input?.files ?? []);
-		currentFiles.forEach((file) => {
-			onPdfFileUpload(file);
-		});
-		src = URL.createObjectURL(currentFiles[0]);
-		input.value = '';
-		fileName = currentFiles[0].name;
+		const input = event.target as HTMLInputElement
+		const currentFiles = Array.from(input?.files ?? [])
+		onPdfFileUpload(currentFiles[0])
+		src = URL.createObjectURL(currentFiles[0])
+		input.value = ''
+		fileName = currentFiles[0].name
 	}
 
 	$: hasValidPdfData =
 		$pdfData.part_number.trim() !== '' ||
 		$pdfData.description.trim() !== '' ||
 		$pdfData.revision.trim() !== '' ||
-		$pdfData.operations.length > 0;
+		$pdfData.operations.length > 0
 
 	// const examplePdfData: PdfData = {
 	// 	part_number: '0036',
@@ -82,6 +100,9 @@
 	// 		'Polishing'
 	// 	]
 	// };
+
+	$: console.log('modelFileName:', modelFileName)
+	$: console.log('modelSrc:', modelSrc)
 </script>
 
 <Button on:click={() => fileInput.click()} variant="outline">Import PDF Drawing</Button>
@@ -117,3 +138,20 @@
 		<Pdf {src} {fileName} />
 	</div>
 {/if}
+
+<Button
+	disabled={modelLoaded}
+	on:click={() => {
+		console.log('Button clicked for model upload')
+		modelFileInput.click()
+	}}>Import Model</Button
+>
+<input
+	type="file"
+	accept={fileTypes}
+	on:change={handleModelFileUpload}
+	bind:this={modelFileInput}
+	hidden
+/>
+
+<StepEmbed src={modelSrc} displayName={modelFileName} />

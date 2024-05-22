@@ -1,11 +1,11 @@
 <script lang="ts">
-	import { page } from '$app/stores';
-	import LightSwitch from './LightSwitch.svelte';
-	import { ModeWatcher } from 'mode-watcher';
+	import { page } from '$app/stores'
+	import LightSwitch from './LightSwitch.svelte'
+	import { ModeWatcher } from 'mode-watcher'
 
-	let activeRoute = '';
+	let activeRoute = ''
 
-	$: activeRoute = $page.url.pathname;
+	$: activeRoute = $page.url.pathname
 </script>
 
 <div

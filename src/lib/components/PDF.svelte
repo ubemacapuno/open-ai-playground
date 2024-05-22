@@ -1,12 +1,12 @@
 <script lang="ts">
-	export let src: string | undefined = undefined;
-	export let errorMessage = '';
-	export let isLoading = false;
-	export let onDownload: (() => void) | undefined = undefined;
-	export let onOpen: (() => void) | undefined = undefined;
-	export let hasToolbar = false;
-	export let view = 'fit';
-	export let fileName = '';
+	export let src: string | undefined = undefined
+	export let errorMessage = ''
+	export let isLoading = false
+	export let onDownload: (() => void) | undefined = undefined
+	export let onOpen: (() => void) | undefined = undefined
+	export let hasToolbar = false
+	export let view = 'fit'
+	export let fileName = ''
 </script>
 
 <div class="relative w-3/4" style="height: 80vh;">
