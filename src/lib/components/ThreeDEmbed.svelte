@@ -1,17 +1,13 @@
 <script lang="ts">
-	import * as OV from 'online-3d-viewer';
-	import { onMount, onDestroy } from 'svelte';
-
-	export let modelSrc = '';
-	export let modelFileName = '';
-
-	let modelViewer: OV.EmbeddedViewer;
-	let modifiedModelSrc = '';
-
+	import * as OV from 'online-3d-viewer'
+	import { onMount, onDestroy } from 'svelte'
+	export let modelSrc = ''
+	export let modelFileName = ''
+	let modelViewer: OV.EmbeddedViewer
+	let modifiedModelSrc = ''
 	onMount(() => {
-		OV.SetExternalLibLocation('/3dmodelViewer_libs');
-		const parentDiv = document.getElementById('modelViewer');
-
+		OV.SetExternalLibLocation('/3dmodelViewer_libs')
+		const parentDiv = document.getElementById('modelViewer')
 		modelViewer = new OV.EmbeddedViewer(parentDiv!, {
 			camera: new OV.Camera(
 				new OV.Coord3D(100, 100, 100),
@@ -23,18 +19,16 @@
 			defaultColor: new OV.RGBColor(200, 200, 200),
 			edgeSettings: new OV.EdgeSettings(true, new OV.RGBColor(28, 28, 28), 5),
 			environmentSettings: new OV.EnvironmentSettings([], false)
-		});
-	});
-
+		})
+	})
 	onDestroy(() => {
-		modelViewer?.Destroy();
-	});
-
+		modelViewer?.Destroy()
+	})
 	$: if (modelSrc) {
-		const fileExtension = modelSrc.split('.').pop();
-		modifiedModelSrc = `${modelSrc}#.${fileExtension}`;
+		const fileExtension = modelSrc.split('.').pop()
+		modifiedModelSrc = `${modelSrc}#.${fileExtension}`
 		if (modelViewer) {
-			modelViewer.LoadModelFromUrlList([modifiedModelSrc]);
+			modelViewer.LoadModelFromUrlList([modifiedModelSrc])
 		}
 	}
 </script>
