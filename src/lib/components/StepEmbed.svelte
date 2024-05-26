@@ -3,8 +3,8 @@
 	import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
 	import { onMount } from 'svelte'
 	import { cleanupMaterial, loadStepUsingWorker } from '../../utilities/step-helpers'
+	import { Button } from '$lib/components/ui/button'
 
-	export let src = ''
 	export let displayName = ''
 
 	// STEP Colors
@@ -13,18 +13,25 @@
 	const modeColors = { light: 0xd9e7fc, dark: 0x232323 }
 
 	let container: HTMLElement
-	let isModelLoading = true
+	let isModelLoading = false
 	let errorMessage = ''
 	let debouncedResize: (...args: any[]) => void
 	let currentBackgroundColor = modeColors.dark
 
 	// Three.js vars
-	let model: THREE.Object3D<THREE.Object3DEventMap>
+	let model: THREE.Object3D<THREE.Object3DEventMap> | null
 	let scene: THREE.Scene
 	let camera: THREE.OrthographicCamera
 	let renderer: THREE.WebGLRenderer
 	let controls: OrbitControls
 	let viewSize: number
+
+	// 3D Model Vars
+	let src = ''
+	let modelFileInput: HTMLInputElement
+	let modelFileName = ''
+	let isModelRendered = false
+	const fileTypes = '.stp, .step'
 
 	function adjustCamera(boundingBox: THREE.Box3) {
 		const size = boundingBox.getSize(new THREE.Vector3())
@@ -61,15 +68,15 @@
 		}
 	}
 
-	function toggleLightDarkMode() {
-		currentBackgroundColor =
-			currentBackgroundColor === modeColors.light ? modeColors.dark : modeColors.light
+	// function toggleLightDarkMode() {
+	// 	currentBackgroundColor =
+	// 		currentBackgroundColor === modeColors.light ? modeColors.dark : modeColors.light
 
-		if (renderer) {
-			renderer.setClearColor(currentBackgroundColor)
-			renderer.render(scene, camera) // re-render scene
-		}
-	}
+	// 	if (renderer) {
+	// 		renderer.setClearColor(currentBackgroundColor)
+	// 		renderer.render(scene, camera) // re-render scene
+	// 	}
+	// }
 
 	function debounce(func: (...args: any[]) => void, timeout = 300) {
 		let timer: number | undefined
@@ -81,24 +88,24 @@
 		}
 	}
 
-	function resetCamera() {
-		if (!model || !camera) return
-		const boundingBox = new THREE.Box3().setFromObject(model)
-		adjustCamera(boundingBox)
-		controls?.target.copy(boundingBox.getCenter(new THREE.Vector3())) // Center the model
-		controls?.update()
-	}
+	// function resetCamera() {
+	// 	if (!model || !camera) return
+	// 	const boundingBox = new THREE.Box3().setFromObject(model)
+	// 	adjustCamera(boundingBox)
+	// 	controls?.target.copy(boundingBox.getCenter(new THREE.Vector3())) // Center the model
+	// 	controls?.update()
+	// }
 
 	async function initScene() {
-		console.log('initScene Hit')
 		if (!src || !container) {
+			// TODO: Show error message
 			console.log('No source provided for STEP file or container is not ready.')
 			return
 		}
 
-		console.log('Initializing scene for:', src)
-
 		try {
+			isModelLoading = true
+
 			scene = new THREE.Scene()
 			camera = new THREE.OrthographicCamera(-1, 1, 1, -1, 1, 1000)
 			renderer = new THREE.WebGLRenderer({ antialias: true })
@@ -110,10 +117,8 @@
 			if (!response.ok) throw new Error('Failed to fetch the file')
 
 			const arrayBuffer = await response.arrayBuffer()
-			const model = await loadStepUsingWorker(arrayBuffer)
-			console.log('initScene model:', model)
+			model = await loadStepUsingWorker(arrayBuffer)
 
-			console.log('model in initScene:', model)
 			if (model) {
 				isModelLoading = false
 				errorMessage = ''
@@ -121,7 +126,6 @@
 				const boundingBox = new THREE.Box3().setFromObject(model)
 				model.position.sub(boundingBox.getCenter(new THREE.Vector3()))
 
-				//
 				model.traverse((child) => {
 					if (child instanceof THREE.Mesh) {
 						const edges = new THREE.EdgesGeometry(child.geometry)
@@ -151,11 +155,53 @@
 			debouncedResize = debounce(onWindowResize, 1800) // Resize after 1.8s
 			window.addEventListener('resize', debouncedResize)
 			onWindowResize()
+			isModelLoading = false
+			isModelRendered = true
 		} catch (error) {
 			console.error('Error initializing Three.js scene: ', error)
 			isModelLoading = false
 			errorMessage = error as string
 		}
+	}
+
+	const handleModelFileUpload = (event: Event) => {
+		const input = event.target as HTMLInputElement
+		if (input.files && input.files[0]) {
+			const file = input.files[0]
+
+			modelFileName = file.name
+			src = URL.createObjectURL(file)
+			input.value = ''
+		}
+	}
+
+	function removeModel() {
+		if (model && scene) {
+			scene.remove(model)
+			model.traverse((object) => {
+				// Cleanup materials and geometries
+				if (object instanceof THREE.Mesh) {
+					object.geometry.dispose()
+					if (Array.isArray(object.material)) {
+						object.material.forEach(cleanupMaterial)
+					} else if (object.material instanceof THREE.Material) {
+						cleanupMaterial(object.material)
+					}
+				}
+			})
+			container.removeChild(renderer.domElement)
+
+			model = null
+			console.log('Model removed') // Show in toast
+		} else {
+			console.log('No model to remove') // Show in toast
+		}
+		renderer.clear()
+		controls.dispose()
+		renderer.dispose()
+
+		errorMessage = ''
+		isModelRendered = false
 	}
 
 	onMount(() => {
@@ -165,34 +211,7 @@
 
 		return () => {
 			window.removeEventListener('resize', debouncedResize)
-
-			// Traverse scene and clean up materials and geometries
-			scene.traverse((object) => {
-				if (object instanceof THREE.Mesh) {
-					object.geometry.dispose()
-
-					if (Array.isArray(object.material)) {
-						object.material.forEach((material) => {
-							if (material instanceof THREE.Material) {
-								cleanupMaterial(material)
-							}
-						})
-					} else if (object.material instanceof THREE.Material) {
-						cleanupMaterial(object.material)
-					}
-				}
-			})
-
-			if (controls) {
-				controls.dispose()
-			}
-
-			if (renderer) {
-				renderer.dispose()
-				if (container && renderer.domElement.parentNode === container) {
-					container.removeChild(renderer.domElement)
-				}
-			}
+			removeModel()
 		}
 	})
 
@@ -201,13 +220,42 @@
 	}
 </script>
 
-<div class="model_container" bind:this={container}></div>
-
-<style>
-	.model_container {
-		height: 1000px;
-		width: 1000px;
-		position: relative;
-		border: 1px solid red;
-	}
-</style>
+<div class="h-[80vh] w-full relative my-2" bind:this={container}>
+	{#if isModelLoading}
+		<p>Loading model . . .</p>
+	{/if}
+	{#if !isModelRendered}
+		<div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
+			<Button
+				on:click={() => {
+					modelFileInput.click()
+				}}
+				variant="outline"
+				disabled={isModelLoading}
+			>
+				Import STEP File
+			</Button>
+		</div>
+	{:else}
+		<div class="absolute top-1 right-1">
+			<Button variant="outline" on:click={removeModel}>Clear</Button>
+		</div>
+	{/if}
+	{#if displayName}
+		<div class="absolute top-1/2 right-1/2 transform -translate-x-1/2 -translate-y-1/2 border-">
+			<p>
+				{displayName}
+			</p>
+		</div>
+	{/if}
+	{#if errorMessage}
+		<p class="text-red-500">{errorMessage}</p>
+	{/if}
+	<input
+		type="file"
+		accept={fileTypes}
+		on:change={handleModelFileUpload}
+		bind:this={modelFileInput}
+		hidden
+	/>
+</div>

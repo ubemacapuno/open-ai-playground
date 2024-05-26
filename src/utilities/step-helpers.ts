@@ -33,7 +33,6 @@ export function cleanupMaterial(material: THREE.Material) {
 // function to process a STEP file outside the main thread using a Web Worker
 // Assuming loadStepUsingWorker is modified to accept ArrayBuffer
 export function loadStepUsingWorker(fileData: ArrayBuffer): Promise<THREE.Object3D> {
-	console.log('Loading STEP file using Web Worker with ArrayBuffer...')
 	return new Promise((resolve, reject) => {
 		const worker = new Worker(new URL('./step-worker.ts', import.meta.url), { type: 'module' })
 
@@ -54,7 +53,6 @@ export function loadStepUsingWorker(fileData: ArrayBuffer): Promise<THREE.Object
 			reject(new Error('Error in Web Worker: ' + err.message))
 		}
 
-		console.log('fileData fromn loadStepUsingWorker:', fileData)
 		worker.postMessage({ fileData }) // Sending ArrayBuffer directly
 	})
 }

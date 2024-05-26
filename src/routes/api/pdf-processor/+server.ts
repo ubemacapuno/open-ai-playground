@@ -21,22 +21,12 @@ export const POST: RequestHandler = async ({ request }) => {
 		const extractedPdfData: PDFExtractResult = await pdfExtract.extractBuffer(buffer, {})
 		let pdfText = ''
 
-		// TODO: Determine if we should process all pages or just the first page of the PDF
-
 		// Process all pages of the PDF
-		// extractedPdfData.pages.forEach((page) => {
-		// 	page.content.forEach((item) => {
-		// 		pdfText += item.str + ' ';
-		// 	});
-		// });
-
-		// Process only the first two pages of the PDF
-		const pagesToProcess = 2
-		for (let i = 0; i < Math.min(pagesToProcess, extractedPdfData.pages.length); i++) {
-			extractedPdfData.pages[i].content.forEach((item) => {
+		extractedPdfData.pages.forEach((page) => {
+			page.content.forEach((item) => {
 				pdfText += item.str + ' '
 			})
-		}
+		})
 
 		let inputTokenCount = getTokens(pdfText)
 
@@ -68,17 +58,9 @@ export const POST: RequestHandler = async ({ request }) => {
 				.trim()
 		}
 
-		console.log('responseText:', responseText)
 		const responseData = JSON.parse(responseText as string)
-
-		console.log('responseData:', responseData)
-
 		const totalTokensUsed =
 			inputTokenCount + (openaiResponse.usage ? openaiResponse.usage.total_tokens : 0)
-
-		console.log(
-			`Total tokens used: ${totalTokensUsed} (Input: ${inputTokenCount}, Response: ${openaiResponse.usage ? openaiResponse.usage.total_tokens : 0})`
-		)
 
 		console.log('responseText:', responseData)
 		console.log('tokensUsed:', totalTokensUsed)

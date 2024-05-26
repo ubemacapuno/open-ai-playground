@@ -16,7 +16,7 @@
 		const formData = new FormData()
 		formData.append('file', file)
 		isProcessing = true
-		const response = await fetch('/api/csv-json-processor', {
+		const response = await fetch('/api/csv-processor', {
 			method: 'POST',
 			body: formData
 		})

@@ -43,8 +43,8 @@
 			body: formData
 		})
 		if (response.ok) {
+			// TODO: Show toast ?
 			const result = await response.json()
-			console.log('API Response:', result)
 			if (typeof result.data === 'string') {
 				pdfData.set(JSON.parse(result.data))
 			} else {
@@ -52,21 +52,8 @@
 			}
 			isProcessing = false
 		} else {
-			console.error('Failed to upload and process PDF:', await response.text())
+			console.error('Failed to upload and process PDF:', await response.text()) // TODO: Show toast
 			isProcessing = false
-		}
-	}
-
-	const handleModelFileUpload = (event: Event) => {
-		const input = event.target as HTMLInputElement
-		if (input.files && input.files[0]) {
-			const file = input.files[0]
-
-			modelFileName = file.name
-			modelSrc = URL.createObjectURL(file)
-			console.log('Model file selected:', modelFileName)
-			input.value = ''
-			modelLoaded = true
 		}
 	}
 
@@ -85,6 +72,7 @@
 		$pdfData.revision.trim() !== '' ||
 		$pdfData.operations.length > 0
 
+	// TODO: Use this example data for testing (Ex. when you don't want to hit the OpenAI API)
 	// const examplePdfData: PdfData = {
 	// 	part_number: '0036',
 	// 	description: 'SP Base Plate',
@@ -100,9 +88,6 @@
 	// 		'Polishing'
 	// 	]
 	// };
-
-	$: console.log('modelFileName:', modelFileName)
-	$: console.log('modelSrc:', modelSrc)
 </script>
 
 <Button on:click={() => fileInput.click()} variant="outline">Import PDF Drawing</Button>
@@ -139,19 +124,4 @@
 	</div>
 {/if}
 
-<Button
-	disabled={modelLoaded}
-	on:click={() => {
-		console.log('Button clicked for model upload')
-		modelFileInput.click()
-	}}>Import Model</Button
->
-<input
-	type="file"
-	accept={fileTypes}
-	on:change={handleModelFileUpload}
-	bind:this={modelFileInput}
-	hidden
-/>
-
-<StepEmbed src={modelSrc} displayName={modelFileName} />
+<StepEmbed displayName={modelFileName} />

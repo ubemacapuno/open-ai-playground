@@ -17,14 +17,11 @@ const wasmUrl = 'https://cdn.jsdelivr.net/npm/occt-import-js@0.0.12/dist/occt-im
 const defaultMeshColor = 0xf0f0f0
 
 const loadStep = async (fileBuffer: ArrayBuffer) => {
-	console.log('Loading STEP file using Web Worker...')
-	console.log('File buffer:', fileBuffer)
 	try {
 		// Initialize OCCT with the location of the wasm file
 		const occt = await occtimportjs({
 			locateFile: () => wasmUrl
 		})
-		console.log('OCCT initialized: ', occt)
 
 		// Ensure the buffer is valid and not empty
 		if (!fileBuffer.byteLength) {
@@ -92,8 +89,6 @@ addEventListener('message', async ({ data }) => {
 			return
 		}
 
-		console.log('Geometry data loaded successfully.')
-		console.log('Geometry data:', geometryData)
 		postMessage({ geometryData })
 	} catch (error) {
 		postMessage({ error: error.message })
