@@ -4,6 +4,7 @@
 	import { onMount } from 'svelte'
 	import { cleanupMaterial, loadStepUsingWorker } from '../../utilities/step-helpers'
 	import { Button } from '$lib/components/ui/button'
+	import LoadingSpinner from '$lib/components/LoadingSpinner.svelte'
 
 	export let displayName = ''
 
@@ -98,8 +99,6 @@
 
 	async function initScene() {
 		if (!src || !container) {
-			// TODO: Show error message
-			console.log('No source provided for STEP file or container is not ready.')
 			return
 		}
 
@@ -196,9 +195,12 @@
 		} else {
 			console.log('No model to remove') // Show in toast
 		}
-		renderer.clear()
-		controls.dispose()
-		renderer.dispose()
+		if (controls) {
+			controls.dispose()
+		}
+		if (renderer) {
+			renderer.dispose()
+		}
 
 		errorMessage = ''
 		isModelRendered = false
@@ -220,20 +222,27 @@
 	}
 </script>
 
-<div class="h-[80vh] w-full relative my-2" bind:this={container}>
+<div
+	class="h-[80vh] w-full relative my-2"
+	class:border-2={!isModelRendered}
+	class:border-dashed={!isModelRendered}
+	class:border-orange-400={!isModelRendered}
+	bind:this={container}
+>
 	{#if isModelLoading}
-		<p>Loading model . . .</p>
+		<div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
+			<LoadingSpinner />
+		</div>
 	{/if}
-	{#if !isModelRendered}
+	{#if !isModelRendered && !isModelLoading}
 		<div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
 			<Button
 				on:click={() => {
 					modelFileInput.click()
 				}}
 				variant="outline"
-				disabled={isModelLoading}
 			>
-				Import STEP File
+				Import STEP
 			</Button>
 		</div>
 	{:else}

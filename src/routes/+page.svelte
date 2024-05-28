@@ -6,6 +6,8 @@
 	import * as Card from '$lib/components/ui/card'
 	import Badge from '$lib/components/ui/badge/badge.svelte'
 	import StepEmbed from '$lib/components/StepEmbed.svelte'
+	import CallToAction from '$lib/components/CallToAction.svelte'
+	import LoadingSpinner from '$lib/components/LoadingSpinner.svelte'
 
 	type PdfData = {
 		part_number: string
@@ -29,8 +31,6 @@
 	let modelLoaded = false
 
 	// 3D Model Vars
-	let modelSrc = ''
-	let modelFileInput: HTMLInputElement
 	let modelFileName = ''
 	const fileTypes = '.stp, .step'
 
@@ -90,10 +90,17 @@
 	// };
 </script>
 
-<Button on:click={() => fileInput.click()} variant="outline">Import PDF Drawing</Button>
+<CallToAction />
+<div class="mx-auto flex flex-col items-center">
+	<div class="pt-4">
+		<Button on:click={() => fileInput.click()}>Import PDF</Button>
+	</div>
+</div>
 <input on:change={onPdfFilesChange} multiple bind:this={fileInput} type="file" hidden {accept} />
 {#if isProcessing}
-	<p>Processing...</p>
+	<div class="flex justify-center items-start h-screen py-12">
+		<LoadingSpinner />
+	</div>
 {/if}
 
 {#if hasValidPdfData}
@@ -123,5 +130,6 @@
 		<Pdf {src} {fileName} />
 	</div>
 {/if}
-
-<StepEmbed displayName={modelFileName} />
+<div class="pt-12">
+	<StepEmbed displayName={modelFileName} />
+</div>
