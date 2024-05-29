@@ -8,6 +8,7 @@
 	import StepEmbed from '$lib/components/StepEmbed.svelte'
 	import CallToAction from '$lib/components/CallToAction.svelte'
 	import LoadingSpinner from '$lib/components/LoadingSpinner.svelte'
+	import { toast } from 'svelte-sonner'
 
 	type PdfData = {
 		part_number: string
@@ -28,7 +29,6 @@
 	})
 	let isProcessing = false
 	let src = ''
-	let modelLoaded = false
 
 	// 3D Model Vars
 	let modelFileName = ''
@@ -42,8 +42,8 @@
 			method: 'POST',
 			body: formData
 		})
+
 		if (response.ok) {
-			// TODO: Show toast ?
 			const result = await response.json()
 			if (typeof result.data === 'string') {
 				pdfData.set(JSON.parse(result.data))
@@ -51,9 +51,17 @@
 				pdfData.set(result.data)
 			}
 			isProcessing = false
+			toast.success('PDF Processed', {
+				description: 'The PDF has been processed successfully.'
+			})
 		} else {
-			console.error('Failed to upload and process PDF:', await response.text()) // TODO: Show toast
 			isProcessing = false
+			// Since reading as text caused issues, read it as JSON once and handle it appropriately
+			const errorResponse = await response.json() // Read and parse JSON response only once
+			console.error('Failed to upload and process PDF:', errorResponse.error)
+			toast.error('There was an error processing the PDF', {
+				description: errorResponse.error || 'Unknown error occurred'
+			})
 		}
 	}
 
@@ -92,7 +100,7 @@
 
 <CallToAction />
 <div class="mx-auto flex flex-col items-center">
-	<div class="pt-4">
+	<div class="pt-4 pb-12">
 		<Button on:click={() => fileInput.click()}>Import PDF</Button>
 	</div>
 </div>

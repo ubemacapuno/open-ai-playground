@@ -4,6 +4,7 @@
 	import { onMount } from 'svelte'
 	import { cleanupMaterial, loadStepUsingWorker } from '../../utilities/step-helpers'
 	import { Button } from '$lib/components/ui/button'
+	import { toast } from 'svelte-sonner'
 	import LoadingSpinner from '$lib/components/LoadingSpinner.svelte'
 
 	export let displayName = ''
@@ -156,6 +157,9 @@
 			onWindowResize()
 			isModelLoading = false
 			isModelRendered = true
+			toast.success('Model Loaded', {
+				description: 'STEP model has been loaded successfully.'
+			})
 		} catch (error) {
 			console.error('Error initializing Three.js scene: ', error)
 			isModelLoading = false
@@ -191,9 +195,9 @@
 			container.removeChild(renderer.domElement)
 
 			model = null
-			console.log('Model removed') // Show in toast
-		} else {
-			console.log('No model to remove') // Show in toast
+			toast.success('Model Removed', {
+				description: 'STEP model has been removed successfully.'
+			})
 		}
 		if (controls) {
 			controls.dispose()

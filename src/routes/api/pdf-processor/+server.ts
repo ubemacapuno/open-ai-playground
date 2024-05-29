@@ -31,7 +31,7 @@ export const POST: RequestHandler = async ({ request }) => {
 		let inputTokenCount = getTokens(pdfText)
 
 		if (inputTokenCount >= 4000) {
-			throw new Error(`Query exceeds the 4000 token limit. Token count was ${inputTokenCount}.`)
+			return json({ error: 'Query exceeds the 4000 token limit' }, { status: 400 })
 		}
 
 		const openaiResponse = await openai.chat.completions.create({
