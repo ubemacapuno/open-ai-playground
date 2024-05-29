@@ -4,6 +4,8 @@
 	import { onMount } from 'svelte'
 	import { cleanupMaterial, loadStepUsingWorker } from '../../utilities/step-helpers'
 	import { Button } from '$lib/components/ui/button'
+	import { toast } from 'svelte-sonner'
+	import LoadingSpinner from '$lib/components/LoadingSpinner.svelte'
 
 	export let displayName = ''
 
@@ -14,7 +16,6 @@
 
 	let container: HTMLElement
 	let isModelLoading = false
-	let errorMessage = ''
 	let debouncedResize: (...args: any[]) => void
 	let currentBackgroundColor = modeColors.dark
 
@@ -68,6 +69,7 @@
 		}
 	}
 
+	// TODO: Implement light/dark mode
 	// function toggleLightDarkMode() {
 	// 	currentBackgroundColor =
 	// 		currentBackgroundColor === modeColors.light ? modeColors.dark : modeColors.light
@@ -88,6 +90,7 @@
 		}
 	}
 
+	// TODO: Implement camera reset
 	// function resetCamera() {
 	// 	if (!model || !camera) return
 	// 	const boundingBox = new THREE.Box3().setFromObject(model)
@@ -98,8 +101,6 @@
 
 	async function initScene() {
 		if (!src || !container) {
-			// TODO: Show error message
-			console.log('No source provided for STEP file or container is not ready.')
 			return
 		}
 
@@ -121,7 +122,6 @@
 
 			if (model) {
 				isModelLoading = false
-				errorMessage = ''
 				scene.add(model)
 				const boundingBox = new THREE.Box3().setFromObject(model)
 				model.position.sub(boundingBox.getCenter(new THREE.Vector3()))
@@ -157,10 +157,15 @@
 			onWindowResize()
 			isModelLoading = false
 			isModelRendered = true
+			toast.success('Model Loaded', {
+				description: 'STEP model has been loaded successfully.'
+			})
 		} catch (error) {
 			console.error('Error initializing Three.js scene: ', error)
 			isModelLoading = false
-			errorMessage = error as string
+			toast.error('Error Loading Model', {
+				description: error as string
+			})
 		}
 	}
 
@@ -192,15 +197,17 @@
 			container.removeChild(renderer.domElement)
 
 			model = null
-			console.log('Model removed') // Show in toast
-		} else {
-			console.log('No model to remove') // Show in toast
+			toast.success('Model Removed', {
+				description: 'STEP model has been removed successfully.'
+			})
 		}
-		renderer.clear()
-		controls.dispose()
-		renderer.dispose()
+		if (controls) {
+			controls.dispose()
+		}
+		if (renderer) {
+			renderer.dispose()
+		}
 
-		errorMessage = ''
 		isModelRendered = false
 	}
 
@@ -220,20 +227,27 @@
 	}
 </script>
 
-<div class="h-[80vh] w-full relative my-2" bind:this={container}>
+<div
+	class="h-[80vh] w-full relative my-2"
+	class:border-2={!isModelRendered}
+	class:border-dashed={!isModelRendered}
+	class:border-orange-400={!isModelRendered}
+	bind:this={container}
+>
 	{#if isModelLoading}
-		<p>Loading model . . .</p>
+		<div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
+			<LoadingSpinner />
+		</div>
 	{/if}
-	{#if !isModelRendered}
+	{#if !isModelRendered && !isModelLoading}
 		<div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
 			<Button
 				on:click={() => {
 					modelFileInput.click()
 				}}
 				variant="outline"
-				disabled={isModelLoading}
 			>
-				Import STEP File
+				Import STEP
 			</Button>
 		</div>
 	{:else}
@@ -247,9 +261,6 @@
 				{displayName}
 			</p>
 		</div>
-	{/if}
-	{#if errorMessage}
-		<p class="text-red-500">{errorMessage}</p>
 	{/if}
 	<input
 		type="file"

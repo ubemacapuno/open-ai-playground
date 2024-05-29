@@ -1,7 +1,6 @@
 <script lang="ts">
 	export let src: string | undefined = undefined
 	export let errorMessage = ''
-	export let isLoading = false
 	export let onDownload: (() => void) | undefined = undefined
 	export let onOpen: (() => void) | undefined = undefined
 	export let hasToolbar = false
@@ -10,9 +9,8 @@
 </script>
 
 <div class="relative w-3/4" style="height: 80vh;">
-	{#if isLoading}
-		<p class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 transform">Loading...</p>
-	{:else if errorMessage}
+	<!-- TODO: Make a formatted error message component ? -->
+	{#if errorMessage}
 		<p class="text-red-500">Error: {errorMessage}</p>
 	{:else if src}
 		<div class="mb-2 flex items-center justify-between">

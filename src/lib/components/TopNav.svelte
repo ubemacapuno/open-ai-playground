@@ -11,7 +11,7 @@
 <div
 	class="sticky top-0 z-10 flex h-12 items-center justify-between border-b border-border bg-card bg-opacity-75 px-4 text-card-foreground backdrop-blur-lg backdrop-filter"
 >
-	<span class="hidden font-bold sm:inline-block">ProtoParser 3D</span>
+	<span class="hidden font-bold sm:inline-block">OpenAI Playground</span>
 	<div>
 		<LightSwitch />
 		<ModeWatcher defaultMode={'dark'} />

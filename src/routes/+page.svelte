@@ -6,6 +6,9 @@
 	import * as Card from '$lib/components/ui/card'
 	import Badge from '$lib/components/ui/badge/badge.svelte'
 	import StepEmbed from '$lib/components/StepEmbed.svelte'
+	import CallToAction from '$lib/components/CallToAction.svelte'
+	import LoadingSpinner from '$lib/components/LoadingSpinner.svelte'
+	import { toast } from 'svelte-sonner'
 
 	type PdfData = {
 		part_number: string
@@ -26,13 +29,9 @@
 	})
 	let isProcessing = false
 	let src = ''
-	let modelLoaded = false
 
 	// 3D Model Vars
-	let modelSrc = ''
-	let modelFileInput: HTMLInputElement
 	let modelFileName = ''
-	const fileTypes = '.stp, .step'
 
 	const onPdfFileUpload = async (file: File) => {
 		const formData = new FormData()
@@ -42,8 +41,8 @@
 			method: 'POST',
 			body: formData
 		})
+
 		if (response.ok) {
-			// TODO: Show toast ?
 			const result = await response.json()
 			if (typeof result.data === 'string') {
 				pdfData.set(JSON.parse(result.data))
@@ -51,9 +50,16 @@
 				pdfData.set(result.data)
 			}
 			isProcessing = false
+			toast.success('PDF Processed', {
+				description: 'The PDF has been processed successfully.'
+			})
 		} else {
-			console.error('Failed to upload and process PDF:', await response.text()) // TODO: Show toast
 			isProcessing = false
+			const errorResponse = await response.json()
+			console.error('Failed to upload and process PDF:', errorResponse.error)
+			toast.error('There was an error processing the PDF', {
+				description: errorResponse.error || 'Unknown error occurred'
+			})
 		}
 	}
 
@@ -90,10 +96,17 @@
 	// };
 </script>
 
-<Button on:click={() => fileInput.click()} variant="outline">Import PDF Drawing</Button>
+<CallToAction />
+<div class="mx-auto flex flex-col items-center">
+	<div class="pt-4 pb-12">
+		<Button on:click={() => fileInput.click()}>Import PDF</Button>
+	</div>
+</div>
 <input on:change={onPdfFilesChange} multiple bind:this={fileInput} type="file" hidden {accept} />
 {#if isProcessing}
-	<p>Processing...</p>
+	<div class="flex justify-center items-start h-screen py-12">
+		<LoadingSpinner />
+	</div>
 {/if}
 
 {#if hasValidPdfData}
@@ -123,5 +136,6 @@
 		<Pdf {src} {fileName} />
 	</div>
 {/if}
-
-<StepEmbed displayName={modelFileName} />
+<div class="pt-12">
+	<StepEmbed displayName={modelFileName} />
+</div>

@@ -55,6 +55,7 @@
 		"papaparse": "^5.4.1",
 		"pdf.js-extract": "^0.2.1",
 		"svelte-radix": "^1.1.0",
+		"svelte-sonner": "^0.3.24",
 		"tailwind-merge": "^2.3.0",
 		"tailwind-variants": "^0.2.1"
 	}

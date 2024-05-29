@@ -39,15 +39,14 @@
 		Parse your PDF drawings
 	</h1>
 	<p class="max-w-[750px] text-center text-lg sm:text-xl text-balance text-muted-foreground">
-		Streamline your manufacaturing with our PDF parser and 3D STEP viewer. Quickly extract key
-		details and visualize parts. Efficient, adaptable, and open-source.
+		Streamline your manufacaturing with our PDF parser and 3D STEP viewer. Quickly extract key details and visualize parts. Efficient, adaptable, and open-source.
 	</p>
 	<p class="text-center text-sm text-orange-700 dark:text-orange-400">
 		This application uses <a
 			href="https://platform.openai.com/docs/api-reference/chat/create"
 			target="_blank"
 			rel="noreferrer"
-			class="font-medium underline underline-offset-4">OpenAI API</a
+			class="font-medium underline underline-offset-4">openai</a
 		>,
 		<a
 			href="https://github.com/kovacsv/occt-import-js"
