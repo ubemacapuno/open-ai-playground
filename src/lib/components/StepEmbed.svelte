@@ -70,6 +70,7 @@
 		}
 	}
 
+	// TODO: Implement light/dark mode
 	// function toggleLightDarkMode() {
 	// 	currentBackgroundColor =
 	// 		currentBackgroundColor === modeColors.light ? modeColors.dark : modeColors.light
@@ -90,6 +91,7 @@
 		}
 	}
 
+	// TODO: Implement camera reset
 	// function resetCamera() {
 	// 	if (!model || !camera) return
 	// 	const boundingBox = new THREE.Box3().setFromObject(model)

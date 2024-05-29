@@ -32,7 +32,6 @@
 
 	// 3D Model Vars
 	let modelFileName = ''
-	const fileTypes = '.stp, .step'
 
 	const onPdfFileUpload = async (file: File) => {
 		const formData = new FormData()
@@ -56,8 +55,7 @@
 			})
 		} else {
 			isProcessing = false
-			// Since reading as text caused issues, read it as JSON once and handle it appropriately
-			const errorResponse = await response.json() // Read and parse JSON response only once
+			const errorResponse = await response.json()
 			console.error('Failed to upload and process PDF:', errorResponse.error)
 			toast.error('There was an error processing the PDF', {
 				description: errorResponse.error || 'Unknown error occurred'
