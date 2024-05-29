@@ -16,7 +16,6 @@
 
 	let container: HTMLElement
 	let isModelLoading = false
-	let errorMessage = ''
 	let debouncedResize: (...args: any[]) => void
 	let currentBackgroundColor = modeColors.dark
 
@@ -123,7 +122,6 @@
 
 			if (model) {
 				isModelLoading = false
-				errorMessage = ''
 				scene.add(model)
 				const boundingBox = new THREE.Box3().setFromObject(model)
 				model.position.sub(boundingBox.getCenter(new THREE.Vector3()))
@@ -165,7 +163,9 @@
 		} catch (error) {
 			console.error('Error initializing Three.js scene: ', error)
 			isModelLoading = false
-			errorMessage = error as string
+			toast.error('Error Loading Model', {
+				description: error as string
+			})
 		}
 	}
 
@@ -208,7 +208,6 @@
 			renderer.dispose()
 		}
 
-		errorMessage = ''
 		isModelRendered = false
 	}
 
@@ -262,9 +261,6 @@
 				{displayName}
 			</p>
 		</div>
-	{/if}
-	{#if errorMessage}
-		<p class="text-red-500">{errorMessage}</p>
 	{/if}
 	<input
 		type="file"
