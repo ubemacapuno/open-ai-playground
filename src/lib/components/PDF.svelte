@@ -3,8 +3,6 @@
 	export let errorMessage = ''
 	export let onDownload: (() => void) | undefined = undefined
 	export let onOpen: (() => void) | undefined = undefined
-	export let hasToolbar = false
-	export let view = 'fit'
 	export let fileName = ''
 </script>
 
@@ -33,12 +31,7 @@
 		</div>
 		<p>{fileName}</p>
 		{#key src}
-			<iframe
-				title="PDF Preview"
-				src={`${src}#toolbar=${hasToolbar ? 1 : 0}&view=${view}`}
-				class="h-full w-full"
-				allowfullscreen
-			/>
+			<iframe title="PDF Preview" src={`${src}#toolbar=1`} class="h-full w-full" allowfullscreen />
 		{/key}
 	{:else}
 		<p>No document loaded.</p>
