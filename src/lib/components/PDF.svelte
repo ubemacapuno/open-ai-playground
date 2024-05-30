@@ -8,7 +8,7 @@
 
 <div class="relative w-3/4" style="height: 80vh;">
 	<!-- TODO: Make a formatted error message component ? -->
-	{#if !errorMessage}
+	{#if errorMessage}
 		<p class="text-red-500">Failed to open file {fileName}. {errorMessage}</p>
 	{:else if src}
 		<div class="mb-2 flex items-center justify-between">
