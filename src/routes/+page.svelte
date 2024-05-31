@@ -9,13 +9,7 @@
 	import CallToAction from '$lib/components/CallToAction.svelte'
 	import LoadingSpinner from '$lib/components/LoadingSpinner.svelte'
 	import { toast } from 'svelte-sonner'
-
-	type PdfData = {
-		part_number: string
-		description: string
-		revision: string
-		operations: string[]
-	}
+	import type { PdfData } from './api/pdf-processor/pdf_processor_types'
 
 	// PDF Vars
 	let fileInput: HTMLInputElement
@@ -32,10 +26,25 @@
 
 	// 3D Model Vars
 	let modelFileName = ''
+	let pdfDataInitialized = false
+
+	const resetPdfData = () => {
+		pdfData.set({
+			part_number: '',
+			description: '',
+			revision: '',
+			operations: []
+		})
+		src = ''
+		fileName = ''
+		pdfDataInitialized = false
+	}
 
 	const onPdfFileUpload = async (file: File) => {
+		resetPdfData()
 		const formData = new FormData()
 		formData.append('file', file)
+		formData.append('fileName', file.name)
 		isProcessing = true
 		const response = await fetch('/api/pdf-processor', {
 			method: 'POST',
@@ -50,6 +59,7 @@
 				pdfData.set(result.data)
 			}
 			isProcessing = false
+			pdfDataInitialized = true
 			toast.success('PDF Processed', {
 				description: 'The PDF has been processed successfully.'
 			})
@@ -73,27 +83,10 @@
 	}
 
 	$: hasValidPdfData =
-		$pdfData.part_number.trim() !== '' ||
+		(pdfDataInitialized && $pdfData.part_number.trim() !== '') ||
 		$pdfData.description.trim() !== '' ||
 		$pdfData.revision.trim() !== '' ||
 		$pdfData.operations.length > 0
-
-	// TODO: Use this example data for testing (Ex. when you don't want to hit the OpenAI API)
-	// const examplePdfData: PdfData = {
-	// 	part_number: '0036',
-	// 	description: 'SP Base Plate',
-	// 	revision: 'J',
-	// 	operations: [
-	// 		'Laser marking',
-	// 		'Anodizing',
-	// 		'Bead blasting',
-	// 		'Heat treating',
-	// 		'Powder coating',
-	// 		'CNC milling',
-	// 		'Electroplating',
-	// 		'Polishing'
-	// 	]
-	// };
 </script>
 
 <CallToAction />

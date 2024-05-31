@@ -2,7 +2,12 @@
 	import * as THREE from 'three'
 	import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
 	import { onMount } from 'svelte'
-	import { cleanupMaterial, loadStepUsingWorker } from '../../utilities/step-helpers'
+	import {
+		cleanupMaterial,
+		loadStepUsingWorker,
+		calculateSurfaceArea,
+		calculateVolume
+	} from '../../utilities/step-helpers'
 	import { Button } from '$lib/components/ui/button'
 	import { toast } from 'svelte-sonner'
 	import LoadingSpinner from '$lib/components/LoadingSpinner.svelte'
@@ -18,6 +23,11 @@
 	let isModelLoading = false
 	let debouncedResize: (...args: any[]) => void
 	let currentBackgroundColor = modeColors.dark
+
+	let surfaceArea = ''
+	let volume = ''
+	let boundingBoxVolume = ''
+	let boundingBoxDimensions = ''
 
 	// Three.js vars
 	let model: THREE.Object3D<THREE.Object3DEventMap> | null
@@ -69,7 +79,15 @@
 		}
 	}
 
-	// TODO: Implement light/dark mode
+	/**
+	 * TODOs:
+	 * - light/dark mode
+	 * - camera reset
+	 * - orthographic/perspective camera switch
+	 * - zoom in/out
+	 * - mesh selection
+	 */
+
 	// function toggleLightDarkMode() {
 	// 	currentBackgroundColor =
 	// 		currentBackgroundColor === modeColors.light ? modeColors.dark : modeColors.light
@@ -78,6 +96,14 @@
 	// 		renderer.setClearColor(currentBackgroundColor)
 	// 		renderer.render(scene, camera) // re-render scene
 	// 	}
+	// }
+
+	// function resetCamera() {
+	// 	if (!model || !camera) return
+	// 	const boundingBox = new THREE.Box3().setFromObject(model)
+	// 	adjustCamera(boundingBox)
+	// 	controls?.target.copy(boundingBox.getCenter(new THREE.Vector3())) // Center the model
+	// 	controls?.update()
 	// }
 
 	function debounce(func: (...args: any[]) => void, timeout = 300) {
@@ -89,15 +115,6 @@
 			}, timeout)
 		}
 	}
-
-	// TODO: Implement camera reset
-	// function resetCamera() {
-	// 	if (!model || !camera) return
-	// 	const boundingBox = new THREE.Box3().setFromObject(model)
-	// 	adjustCamera(boundingBox)
-	// 	controls?.target.copy(boundingBox.getCenter(new THREE.Vector3())) // Center the model
-	// 	controls?.update()
-	// }
 
 	async function initScene() {
 		if (!src || !container) {
@@ -138,6 +155,16 @@
 				})
 
 				adjustCamera(boundingBox)
+
+				// Calculate and display surface area and volume
+				surfaceArea = calculateSurfaceArea(model).toFixed(3)
+				volume = calculateVolume(model).toFixed(3)
+
+				// Calculate bounding box volume and dimensions
+				const boxSize = boundingBox.getSize(new THREE.Vector3())
+				const boxVolume = boxSize.x * boxSize.y * boxSize.z
+				boundingBoxVolume = boxVolume.toFixed(3)
+				boundingBoxDimensions = `${boxSize.x.toFixed(3)}mm × ${boxSize.y.toFixed(3)}mm × ${boxSize.z.toFixed(3)}mm`
 
 				const ambientLight = new THREE.AmbientLight(lightingColor)
 				const directionalLight = new THREE.DirectionalLight(lightingColor, 1.0)
@@ -207,7 +234,10 @@
 		if (renderer) {
 			renderer.dispose()
 		}
-
+		volume = ''
+		surfaceArea = ''
+		boundingBoxVolume = ''
+		boundingBoxDimensions = ''
 		isModelRendered = false
 	}
 
@@ -221,6 +251,10 @@
 			removeModel()
 		}
 	})
+
+	function numberWithCommas(x: string | number) {
+		return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+	}
 
 	$: if (src && container) {
 		initScene()
@@ -253,6 +287,18 @@
 	{:else}
 		<div class="absolute top-1 right-1">
 			<Button variant="outline" on:click={removeModel}>Clear</Button>
+		</div>
+	{/if}
+	{#if volume && surfaceArea && boundingBoxVolume && boundingBoxDimensions}
+		<div class="absolute bottom-1 left-1">
+			<div class="bg-black bg-opacity-80 p-2 m-2 rounded-lg text-white">
+				<p class="text-orange-400">Surface Area:</p>
+				{numberWithCommas(surfaceArea)} mm²
+				<p class="text-orange-400">Actual Part Volume:</p>
+				{numberWithCommas(volume)} mm³
+				<p class="text-orange-400">Bounding Box Volume:</p>
+				{boundingBoxDimensions} = {numberWithCommas(boundingBoxVolume)} mm³
+			</div>
 		</div>
 	{/if}
 	{#if displayName}
