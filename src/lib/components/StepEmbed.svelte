@@ -79,7 +79,15 @@
 		}
 	}
 
-	// TODO: Implement light/dark mode
+	/**
+	 * TODOs:
+	 * - light/dark mode
+	 * - camera reset
+	 * - orthographic/perspective camera switch
+	 * - zoom in/out
+	 * - mesh selection
+	 */
+
 	// function toggleLightDarkMode() {
 	// 	currentBackgroundColor =
 	// 		currentBackgroundColor === modeColors.light ? modeColors.dark : modeColors.light
@@ -88,6 +96,14 @@
 	// 		renderer.setClearColor(currentBackgroundColor)
 	// 		renderer.render(scene, camera) // re-render scene
 	// 	}
+	// }
+
+	// function resetCamera() {
+	// 	if (!model || !camera) return
+	// 	const boundingBox = new THREE.Box3().setFromObject(model)
+	// 	adjustCamera(boundingBox)
+	// 	controls?.target.copy(boundingBox.getCenter(new THREE.Vector3())) // Center the model
+	// 	controls?.update()
 	// }
 
 	function debounce(func: (...args: any[]) => void, timeout = 300) {
@@ -99,18 +115,6 @@
 			}, timeout)
 		}
 	}
-
-	// TODO: Implement camera reset
-	// function resetCamera() {
-	// 	if (!model || !camera) return
-	// 	const boundingBox = new THREE.Box3().setFromObject(model)
-	// 	adjustCamera(boundingBox)
-	// 	controls?.target.copy(boundingBox.getCenter(new THREE.Vector3())) // Center the model
-	// 	controls?.update()
-	// }
-
-	// TODO: Offer a orthographic/perspective camera switch
-	// TODO: Zoom in/out controls
 
 	async function initScene() {
 		if (!src || !container) {
@@ -161,11 +165,6 @@
 				const boxVolume = boxSize.x * boxSize.y * boxSize.z
 				boundingBoxVolume = boxVolume.toFixed(3)
 				boundingBoxDimensions = `${boxSize.x.toFixed(3)}mm × ${boxSize.y.toFixed(3)}mm × ${boxSize.z.toFixed(3)}mm`
-
-				console.log(`Surface Area: ${surfaceArea} mm²`)
-				console.log(`Volume: ${volume} mm³`)
-				console.log(`Bounding Box Volume: ${boundingBoxVolume} mm³`)
-				console.log(`Bounding Box Dimensions: ${boundingBoxDimensions}`)
 
 				const ambientLight = new THREE.AmbientLight(lightingColor)
 				const directionalLight = new THREE.DirectionalLight(lightingColor, 1.0)
