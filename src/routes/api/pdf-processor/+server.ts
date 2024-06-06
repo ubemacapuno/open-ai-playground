@@ -49,8 +49,6 @@ export const POST: RequestHandler = async ({ request }) => {
 			]
 		})
 
-		console.log('pdfText: ', pdfText)
-		console.log('openaiResponse:', openaiResponse)
 		let responseText = openaiResponse.choices[0].message.content
 		if (responseText) {
 			responseText = responseText
