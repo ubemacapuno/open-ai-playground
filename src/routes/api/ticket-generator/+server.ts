@@ -26,7 +26,7 @@ export const POST: RequestHandler = async ({ request }) => {
 			messages: [
 				{
 					role: 'system',
-					content: `You are a virtual software development assistant. Based on the user's ticketDescription, create a detailed bug ticket. Return the data in a JSON structure like this:
+					content: `You are a virtual software development assistant. Based on the user's ticketDescription, create a detailed bug ticket. Use a relevant team as the assignee, such as Development Team, QA Team, UI/UX Team, or Support Team. Return the data in a JSON structure like this:
                   {
                     "Title": "string",
                     "Description": "string",
