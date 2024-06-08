@@ -52,30 +52,37 @@
 </script>
 
 <div class="container mx-auto p-4 flex flex-col lg:flex-row">
-	<div class="w-full lg:w-1/2 lg:pr-4">
+	<div class="w-1/2 lg:w-1/2 lg:pr-4">
 		<Card.Root class="w-full">
 			<Card.Header>
 				<Card.Title>
-					<h2 class="text-2xl font-bold">Ticket Generator</h2>
+					<h2 class="text-xl lg:text-2xl font-bold">Ticket Generator</h2>
 				</Card.Title>
 				<Card.Description>
-					<p>Generate a ticket based on a description.</p>
+					<p class="text-sm lg:text-base">Generate a ticket based on a description.</p>
 				</Card.Description>
 			</Card.Header>
 			<Card.Content>
 				<Textarea
 					bind:value={ticketDescription}
-					class="textarea textarea-bordered w-full h-40 mb-4"
+					class="textarea textarea-bordered w-full h-40 mb-4 text-sm lg:text-base"
 					placeholder="Enter your ticket description here."
 				/>
 			</Card.Content>
 			<Card.Footer class="flex justify-between">
-				<Button on:click={onTicketSubmit} disabled={isSubmitDisabled}>Generate Ticket</Button>
-				<Button on:click={resetTicketData} variant="outline" disabled={isProcessing}>Reset</Button>
+				<Button on:click={onTicketSubmit} disabled={isSubmitDisabled} class="text-sm lg:text-base"
+					>Generate Ticket</Button
+				>
+				<Button
+					on:click={resetTicketData}
+					variant="outline"
+					disabled={isProcessing}
+					class="text-sm lg:text-base">Reset</Button
+				>
 			</Card.Footer>
 		</Card.Root>
 	</div>
-	<div class="w-full lg:w-1/2 lg:pl-4 mt-4 lg:mt-0">
+	<div class="w-1/2 lg:w-1/2 lg:pl-4 mt-4 lg:mt-0">
 		{#if isProcessing}
 			<div class="flex justify-center items-center h-screen">
 				<LoadingSpinner />
@@ -84,30 +91,30 @@
 		{#if $ticketData}
 			<Card.Root class="w-full rounded-lg p-4 shadow-md">
 				<Card.Header>
-					<Card.Title>{$ticketData.Title}</Card.Title>
+					<Card.Title class="text-lg lg:text-xl font-semibold">{$ticketData.Title}</Card.Title>
 				</Card.Header>
-				<Card.Content>
+				<Card.Content class="text-sm lg:text-base">
 					<p>{$ticketData.Description}</p>
-					<h3 class="mt-4">Acceptance Criteria:</h3>
-					<ul>
+					<h3 class="mt-4 font-medium">Acceptance Criteria:</h3>
+					<ul class="list-disc list-inside">
 						{#each $ticketData.AcceptanceCriteria as criterion}
 							<li>{criterion}</li>
 						{/each}
 					</ul>
-					<h3 class="mt-4">Steps to Reproduce:</h3>
-					<ul>
+					<h3 class="mt-4 font-medium">Steps to Reproduce:</h3>
+					<ul class="list-disc list-inside">
 						{#each $ticketData.StepsToReproduce as step}
 							<li>{step}</li>
 						{/each}
 					</ul>
-					<h3 class="mt-4">Technical Notes:</h3>
-					<ul>
+					<h3 class="mt-4 font-medium">Technical Notes:</h3>
+					<ul class="list-disc list-inside">
 						{#each $ticketData.TechnicalNotes as note}
 							<li>{note}</li>
 						{/each}
 					</ul>
-					<h3 class="mt-4">Priority: {toTitleCase($ticketData.Priority)}</h3>
-					<h3 class="mt-4">Labels:</h3>
+					<h3 class="mt-4 font-medium">Priority: {toTitleCase($ticketData.Priority)}</h3>
+					<h3 class="mt-4 font-medium">Labels:</h3>
 					<div class="flex flex-wrap">
 						{#each $ticketData.Labels as label}
 							<div class="m-1">
@@ -115,7 +122,7 @@
 							</div>
 						{/each}
 					</div>
-					<h3 class="mt-4">Assignee: {toTitleCase($ticketData.Assignee)}</h3>
+					<h3 class="mt-4 font-medium">Assignee: {$ticketData.Assignee}</h3>
 				</Card.Content>
 			</Card.Root>
 		{/if}
