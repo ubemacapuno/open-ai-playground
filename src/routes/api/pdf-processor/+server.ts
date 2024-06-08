@@ -35,7 +35,7 @@ export const POST: RequestHandler = async ({ request }) => {
 		}
 
 		const openaiResponse = await openai.chat.completions.create({
-			model: 'gpt-4-turbo-2024-04-09',
+			model: 'gpt-4o-2024-05-13',
 			messages: [
 				{
 					role: 'system',
