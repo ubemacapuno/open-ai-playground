@@ -3,6 +3,12 @@
 @tailwind utilities;
 
 @layer base {
+	* {
+		@apply border-border;
+	}
+	body {
+		@apply bg-background text-foreground;
+	}
 	:root {
 		--background: 0 0% 100%;
 		--foreground: 20 14.3% 4.1%;
@@ -47,14 +53,6 @@
 		--ring: 20.5 90.2% 48.2%;
 	}
 }
-@layer base {
-	* {
-		@apply border-border;
-	}
-	body {
-		@apply bg-background text-foreground;
-	}
-}
 
 @layer utilities {
 	.bg-card {
@@ -62,5 +60,8 @@
 	}
 	.text-card-foreground {
 		color: var(--card-foreground);
+	}
+	.text-primary {
+		color: var(--primary);
 	}
 }

@@ -95,26 +95,35 @@
 				</Card.Header>
 				<Card.Content class="text-sm lg:text-base">
 					<p>{$ticketData.Description}</p>
-					<h3 class="mt-4 font-medium">Acceptance Criteria:</h3>
+					<h3 class="mt-4 font-medium text-orange-700 dark:text-orange-400">
+						Acceptance Criteria:
+					</h3>
 					<ul class="list-disc list-inside">
 						{#each $ticketData.AcceptanceCriteria as criterion}
 							<li>{criterion}</li>
 						{/each}
 					</ul>
-					<h3 class="mt-4 font-medium">Steps to Reproduce:</h3>
+					<h3 class="mt-4 font-medium text-orange-700 dark:text-orange-400">Steps to Reproduce:</h3>
 					<ul class="list-disc list-inside">
 						{#each $ticketData.StepsToReproduce as step}
 							<li>{step}</li>
 						{/each}
 					</ul>
-					<h3 class="mt-4 font-medium">Technical Notes:</h3>
+					<h3 class="mt-4 font-medium text-orange-700 dark:text-orange-400">Technical Notes:</h3>
 					<ul class="list-disc list-inside">
 						{#each $ticketData.TechnicalNotes as note}
 							<li>{note}</li>
 						{/each}
 					</ul>
-					<h3 class="mt-4 font-medium">Priority: {toTitleCase($ticketData.Priority)}</h3>
-					<h3 class="mt-4 font-medium">Labels:</h3>
+					<h3 class="mt-4 font-medium text-orange-700 dark:text-orange-400">Priority:</h3>
+					<p
+						class:text-green-700={$ticketData.Priority === 'Low'}
+						class:text-yellow-600={$ticketData.Priority === 'Medium'}
+						class:text-red-600={$ticketData.Priority === 'High'}
+					>
+						{toTitleCase($ticketData.Priority)}
+					</p>
+					<h3 class="mt-4 font-medium text-orange-700 dark:text-orange-400">Labels:</h3>
 					<div class="flex flex-wrap">
 						{#each $ticketData.Labels as label}
 							<div class="m-1">
@@ -122,7 +131,8 @@
 							</div>
 						{/each}
 					</div>
-					<h3 class="mt-4 font-medium">Assignee: {$ticketData.Assignee}</h3>
+					<h3 class="mt-4 font-medium text-orange-700 dark:text-orange-400">Assignee:</h3>
+					<p>{$ticketData.Assignee}</p>
 				</Card.Content>
 			</Card.Root>
 		{/if}

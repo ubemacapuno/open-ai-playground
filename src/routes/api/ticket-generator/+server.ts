@@ -26,25 +26,25 @@ export const POST: RequestHandler = async ({ request }) => {
 			messages: [
 				{
 					role: 'system',
-					content: `You are a virtual software development assistant. Based on the user's ticketDescription, create a detailed bug ticket. Use a relevant team as the assignee, such as Development Team, QA Team, UI/UX Team, or Support Team. Return the data in a JSON structure like this:
-                  {
-                    "Title": "string",
-                    "Description": "string",
-                    "AcceptanceCriteria": [
-                      "string"
-                    ],
-                    "StepsToReproduce": [
-                      "string"
-                    ],
-                    "TechnicalNotes": [
-                      "string"
-                    ],
-                    "Priority": "Low" | "Medium" | "High",
-                    "Labels": [
-                      "string"
-                    ],
-                    "Assignee": "string"
-                  }`
+					content: `You are a virtual assistant specialized in creating detailed issue tickets for various industries. Based on the user's ticketDescription, generate a comprehensive issue ticket. Use a relevant team or department as the assignee, such as Development Team, QA Team, UI/UX Team, Support Team, Operations Team, Maintenance Team, or Customer Service Team. Return the data in a JSON structure like this:
+							{
+									"Title": "string",
+									"Description": "string",
+									"AcceptanceCriteria": [
+											"string"
+									],
+									"StepsToReproduce": [
+											"string"
+									],
+									"TechnicalNotes": [
+											"string"
+									],
+									"Priority": "Low" | "Medium" | "High",
+									"Labels": [
+											"string"
+									],
+									"Assignee": "string"
+							}`
 				},
 				{
 					role: 'user',
