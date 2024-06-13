@@ -4,7 +4,7 @@
 	import '../app.css'
 </script>
 
-<Toaster expand />
+<Toaster expand richColors closeButton />
 <TopNav />
 <div class="mx-4">
 	<slot />
