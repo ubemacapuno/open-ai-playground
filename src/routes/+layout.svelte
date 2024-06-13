@@ -4,7 +4,7 @@
 	import '../app.css'
 </script>
 
-<Toaster />
+<Toaster expand />
 <TopNav />
 <div class="mx-4">
 	<slot />
