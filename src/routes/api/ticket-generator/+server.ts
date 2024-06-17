@@ -62,6 +62,8 @@ export const POST: RequestHandler = async ({ request }) => {
 		}
 
 		const responseData = JSON.parse(responseText as string)
+		console.log('Response Data:', responseData)
+
 		const totalTokensUsed =
 			inputTokenCount + (openaiResponse.usage ? openaiResponse.usage.total_tokens : 0)
 

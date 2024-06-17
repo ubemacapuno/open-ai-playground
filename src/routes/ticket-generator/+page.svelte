@@ -127,7 +127,7 @@
 					<div class="flex flex-wrap">
 						{#each $ticketData.Labels as label}
 							<div class="m-1">
-								<Badge>{toTitleCase(label)}</Badge>
+								<Badge>{label}</Badge>
 							</div>
 						{/each}
 					</div>
