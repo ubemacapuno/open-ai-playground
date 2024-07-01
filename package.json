@@ -54,6 +54,7 @@
 		"openai": "^4.47.1",
 		"papaparse": "^5.4.1",
 		"pdf.js-extract": "^0.2.1",
+		"pocketbase": "^0.21.1",
 		"svelte-radix": "^1.1.0",
 		"svelte-sonner": "^0.3.24",
 		"tailwind-merge": "^2.3.0",
