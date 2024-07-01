@@ -1,7 +1,10 @@
 import { type ClassValue, clsx } from 'clsx'
 import { twMerge } from 'tailwind-merge'
 import { cubicOut } from 'svelte/easing'
+import type { RequestEvent } from '@sveltejs/kit'
 import type { TransitionConfig } from 'svelte/transition'
+
+// This file is a collection of utility functions that can be used in any Svelte component or server route.
 
 export function cn(...inputs: ClassValue[]) {
 	return twMerge(clsx(inputs))
@@ -53,4 +56,13 @@ export const flyAndScale = (
 		},
 		easing: cubicOut
 	}
+}
+
+// Helper function to redirect the user to the login page with a message
+export function handleLoginRedirect(
+	event: RequestEvent,
+	message: string = 'You must be logged in to access this page'
+) {
+	const redirectTo = event.url.pathname + event.url.search
+	return `/login?redirectTo=${redirectTo}&message=${message}`
 }
