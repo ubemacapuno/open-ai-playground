@@ -48,6 +48,7 @@
 		"gpt3-tokenizer": "^1.1.5",
 		"lodash.camelcase": "^4.3.0",
 		"lodash.startcase": "^4.4.0",
+		"lucide-svelte": "^0.399.0",
 		"mode-watcher": "^0.3.0",
 		"occt-import-js": "0.0.12",
 		"online-3d-viewer": "^0.13.0",

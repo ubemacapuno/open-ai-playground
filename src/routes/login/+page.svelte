@@ -1,22 +1,46 @@
 <script lang="ts">
 	import { applyAction, enhance } from '$app/forms'
 	import { pb } from '$lib/pocketbase'
+	import { Input } from '$lib/components/ui/input'
+	import { Label } from '$lib/components/ui/label/index.js'
+	import { Button } from '$lib/components/ui/button'
+	import * as Card from '$lib/components/ui/card'
 </script>
 
-<form
-	method="POST"
-	class="card"
-	use:enhance={() => {
-		return async ({ result }) => {
-			pb.authStore.loadFromCookie(document.cookie)
-			await applyAction(result)
-		}
-	}}
->
-	<h1 class="text-2xl mb-8">Log in</h1>
-	<div class="form-control gap-2 mb-4">
-		<input type="email" name="email" placeholder="Email" class="input input-bordered" />
-		<input type="password" name="password" placeholder="Password" class="input input-bordered" />
-		<button class="btn btn-primary">Log in</button>
-	</div>
-</form>
+<div class="flex items-center justify-center min-h-[calc(100vh-4rem)] pt-4">
+	<Card.Root class="w-full max-w-md p-4 sm:p-6 lg:p-8 mx-4">
+		<Card.Header class="space-y-1">
+			<Card.Title class="text-2xl">Log in</Card.Title>
+		</Card.Header>
+		<Card.Content class="grid gap-4">
+			<form
+				method="POST"
+				class="grid gap-4"
+				use:enhance={() => {
+					return async ({ result }) => {
+						pb.authStore.loadFromCookie(document.cookie)
+						await applyAction(result)
+					}
+				}}
+			>
+				<div class="grid gap-2 w-full">
+					<Label for="email">Email</Label>
+					<Input type="email" id="email" name="email" placeholder="Email" class="w-full" />
+				</div>
+				<div class="grid gap-2 w-full">
+					<Label for="password">Password</Label>
+					<Input
+						type="password"
+						id="password"
+						name="password"
+						placeholder="Password"
+						class="w-full"
+					/>
+				</div>
+				<Card.Footer class="w-full px-0">
+					<Button type="submit" class="w-full">Log in</Button>
+				</Card.Footer>
+			</form>
+		</Card.Content>
+	</Card.Root>
+</div>
