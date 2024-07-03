@@ -1,5 +1,12 @@
 import { redirect } from '@sveltejs/kit'
-import type { Actions } from './$types'
+import type { Actions, PageServerLoad } from './$types'
+
+export const load: PageServerLoad = async ({ locals }) => {
+	// If the user is already authenticated, redirect to the home page
+	if (locals.pb.authStore.isValid) {
+		throw redirect(303, '/')
+	}
+}
 
 export const actions: Actions = {
 	default: async ({ locals, request }) => {
