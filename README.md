@@ -1,6 +1,6 @@
 # Open AI Playground
 
-This repository is designed as a personal project space to experiment with the OpenAI API. The focus is on parsing and extracting data from various file formats, starting with CAD PDF drawings and potentially expanding to other types of documents and data formats.
+This repository is a personal project space to experiment with the OpenAI API:
 
 ## Features
 
@@ -9,6 +9,19 @@ This repository is designed as a personal project space to experiment with the O
 - **Upload Feature**: Upload CAD PDF drawings directly through the UI.
 - **PDF Parsing**: Parse the uploaded PDF to extract text.
 - **Data Extraction Using OpenAI API**: Use OpenAI API to extract fields such as the part name, description, and revision from the parsed PDF text. Down the road, suggest necessary operations/steps to design the part (ex: milling, galvanizing, etc.).
+
+### Bug Ticket Generator
+
+- **Issue Summary Submission**: Users can submit a summary of their issue through the UI.
+- **PDF-Generator API Integration**: The PDF-Generator API automatically fills in a JSON template with the issue details, including:
+  - **Title**: The title of the bug.
+  - **Description**: A detailed description of the issue.
+  - **Acceptance Criteria**: A list of conditions that must be met for the bug to be considered resolved.
+  - **Steps To Reproduce**: Ordered steps to reproduce the bug.
+  - **Technical Notes**: Any technical notes or comments related to the bug.
+  - **Priority**: The priority level of the bug (Low, Medium, High).
+  - **Labels**: Tags or labels associated with the bug for categorization.
+  - **Assignee**: The individual assigned to address the bug.
 
 ## Future Enhancements
 
@@ -37,6 +50,9 @@ See the [official OpenAI API documentation](https://help.openai.com/en/articles/
 ```
 OPENAI_API_KEY=your_openai_api_key_here
 ```
+
+See the [official Pocketbase documentation] for setting up a database
+PUBLIC_POCKETBASE_URL=your_pocketbase_server_url
 
 4. **Run the Application**
 
