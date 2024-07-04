@@ -5,7 +5,22 @@
 	import { Label } from '$lib/components/ui/label/index.js'
 	import { Button } from '$lib/components/ui/button'
 	import * as Card from '$lib/components/ui/card'
+	import { page } from '$app/stores'
+	import CircleAlert from 'lucide-svelte/icons/circle-alert'
+	import * as Alert from '$lib/components/ui/alert/index.js'
+
+	let message: string
+
+	$: message = $page.url.searchParams.get('message') ?? ''
 </script>
+
+{#if message}
+	<Alert.Root variant="caution" class="mt-2">
+		<CircleAlert class="h-4 w-4" />
+		<Alert.Title>Error</Alert.Title>
+		<Alert.Description>{message}</Alert.Description>
+	</Alert.Root>
+{/if}
 
 <div class="flex items-center justify-center min-h-[calc(100vh-4rem)] pt-4">
 	<Card.Root class="w-full max-w-md p-4 sm:p-6 lg:p-8 mx-4">
@@ -41,6 +56,10 @@
 					<Button type="submit" class="w-full">Log in</Button>
 				</Card.Footer>
 			</form>
+			<!-- Add a button with a divider line that links to the /register page-->
+			<Card.Footer class="w-full px-0">
+				<Button href="/register" class="w-full" variant="outline">Register</Button>
+			</Card.Footer>
 		</Card.Content>
 	</Card.Root>
 </div>

@@ -9,6 +9,7 @@ export const badgeVariants = tv({
 			secondary: 'border-transparent bg-secondary text-secondary-foreground hover:bg-secondary/80',
 			destructive:
 				'border-transparent bg-destructive text-destructive-foreground shadow hover:bg-destructive/80',
+			caution: 'border-transparent bg-caution text-caution-foreground shadow hover:bg-caution/80',
 			outline: 'text-foreground'
 		}
 	},

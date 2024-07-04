@@ -9,21 +9,25 @@ export const load: PageServerLoad = async ({ locals }) => {
 }
 
 export const actions: Actions = {
-	default: async ({ locals, request }) => {
-		const data = Object.fromEntries(await request.formData()) as {
+	default: async (event) => {
+		const data = Object.fromEntries(await event.request.formData()) as {
 			email: string
 			password: string
 		}
 
 		try {
-			await locals.pb.collection('users').authWithPassword(data.email, data.password)
+			await event.locals.pb.collection('users').authWithPassword(data.email, data.password)
 		} catch (e) {
 			console.error(e)
 			throw e
 		}
 
-		console.log('data:', data)
-
+		// grab the redirectTo query param
+		// if the user was redirected to the login page, redirect them back to the page they were on
+		const redirectTo = event.url.searchParams.get('redirectTo')
+		if (redirectTo) {
+			throw redirect(302, `/${redirectTo.slice(1)}`)
+		}
 		redirect(303, '/')
 	}
 }
