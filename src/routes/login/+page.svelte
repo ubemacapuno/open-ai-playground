@@ -17,7 +17,7 @@
 {#if message}
 	<Alert.Root variant="caution" class="mt-2">
 		<CircleAlert class="h-4 w-4" />
-		<Alert.Title>Error</Alert.Title>
+		<Alert.Title>Caution</Alert.Title>
 		<Alert.Description>{message}</Alert.Description>
 	</Alert.Root>
 {/if}
@@ -56,10 +56,14 @@
 					<Button type="submit" class="w-full">Log in</Button>
 				</Card.Footer>
 			</form>
-			<!-- Add a button with a divider line that links to the /register page-->
+			<div class="flex items-center justify-center space-x-2">
+				<hr class="w-1/2 border-t border-gray-500" />
+				<p class="text-gray-500">or</p>
+				<hr class="w-1/2 border-t border-gray-500" />
+			</div>
 			<Card.Footer class="w-full px-0">
 				<Button href="/register" class="w-full" variant="outline">Register</Button>
-			</Card.Footer>
-		</Card.Content>
+			</Card.Footer></Card.Content
+		>
 	</Card.Root>
 </div>
