@@ -7,6 +7,14 @@
 	import { toTitleCase } from '../../utilities/transform'
 	import { Textarea } from '$lib/components/ui/textarea'
 	import Badge from '$lib/components/ui/badge/badge.svelte'
+	import type { PageData } from './$types'
+	import { pb } from '$lib/pocketbase'
+
+	export let data: PageData
+
+	$: ({ user, tickets } = data)
+
+	$: console.log('user', user)
 
 	// Ticket Vars
 	let ticketDescription = ''
@@ -49,6 +57,40 @@
 	}
 
 	$: isSubmitDisabled = isProcessing || !ticketDescription.trim()
+
+	$: console.log('ticketData', $ticketData)
+	$: console.log('user', user)
+
+	const saveTicket = async () => {
+		console.log('saveTicket called')
+		const ticket = $ticketData
+		if (!ticket) return
+
+		try {
+			const record = await pb.collection('tickets').create({
+				title: ticket.Title,
+				description: ticket.Description,
+				acceptanceCriteria: ticket.AcceptanceCriteria,
+				stepsToReproduce: ticket.StepsToReproduce,
+				technicalNotes: ticket.TechnicalNotes,
+				priority: ticket.Priority,
+				labels: ticket.Labels,
+				assignee: ticket.Assignee,
+				user: user.id
+			})
+
+			console.log('ticket in saveTicket', ticket)
+			console.log('record in saveTicket', record)
+			toast.success('Ticket Saved', { description: 'The ticket has been saved successfully.' })
+		} catch (error) {
+			console.error('Error saving ticket:', error)
+			toast.error('Error Saving Ticket', {
+				description: 'An error occurred while saving the ticket.'
+			})
+		}
+	}
+
+	$: console.log('tickets', tickets)
 </script>
 
 <div class="container mx-auto p-4 flex flex-col lg:flex-row">
@@ -81,6 +123,75 @@
 				>
 			</Card.Footer>
 		</Card.Root>
+
+		Tickets: {tickets.length}
+
+		{#each tickets as ticket}
+			<div class="p-4 bg-white dark:bg-gray-800 rounded-lg shadow-md mb-4">
+				<h2 class="text-lg font-semibold">{ticket.title}</h2>
+
+				<!-- Display Description -->
+				<p>{ticket.description}</p>
+
+				<!-- Display Acceptance Criteria -->
+				{#if ticket.acceptanceCriteria}
+					<h3 class="mt-4 font-medium text-orange-700 dark:text-orange-400">
+						Acceptance Criteria:
+					</h3>
+					<ul class="list-disc list-inside">
+						{#each ticket.acceptanceCriteria as criterion}
+							<li>{criterion}</li>
+						{/each}
+					</ul>
+				{/if}
+
+				<!-- Display Steps to Reproduce -->
+				{#if ticket.stepsToReproduce}
+					<h3 class="mt-4 font-medium text-orange-700 dark:text-orange-400">Steps to Reproduce:</h3>
+					<ul class="list-disc list-inside">
+						{#each ticket.stepsToReproduce as step}
+							<li>{step}</li>
+						{/each}
+					</ul>
+				{/if}
+
+				<!-- Display Technical Notes -->
+				{#if ticket.technicalNotes}
+					<h3 class="mt-4 font-medium text-orange-700 dark:text-orange-400">Technical Notes:</h3>
+					<ul class="list-disc list-inside">
+						{#each ticket.technicalNotes as note}
+							<li>{note}</li>
+						{/each}
+					</ul>
+				{/if}
+
+				<!-- Display Labels -->
+				{#if ticket.labels}
+					<h3 class="mt-4 font-medium text-orange-700 dark:text-orange-400">Labels:</h3>
+					<div class="flex flex-wrap">
+						{#each ticket.labels as label}
+							<div class="m-1">
+								<Badge>{label}</Badge>
+							</div>
+						{/each}
+					</div>
+				{/if}
+
+				<!-- Display Assignee -->
+				<h3 class="mt-4 font-medium text-orange-700 dark:text-orange-400">Assignee:</h3>
+				<p>{ticket.assignee}</p>
+
+				<!-- Display Priority -->
+				<h3 class="mt-4 font-medium text-orange-700 dark:text-orange-400">Priority:</h3>
+				<p
+					class:text-green-700={ticket.priority === 'Low'}
+					class:text-yellow-600={ticket.priority === 'Medium'}
+					class:text-red-600={ticket.priority === 'High'}
+				>
+					{toTitleCase(ticket.priority)}
+				</p>
+			</div>
+		{/each}
 	</div>
 	<div class="w-1/2 lg:w-1/2 lg:pl-4 mt-4 lg:mt-0">
 		{#if isProcessing}
@@ -134,6 +245,11 @@
 					<h3 class="mt-4 font-medium text-orange-700 dark:text-orange-400">Assignee:</h3>
 					<p>{$ticketData.Assignee}</p>
 				</Card.Content>
+				<Card.Footer class="flex justify-between">
+					<Button type="submit" on:click={saveTicket} class="text-sm lg:text-base"
+						>Save Ticket</Button
+					>
+				</Card.Footer>
 			</Card.Root>
 		{/if}
 	</div>
