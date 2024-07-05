@@ -39,7 +39,7 @@ export const POST: RequestHandler = async ({ request }) => {
 									"technical_notes": [
 											"string"
 									],
-									"priority": "Low" | "Medium" | "High",
+									"priority": "low" | "medium" | "high",
 									"labels": [
 											"string"
 									],

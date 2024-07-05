@@ -35,9 +35,9 @@
 		</ul>
 		<h3 class="mt-4 font-medium text-orange-700 dark:text-orange-400">Priority:</h3>
 		<p
-			class:text-green-700={ticketData.priority === 'Low'}
-			class:text-yellow-600={ticketData.priority === 'Medium'}
-			class:text-red-600={ticketData.priority === 'High'}
+			class:text-green-700={ticketData.priority === 'low'}
+			class:text-yellow-600={ticketData.priority === 'medium'}
+			class:text-red-600={ticketData.priority === 'high'}
 		>
 			{toTitleCase(ticketData.priority)}
 		</p>

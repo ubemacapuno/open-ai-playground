@@ -153,7 +153,9 @@
 			</Card.Footer>
 		</Card.Root>
 
-		Tickets: {tickets.length}
+		<h2 class="text-xl lg:text-2xl font-bold pt-6 pb-2 text-orange-700 dark:text-orange-400">
+			{tickets.length} Tickets
+		</h2>
 
 		{#each tickets as ticket}
 			<TicketListItem {ticket} {deleteTicket} />
