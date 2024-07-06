@@ -41,6 +41,7 @@
 			const result = await response.json()
 			ticketData.set(result.data)
 			isProcessing = false
+			hasTicketSaved = false
 			toast.success('Ticket Generated', {
 				description: 'The ticket has been generated successfully.'
 			})
@@ -57,6 +58,7 @@
 	const resetTicketData = () => {
 		ticketData.set(null)
 		ticketDescription = ''
+		hasTicketSaved = false
 	}
 
 	$: isSubmitDisabled = isProcessing || !ticketDescription.trim()
