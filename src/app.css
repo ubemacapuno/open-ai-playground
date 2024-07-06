@@ -67,3 +67,12 @@
 		color: var(--primary);
 	}
 }
+
+/*
+!important: Override to allow text selection in the `vaul-svelte` drawer
+*/
+[data-vaul-drawer] {
+	-webkit-user-select: text !important;
+	-moz-user-select: text !important;
+	user-select: text !important;
+}

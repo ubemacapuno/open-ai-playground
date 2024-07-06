@@ -3,12 +3,63 @@
 	import { toTitleCase } from '../../utilities/transform'
 	import { Button } from '$lib/components/ui/button'
 	import type { TicketData } from './ticket-generator-types'
+	import * as Drawer from '$lib/components/ui/drawer/index.js'
+	import { writable } from 'svelte/store'
+	import { Input } from '$lib/components/ui/input'
+	import { Textarea } from '$lib/components/ui/textarea'
+	import { tick } from 'svelte'
+	import { Check } from 'lucide-svelte'
+	import { CircleX } from 'lucide-svelte'
 	import { Trash2 } from 'lucide-svelte'
 	import { ExternalLink } from 'lucide-svelte'
-	import * as Drawer from '$lib/components/ui/drawer/index.js'
 
 	export let ticket: TicketData
 	export let deleteTicket: (id: string) => void
+	export let updateTicket: (id: string, updatedFields: Partial<TicketData>) => Promise<void>
+
+	let isEditingTitle = writable(false)
+	let newTitle = writable(ticket.title)
+	let isEditingDescription = writable(false)
+	let newDescription = writable(ticket.description)
+
+	async function startEditing(field: 'title' | 'description') {
+		if (field === 'title') {
+			isEditingTitle.set(true)
+		} else {
+			isEditingDescription.set(true)
+		}
+		await tick() // Wait for the DOM to update
+		document.getElementById(`edit-${field}-${ticket.id}`)?.focus()
+	}
+
+	function cancelEdit(field: 'title' | 'description') {
+		if (field === 'title') {
+			newTitle.set(ticket.title)
+			isEditingTitle.set(false)
+		} else {
+			newDescription.set(ticket.description)
+			isEditingDescription.set(false)
+		}
+	}
+
+	async function saveField(field: 'title' | 'description', value: string) {
+		try {
+			await updateTicket(ticket.id, { [field]: value })
+			ticket[field] = value
+			if (field === 'title') {
+				isEditingTitle.set(false)
+			} else {
+				isEditingDescription.set(false)
+			}
+		} catch (error) {
+			console.error(`Error updating ticket ${field}:`, error)
+		}
+	}
+
+	function handleDrawerClose() {
+		isEditingTitle.set(false)
+		isEditingDescription.set(false)
+	}
 </script>
 
 <div class="p-4 border rounded-lg shadow-md mb-4">
@@ -26,7 +77,7 @@
 			</Button>
 
 			<!-- Ticket Drawer -->
-			<Drawer.Root>
+			<Drawer.Root onOpenChange={handleDrawerClose}>
 				<Drawer.Trigger asChild let:builder>
 					<Button builders={[builder]} type="submit" size="icon" class="text-sm" variant="ghost">
 						<ExternalLink size={16} />
@@ -35,8 +86,81 @@
 				<Drawer.Content>
 					<div class="drawer-content-wrapper mx-auto w-full max-w-full px-8">
 						<Drawer.Header>
-							<Drawer.Title>{ticket.title}</Drawer.Title>
-							<Drawer.Description>{ticket.description}</Drawer.Description>
+							<Drawer.Title>
+								{#if $isEditingTitle}
+									<form
+										on:submit|preventDefault={() => saveField('title', $newTitle)}
+										class="flex flex-col space-y-2"
+									>
+										<div class="flex gap-2">
+											<Input
+												id={`edit-title-${ticket.id}`}
+												type="text"
+												bind:value={$newTitle}
+												class="w-full text-lg font-semibold"
+											/>
+											<div class="flex space-x-2">
+												<Button type="submit" size="sm" class="text-sm p-1" variant="ghost"
+													><Check size={16} color="#22c55e" /></Button
+												>
+												<Button
+													type="button"
+													on:click={() => cancelEdit('title')}
+													size="sm"
+													class="text-sm p-1"
+													variant="ghost"><CircleX size={16} color="#ef4444" /></Button
+												>
+											</div>
+										</div>
+									</form>
+								{:else}
+									<span
+										role="button"
+										tabindex="0"
+										on:click={() => startEditing('title')}
+										on:keydown={(event) => event.key === 'Enter' && startEditing('title')}
+									>
+										{ticket.title}
+									</span>
+								{/if}
+							</Drawer.Title>
+							<Drawer.Description>
+								{#if $isEditingDescription}
+									<form
+										on:submit|preventDefault={() => saveField('description', $newDescription)}
+										class="flex flex-col space-y-2"
+									>
+										<div class="flex gap-2">
+											<Textarea
+												id={`edit-description-${ticket.id}`}
+												bind:value={$newDescription}
+												class="w-full text-sm font-semibold"
+											/>
+											<div class="flex space-x-2">
+												<Button type="submit" size="sm" class="text-sm p-1" variant="ghost"
+													><Check size={16} color="#22c55e" /></Button
+												>
+												<Button
+													type="button"
+													on:click={() => cancelEdit('description')}
+													size="sm"
+													class="text-sm p-1"
+													variant="ghost"><CircleX size={16} color="#ef4444" /></Button
+												>
+											</div>
+										</div>
+									</form>
+								{:else}
+									<span
+										role="button"
+										tabindex="0"
+										on:click={() => startEditing('description')}
+										on:keydown={(event) => event.key === 'Enter' && startEditing('description')}
+									>
+										{ticket.description}
+									</span>
+								{/if}
+							</Drawer.Description>
 						</Drawer.Header>
 
 						{#if ticket.acceptance_criteria}

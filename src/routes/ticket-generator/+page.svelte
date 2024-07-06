@@ -2,7 +2,7 @@
 	import { Button } from '$lib/components/ui/button'
 	import { writable } from 'svelte/store'
 	import * as Card from '$lib/components/ui/card'
-	import LoadingSpinner from '$lib/components/LoadingSpinner.svelte'
+	import Loading from '$lib/components/Loading.svelte'
 	import { toast } from 'svelte-sonner'
 	import { Textarea } from '$lib/components/ui/textarea'
 	import type { PageData } from './$types'
@@ -123,6 +123,20 @@
 			})
 		}
 	}
+
+	const updateTicket = async (ticketId: string, updatedFields: Partial<TicketData>) => {
+		try {
+			await pb.collection('tickets').update(ticketId, updatedFields)
+			toast.success('Ticket Updated', { description: 'The ticket has been updated successfully.' })
+			await refreshTicketList()
+		} catch (error) {
+			console.error('Error updating ticket:', error)
+			toast.error('Error Updating Ticket', {
+				description: 'An error occurred while updating the ticket.'
+			})
+		}
+	}
+
 	$: console.log('tickets', tickets)
 </script>
 
@@ -145,15 +159,17 @@
 				/>
 			</Card.Content>
 			<Card.Footer class="flex justify-between">
-				<Button on:click={onTicketSubmit} disabled={isSubmitDisabled} class="text-sm lg:text-base"
-					>Generate Ticket</Button
-				>
+				<Button on:click={onTicketSubmit} disabled={isSubmitDisabled} class="text-sm lg:text-base">
+					Generate Ticket
+				</Button>
 				<Button
 					on:click={resetTicketData}
 					variant="outline"
 					disabled={isProcessing}
-					class="text-sm lg:text-base">Reset</Button
+					class="text-sm lg:text-base"
 				>
+					Reset
+				</Button>
 			</Card.Footer>
 		</Card.Root>
 
@@ -162,13 +178,13 @@
 		</h2>
 
 		{#each tickets as ticket}
-			<TicketListItem {ticket} {deleteTicket} />
+			<TicketListItem {ticket} {deleteTicket} {updateTicket} />
 		{/each}
 	</div>
 	<div class="w-1/2 lg:w-1/2 lg:pl-4 mt-4 lg:mt-0">
 		{#if isProcessing}
 			<div class="flex justify-center items-center h-screen">
-				<LoadingSpinner />
+				<Loading />
 			</div>
 		{/if}
 		{#if $ticketData}
