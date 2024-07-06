@@ -21,44 +21,73 @@
 	let newTitle = writable(ticket.title)
 	let isEditingDescription = writable(false)
 	let newDescription = writable(ticket.description)
+	let isEditingAcceptanceCriteria = writable(false)
+	let newAcceptanceCriteria = writable([...ticket.acceptance_criteria])
+	let newCriteriaItem = writable('')
 
-	async function startEditing(field: 'title' | 'description') {
+	const fields = {
+		title: newTitle,
+		description: newDescription,
+		acceptance_criteria: newAcceptanceCriteria
+	}
+
+	async function startEditing(field: 'title' | 'description' | 'acceptance_criteria') {
 		if (field === 'title') {
 			isEditingTitle.set(true)
-		} else {
+		} else if (field === 'description') {
 			isEditingDescription.set(true)
+		} else if (field === 'acceptance_criteria') {
+			isEditingAcceptanceCriteria.set(true)
 		}
 		await tick() // Wait for the DOM to update
 		document.getElementById(`edit-${field}-${ticket.id}`)?.focus()
 	}
 
-	function cancelEdit(field: 'title' | 'description') {
-		if (field === 'title') {
-			newTitle.set(ticket.title)
-			isEditingTitle.set(false)
-		} else {
-			newDescription.set(ticket.description)
-			isEditingDescription.set(false)
+	function resetFieldValue(field: 'title' | 'description' | 'acceptance_criteria') {
+		if (fields[field]) {
+			fields[field].set(ticket[field])
 		}
 	}
 
-	async function saveField(field: 'title' | 'description', value: string) {
+	async function saveField(field: 'title' | 'description' | 'acceptance_criteria', value: any) {
+		if (field === 'title' && !value.trim()) {
+			console.error('Title cannot be empty')
+			resetFieldValue(field)
+			return
+		}
+
 		try {
 			await updateTicket(ticket.id, { [field]: value })
 			ticket[field] = value
 			if (field === 'title') {
 				isEditingTitle.set(false)
-			} else {
+			} else if (field === 'description') {
 				isEditingDescription.set(false)
+			} else if (field === 'acceptance_criteria') {
+				isEditingAcceptanceCriteria.set(false)
 			}
 		} catch (error) {
 			console.error(`Error updating ticket ${field}:`, error)
+			resetFieldValue(field)
 		}
 	}
 
 	function handleDrawerClose() {
 		isEditingTitle.set(false)
 		isEditingDescription.set(false)
+		isEditingAcceptanceCriteria.set(false)
+	}
+
+	function addCriteriaItem() {
+		const item = $newCriteriaItem.trim()
+		if (item) {
+			newAcceptanceCriteria.update((items) => [...items, item])
+			newCriteriaItem.set('')
+		}
+	}
+
+	function removeCriteriaItem(index: number) {
+		newAcceptanceCriteria.update((items) => items.filter((_, i) => i !== index))
 	}
 </script>
 
@@ -100,16 +129,18 @@
 												class="w-full text-lg font-semibold"
 											/>
 											<div class="flex space-x-2">
-												<Button type="submit" size="sm" class="text-sm p-1" variant="ghost"
-													><Check size={16} color="#22c55e" /></Button
-												>
+												<Button type="submit" size="sm" class="text-sm p-1" variant="ghost">
+													<Check size={16} color="#22c55e" />
+												</Button>
 												<Button
 													type="button"
-													on:click={() => cancelEdit('title')}
+													on:click={() => resetFieldValue('title')}
 													size="sm"
 													class="text-sm p-1"
-													variant="ghost"><CircleX size={16} color="#ef4444" /></Button
+													variant="ghost"
 												>
+													<CircleX size={16} color="#ef4444" />
+												</Button>
 											</div>
 										</div>
 									</form>
@@ -135,18 +166,21 @@
 												id={`edit-description-${ticket.id}`}
 												bind:value={$newDescription}
 												class="w-full text-sm font-semibold"
+												rows="5"
 											/>
 											<div class="flex space-x-2">
-												<Button type="submit" size="sm" class="text-sm p-1" variant="ghost"
-													><Check size={16} color="#22c55e" /></Button
-												>
+												<Button type="submit" size="sm" class="text-sm p-1" variant="ghost">
+													<Check size={16} color="#22c55e" />
+												</Button>
 												<Button
 													type="button"
-													on:click={() => cancelEdit('description')}
+													on:click={() => resetFieldValue('description')}
 													size="sm"
 													class="text-sm p-1"
-													variant="ghost"><CircleX size={16} color="#ef4444" /></Button
+													variant="ghost"
 												>
+													<CircleX size={16} color="#ef4444" />
+												</Button>
 											</div>
 										</div>
 									</form>
@@ -163,15 +197,84 @@
 							</Drawer.Description>
 						</Drawer.Header>
 
-						{#if ticket.acceptance_criteria}
-							<h3 class="mt-4 font-medium text-orange-700 dark:text-orange-400">
-								Acceptance Criteria:
-							</h3>
-							<ul class="list-disc list-inside">
-								{#each ticket.acceptance_criteria as criterion}
-									<li>{criterion}</li>
-								{/each}
-							</ul>
+						{#if $isEditingAcceptanceCriteria}
+							<div class="mt-4">
+								<h3 class="font-medium text-orange-700 dark:text-orange-400">
+									Acceptance Criteria:
+								</h3>
+								<ul class="list-disc list-inside space-y-2">
+									{#each $newAcceptanceCriteria as criterion, index}
+										<li class="flex items-center space-x-2">
+											<span>{criterion}</span>
+											<Button
+												type="button"
+												on:click={() => removeCriteriaItem(index)}
+												size="icon"
+												variant="ghost"
+											>
+												<CircleX size={16} color="#ef4444" />
+											</Button>
+										</li>
+									{/each}
+								</ul>
+								<div class="flex items-center space-x-2 mt-2">
+									<Input
+										type="text"
+										bind:value={$newCriteriaItem}
+										class="w-full"
+										placeholder="Add new criterion"
+									/>
+									<Button
+										type="button"
+										on:click={addCriteriaItem}
+										size="sm"
+										class="text-sm p-1"
+										variant="ghost"
+									>
+										Add
+									</Button>
+								</div>
+								<div class="flex space-x-2 mt-4">
+									<Button
+										type="button"
+										on:click={() => saveField('acceptance_criteria', $newAcceptanceCriteria)}
+										size="sm"
+										class="text-sm p-1"
+										variant="ghost"
+									>
+										<Check size={16} color="#22c55e" />
+									</Button>
+									<Button
+										type="button"
+										on:click={() => resetFieldValue('acceptance_criteria')}
+										size="sm"
+										class="text-sm p-1"
+										variant="ghost"
+									>
+										<CircleX size={16} color="#ef4444" />
+									</Button>
+								</div>
+							</div>
+						{:else}
+							{#if ticket.acceptance_criteria.length > 0}
+								<h3 class="mt-4 font-medium text-orange-700 dark:text-orange-400">
+									Acceptance Criteria:
+								</h3>
+								<ul class="list-disc list-inside space-y-2">
+									{#each ticket.acceptance_criteria as criterion}
+										<li>{criterion}</li>
+									{/each}
+								</ul>
+							{/if}
+							<Button
+								type="button"
+								on:click={() => startEditing('acceptance_criteria')}
+								size="sm"
+								class="text-sm mt-2"
+								variant="ghost"
+							>
+								Edit Acceptance Criteria
+							</Button>
 						{/if}
 
 						{#if ticket.steps_to_reproduce}
