@@ -7,6 +7,7 @@
 
 	export let ticketData: TicketData
 	export let saveTicket: () => void
+	export let hasTicketSaved: boolean
 </script>
 
 <Card.Root class="w-full rounded-lg p-4 shadow-md">
@@ -53,6 +54,11 @@
 		<p>{ticketData.assignee}</p>
 	</Card.Content>
 	<Card.Footer class="flex justify-between">
-		<Button type="submit" on:click={saveTicket} class="text-sm lg:text-base">Save Ticket</Button>
+		<Button
+			type="submit"
+			on:click={saveTicket}
+			class="text-sm lg:text-base"
+			disabled={hasTicketSaved}>Save Ticket</Button
+		>
 	</Card.Footer>
 </Card.Root>

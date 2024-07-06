@@ -22,6 +22,7 @@
 	let ticketDescription = ''
 	let ticketData = writable<TicketData | null>(null)
 	let isProcessing = false
+	let hasTicketSaved = false
 
 	const onTicketSubmit = async () => {
 		if (!ticketDescription.trim()) {
@@ -98,6 +99,7 @@
 			// Refresh the tickets list
 			await refreshTicketList()
 
+			hasTicketSaved = true
 			toast.success('Ticket Saved', { description: 'The ticket has been saved successfully.' })
 		} catch (error) {
 			console.error('Error saving ticket:', error)
@@ -168,7 +170,7 @@
 			</div>
 		{/if}
 		{#if $ticketData}
-			<TicketCard ticketData={$ticketData} {saveTicket} />
+			<TicketCard ticketData={$ticketData} {saveTicket} {hasTicketSaved} />
 		{/if}
 	</div>
 </div>

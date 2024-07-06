@@ -71,6 +71,7 @@ export function handleLoginRedirect(
 // Utility function to map RecordModel to TicketData
 export function mapRecordToTicketData(record: any): TicketData {
 	return {
+		id: record.id,
 		title: record.title,
 		description: record.description,
 		acceptance_criteria: record.acceptance_criteria || [],
