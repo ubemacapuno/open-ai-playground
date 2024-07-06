@@ -8,9 +8,11 @@
 	import { Input } from '$lib/components/ui/input'
 	import { Textarea } from '$lib/components/ui/textarea'
 	import { tick } from 'svelte'
+	import { toast } from 'svelte-sonner'
 	import { Check } from 'lucide-svelte'
 	import { CircleX } from 'lucide-svelte'
 	import { Trash2 } from 'lucide-svelte'
+	import { Plus } from 'lucide-svelte'
 	import { ExternalLink } from 'lucide-svelte'
 
 	export let ticket: TicketData
@@ -24,6 +26,8 @@
 	let isEditingAcceptanceCriteria = writable(false)
 	let newAcceptanceCriteria = writable([...ticket.acceptance_criteria])
 	let newCriteriaItem = writable('')
+	let editingCriteriaIndex = writable(-1)
+	let editingCriteriaValue = writable('')
 
 	const fields = {
 		title: newTitle,
@@ -43,10 +47,24 @@
 		document.getElementById(`edit-${field}-${ticket.id}`)?.focus()
 	}
 
+	function cancelEdit(field: 'title' | 'description' | 'acceptance_criteria') {
+		if (field === 'title') {
+			resetFieldValue(field)
+			isEditingTitle.set(false)
+		} else if (field === 'description') {
+			resetFieldValue(field)
+			isEditingDescription.set(false)
+		} else if (field === 'acceptance_criteria') {
+			resetFieldValue(field)
+			isEditingAcceptanceCriteria.set(false)
+		}
+	}
+
 	function resetFieldValue(field: 'title' | 'description' | 'acceptance_criteria') {
 		if (fields[field]) {
 			fields[field].set(ticket[field])
 		}
+		editingCriteriaIndex.set(-1)
 	}
 
 	async function saveField(field: 'title' | 'description' | 'acceptance_criteria', value: any) {
@@ -65,6 +83,7 @@
 				isEditingDescription.set(false)
 			} else if (field === 'acceptance_criteria') {
 				isEditingAcceptanceCriteria.set(false)
+				editingCriteriaIndex.set(-1)
 			}
 		} catch (error) {
 			console.error(`Error updating ticket ${field}:`, error)
@@ -76,18 +95,41 @@
 		isEditingTitle.set(false)
 		isEditingDescription.set(false)
 		isEditingAcceptanceCriteria.set(false)
+		editingCriteriaIndex.set(-1)
 	}
 
 	function addCriteriaItem() {
 		const item = $newCriteriaItem.trim()
-		if (item) {
-			newAcceptanceCriteria.update((items) => [...items, item])
-			newCriteriaItem.set('')
+		if (!item) {
+			toast.error('Error', { description: 'Item cannot be empty.' })
+			return
 		}
+		newAcceptanceCriteria.update((items) => [...items, item])
+		newCriteriaItem.set('')
 	}
 
 	function removeCriteriaItem(index: number) {
 		newAcceptanceCriteria.update((items) => items.filter((_, i) => i !== index))
+	}
+
+	async function editCriteriaItem(index: number) {
+		editingCriteriaIndex.set(index)
+		editingCriteriaValue.set($newAcceptanceCriteria[index])
+		await tick() // Wait for the DOM to update
+		document.getElementById(`edit-criteria-${index}`)?.focus()
+	}
+
+	function saveEditedCriteriaItem(index: number) {
+		const value = $editingCriteriaValue.trim()
+		if (!value) {
+			console.error('Criterion cannot be empty')
+			return
+		}
+		newAcceptanceCriteria.update((items) => {
+			items[index] = value
+			return items
+		})
+		editingCriteriaIndex.set(-1)
 	}
 </script>
 
@@ -134,7 +176,7 @@
 												</Button>
 												<Button
 													type="button"
-													on:click={() => resetFieldValue('title')}
+													on:click={() => cancelEdit('title')}
 													size="sm"
 													class="text-sm p-1"
 													variant="ghost"
@@ -166,7 +208,6 @@
 												id={`edit-description-${ticket.id}`}
 												bind:value={$newDescription}
 												class="w-full text-sm font-semibold"
-												rows="5"
 											/>
 											<div class="flex space-x-2">
 												<Button type="submit" size="sm" class="text-sm p-1" variant="ghost">
@@ -174,7 +215,7 @@
 												</Button>
 												<Button
 													type="button"
-													on:click={() => resetFieldValue('description')}
+													on:click={() => cancelEdit('description')}
 													size="sm"
 													class="text-sm p-1"
 													variant="ghost"
@@ -205,15 +246,49 @@
 								<ul class="list-disc list-inside space-y-2">
 									{#each $newAcceptanceCriteria as criterion, index}
 										<li class="flex items-center space-x-2">
-											<span>{criterion}</span>
-											<Button
-												type="button"
-												on:click={() => removeCriteriaItem(index)}
-												size="icon"
-												variant="ghost"
-											>
-												<CircleX size={16} color="#ef4444" />
-											</Button>
+											{#if $editingCriteriaIndex === index}
+												<Input
+													id={`edit-criteria-${index}`}
+													type="text"
+													bind:value={$editingCriteriaValue}
+													class="w-full"
+												/>
+												<Button
+													type="button"
+													on:click={() => saveEditedCriteriaItem(index)}
+													size="sm"
+													class="text-sm p-1"
+													variant="ghost"
+												>
+													<Check size={16} color="#22c55e" />
+												</Button>
+												<Button
+													type="button"
+													on:click={() => cancelEdit('acceptance_criteria')}
+													size="sm"
+													class="text-sm p-1"
+													variant="ghost"
+												>
+													<CircleX size={16} color="#ef4444" />
+												</Button>
+											{:else}
+												<span
+													role="button"
+													tabindex="0"
+													on:click={() => editCriteriaItem(index)}
+													on:keydown={(event) => event.key === 'Enter' && editCriteriaItem(index)}
+												>
+													{criterion}
+												</span>
+												<Button
+													type="button"
+													on:click={() => removeCriteriaItem(index)}
+													size="icon"
+													variant="ghost"
+												>
+													<Trash2 size={16} color="#ef4444" />
+												</Button>
+											{/if}
 										</li>
 									{/each}
 								</ul>
@@ -222,7 +297,7 @@
 										type="text"
 										bind:value={$newCriteriaItem}
 										class="w-full"
-										placeholder="Add new criterion"
+										placeholder="Add new item"
 									/>
 									<Button
 										type="button"
@@ -231,7 +306,7 @@
 										class="text-sm p-1"
 										variant="ghost"
 									>
-										Add
+										<Plus size={16} color="#22c55e" />
 									</Button>
 								</div>
 								<div class="flex space-x-2 mt-4">
@@ -256,25 +331,24 @@
 								</div>
 							</div>
 						{:else}
-							{#if ticket.acceptance_criteria.length > 0}
+							<div class="flex">
 								<h3 class="mt-4 font-medium text-orange-700 dark:text-orange-400">
-									Acceptance Criteria:
+									<span
+										role="button"
+										tabindex="0"
+										on:click={() => startEditing('acceptance_criteria')}
+										on:keydown={(event) =>
+											event.key === 'Enter' && startEditing('acceptance_criteria')}
+									>
+										Acceptance Criteria:
+									</span>
 								</h3>
-								<ul class="list-disc list-inside space-y-2">
-									{#each ticket.acceptance_criteria as criterion}
-										<li>{criterion}</li>
-									{/each}
-								</ul>
-							{/if}
-							<Button
-								type="button"
-								on:click={() => startEditing('acceptance_criteria')}
-								size="sm"
-								class="text-sm mt-2"
-								variant="ghost"
-							>
-								Edit Acceptance Criteria
-							</Button>
+							</div>
+							<ul class="list-disc list-inside space-y-2">
+								{#each ticket.acceptance_criteria as criterion}
+									<li>{criterion}</li>
+								{/each}
+							</ul>
 						{/if}
 
 						{#if ticket.steps_to_reproduce}
