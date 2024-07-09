@@ -231,14 +231,6 @@
 									<h3 class="font-medium text-orange-700 dark:text-orange-400">
 										Acceptance Criteria:
 									</h3>
-									<!-- <span
-									role="button"
-									tabindex="0"
-									on:click={() => startEditing('acceptance_criteria')}
-									on:keydown={(event) =>
-										event.key === 'Enter' && startEditing('acceptance_criteria')}
-								>
-								</span> -->
 								</div>
 								<ul class="list-disc list-inside space-y-2">
 									{#each ticket.acceptance_criteria as criterion}

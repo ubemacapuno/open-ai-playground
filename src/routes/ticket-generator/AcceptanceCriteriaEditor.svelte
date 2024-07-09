@@ -60,10 +60,7 @@
 	}
 </script>
 
-<div
-	class="mt-4 border-2 border-orange-700 dark:border-orange-400 rounded-md p-2"
-	in:fly={{ duration: 150, y: '100%' }}
->
+<div class="mt-4 border-2 border-orange-700 rounded-md p-2" in:fly={{ duration: 150, y: '100%' }}>
 	<div class="flex space-x-2 items-center mt-4">
 		<Button type="button" on:click={onCancel} size="sm" class="text-sm p-1" variant="ghost">
 			<ChevronsDownUp size={16} />
@@ -125,10 +122,5 @@
 		<Button type="button" on:click={addCriteriaItem} size="sm" class="text-sm p-1" variant="ghost">
 			<Plus size={16} color="#22c55e" />
 		</Button>
-	</div>
-	<div class="flex space-x-2 mt-4">
-		<!-- <Button type="button" on:click={onCancel} size="sm" class="text-sm p-1" variant="ghost">
-			<CircleX size={16} color="#ef4444" />
-		</Button> -->
 	</div>
 </div>
