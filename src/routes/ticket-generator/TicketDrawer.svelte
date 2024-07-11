@@ -10,6 +10,7 @@
 	import type { TicketData } from './ticket-generator-types'
 	import { tick } from 'svelte'
 	import Select from './Select.svelte'
+	import { TICKET_STATUSES } from '$lib/constants'
 
 	export let ticket: TicketData
 	export let updateTicket: (id: string, updatedFields: Partial<TicketData>) => Promise<void>
@@ -23,19 +24,12 @@
 	let newAcceptanceCriteria = writable([...ticket.acceptance_criteria])
 	let editingCriteriaIndex = writable(-1)
 
+	// TODO - Add more fields to edit, move to constants file
 	const fields = {
 		title: newTitle,
 		description: newDescription,
 		acceptance_criteria: newAcceptanceCriteria
 	}
-	const statuses = [
-		{ label: 'Open', value: 'open' },
-		{ label: 'In Progress', value: 'in_progress' },
-		{ label: 'In Review', value: 'in_review' },
-		{ label: 'Rejected', value: 'rejected' },
-		{ label: 'Closed', value: 'closed' },
-		{ label: 'Draft', value: 'draft' }
-	]
 
 	$: newTitle.set(ticket.title)
 	$: newDescription.set(ticket.description)
@@ -210,8 +204,8 @@
 
 				<h3 class="font-medium text-orange-700 dark:text-orange-400 mt-4">Status:</h3>
 				<Select
-					items={statuses}
-					value={statuses.find((status) => status.value === ticket.status)}
+					items={TICKET_STATUSES}
+					value={TICKET_STATUSES.find((status) => status.value === ticket.status)}
 					on:change={handleStatusChange}
 				/>
 			</Drawer.Header>
@@ -279,10 +273,3 @@
 		</div>
 	</Drawer.Content>
 </Drawer.Root>
-
-<style>
-	.drawer-content-wrapper {
-		max-height: 80vh;
-		overflow-y: auto;
-	}
-</style>

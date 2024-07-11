@@ -6,6 +6,7 @@
 	import { Trash2 } from 'lucide-svelte'
 	import TicketDrawer from './TicketDrawer.svelte'
 	import Select from './Select.svelte'
+	import { TICKET_STATUSES } from '$lib/constants'
 
 	export let ticket: TicketData
 	export let deleteTicket: (id: string) => void
@@ -15,15 +16,6 @@
 	let isEditingDescription = writable(false)
 	let isEditingAcceptanceCriteria = writable(false)
 	let editingCriteriaIndex = writable(-1)
-
-	const statuses = [
-		{ label: 'Open', value: 'open' },
-		{ label: 'In Progress', value: 'in_progress' },
-		{ label: 'In Review', value: 'in_review' },
-		{ label: 'Rejected', value: 'rejected' },
-		{ label: 'Closed', value: 'closed' },
-		{ label: 'Draft', value: 'draft' }
-	]
 
 	async function handleStatusChange(event) {
 		const newStatus = event.detail.value
@@ -67,8 +59,8 @@
 		<div class="flex flex-col">
 			<h3 class="font-medium text-orange-700 dark:text-orange-400">Status:</h3>
 			<Select
-				items={statuses}
-				value={statuses.find((status) => status.value === ticket.status)}
+				items={TICKET_STATUSES}
+				value={TICKET_STATUSES.find((status) => status.value === ticket.status)}
 				on:change={handleStatusChange}
 			/>
 		</div>
@@ -90,10 +82,3 @@
 		</div>
 	</div>
 </div>
-
-<style>
-	.drawer-content-wrapper {
-		max-height: 80vh;
-		overflow-y: auto;
-	}
-</style>
