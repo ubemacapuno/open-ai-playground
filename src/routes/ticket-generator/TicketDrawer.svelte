@@ -1,16 +1,15 @@
 <script lang="ts">
 	import { writable } from 'svelte/store'
-	import { Input } from '$lib/components/ui/input'
-	import { Textarea } from '$lib/components/ui/textarea'
 	import { Button } from '$lib/components/ui/button'
 	import * as Drawer from '$lib/components/ui/drawer/index.js'
-	import { Check, ChevronsUpDown, CircleX, ExternalLink } from 'lucide-svelte'
+	import { ChevronsUpDown, ExternalLink } from 'lucide-svelte'
 	import AcceptanceCriteriaEditor from './AcceptanceCriteriaEditor.svelte'
 	import Badge from '$lib/components/ui/badge/badge.svelte'
 	import type { TicketData } from './ticket-generator-types'
 	import { tick } from 'svelte'
 	import Select from './Select.svelte'
 	import { TICKET_STATUSES } from '$lib/constants'
+	import EditableField from './EditableField.svelte'
 
 	export let ticket: TicketData
 	export let updateTicket: (id: string, updatedFields: Partial<TicketData>) => Promise<void>
@@ -36,6 +35,7 @@
 	$: newAcceptanceCriteria.set([...ticket.acceptance_criteria])
 
 	async function startEditing(field: 'title' | 'description' | 'acceptance_criteria') {
+		exitAllEditModes()
 		if (field === 'title') {
 			isEditingTitle.set(true)
 		} else if (field === 'description') {
@@ -48,6 +48,7 @@
 	}
 
 	async function handleStatusChange(event) {
+		exitAllEditModes()
 		const newStatus = event.detail.value
 		if (newStatus !== ticket.status) {
 			try {
@@ -70,6 +71,20 @@
 			resetFieldValue(field)
 			isEditingAcceptanceCriteria.set(false)
 		}
+	}
+
+	function exitAllEditModes() {
+		isEditingTitle.set(false)
+		isEditingDescription.set(false)
+		isEditingAcceptanceCriteria.set(false)
+	}
+
+	function handleSelectClick() {
+		exitAllEditModes()
+	}
+
+	function handleSaveEdit(field: 'title' | 'description', value: string) {
+		saveField(field, value)
 	}
 
 	function resetFieldValue(field: 'title' | 'description' | 'acceptance_criteria') {
@@ -123,83 +138,26 @@
 		<div class="drawer-content-wrapper mx-auto w-full max-w-full px-8">
 			<Drawer.Header>
 				<Drawer.Title>
-					{#if $isEditingTitle}
-						<form
-							on:submit|preventDefault={() => saveField('title', $newTitle)}
-							class="flex flex-col space-y-2"
-						>
-							<div class="flex gap-2">
-								<Input
-									id={`edit-title-${ticket.id}`}
-									type="text"
-									bind:value={$newTitle}
-									class="w-full text-lg font-semibold"
-								/>
-								<div class="flex space-x-2">
-									<Button type="submit" size="sm" class="text-sm p-1" variant="ghost">
-										<Check size={16} color="#22c55e" />
-									</Button>
-									<Button
-										type="button"
-										on:click={() => cancelEdit('title')}
-										size="sm"
-										class="text-sm p-1"
-										variant="ghost"
-									>
-										<CircleX size={16} color="#ef4444" />
-									</Button>
-								</div>
-							</div>
-						</form>
-					{:else}
-						<span
-							role="button"
-							tabindex="0"
-							on:click={() => startEditing('title')}
-							on:keydown={(event) => event.key === 'Enter' && startEditing('title')}
-						>
-							{ticket.title}
-						</span>
-					{/if}
+					<EditableField
+						value={ticket.title}
+						isEditing={$isEditingTitle}
+						fieldType="input"
+						id={`edit-title-${ticket.id}`}
+						on:startEdit={() => startEditing('title')}
+						on:cancelEdit={() => cancelEdit('title')}
+						on:saveEdit={({ detail }) => handleSaveEdit('title', detail)}
+					/>
 				</Drawer.Title>
 				<Drawer.Description>
-					{#if $isEditingDescription}
-						<form
-							on:submit|preventDefault={() => saveField('description', $newDescription)}
-							class="flex flex-col space-y-2"
-						>
-							<div class="flex gap-2">
-								<Textarea
-									id={`edit-description-${ticket.id}`}
-									bind:value={$newDescription}
-									class="w-full text-sm font-semibold"
-								/>
-								<div class="flex space-x-2">
-									<Button type="submit" size="sm" class="text-sm p-1" variant="ghost">
-										<Check size={16} color="#22c55e" />
-									</Button>
-									<Button
-										type="button"
-										on:click={() => cancelEdit('description')}
-										size="sm"
-										class="text-sm p-1"
-										variant="ghost"
-									>
-										<CircleX size={16} color="#ef4444" />
-									</Button>
-								</div>
-							</div>
-						</form>
-					{:else}
-						<span
-							role="button"
-							tabindex="0"
-							on:click={() => startEditing('description')}
-							on:keydown={(event) => event.key === 'Enter' && startEditing('description')}
-						>
-							{ticket.description}
-						</span>
-					{/if}
+					<EditableField
+						value={ticket.description}
+						isEditing={$isEditingDescription}
+						fieldType="textarea"
+						id={`edit-description-${ticket.id}`}
+						on:startEdit={() => startEditing('description')}
+						on:cancelEdit={() => cancelEdit('description')}
+						on:saveEdit={({ detail }) => handleSaveEdit('description', detail)}
+					/>
 				</Drawer.Description>
 
 				<h3 class="font-medium text-orange-700 dark:text-orange-400 mt-4">Status:</h3>
@@ -207,44 +165,53 @@
 					items={TICKET_STATUSES}
 					value={TICKET_STATUSES.find((status) => status.value === ticket.status)}
 					on:change={handleStatusChange}
+					on:selectClick={handleSelectClick}
 				/>
 			</Drawer.Header>
 
-			{#if $isEditingAcceptanceCriteria}
-				<AcceptanceCriteriaEditor
-					criteria={$newAcceptanceCriteria}
-					onSave={saveAcceptanceCriteria}
-					onCancel={cancelAcceptanceCriteriaEdit}
-				/>
-			{:else}
-				<div class="mt-4">
-					<div class="flex space-x-2 items-center mt-4">
-						<Button
-							type="button"
-							class="text-sm p-1"
-							variant="ghost"
-							on:click={() => startEditing('acceptance_criteria')}
-						>
-							<ChevronsUpDown size={16} />
-						</Button>
-						<h3 class="font-medium text-orange-700 dark:text-orange-400">Acceptance Criteria:</h3>
-					</div>
-					<ul class="list-disc list-inside space-y-2">
-						{#each ticket.acceptance_criteria as criterion}
-							<li>{criterion}</li>
-						{/each}
-					</ul>
+			<div class="mt-4 lg:flex lg:gap-4">
+				<div class="lg:w-1/2">
+					{#if $isEditingAcceptanceCriteria}
+						<AcceptanceCriteriaEditor
+							criteria={$newAcceptanceCriteria}
+							onSave={saveAcceptanceCriteria}
+							onCancel={cancelAcceptanceCriteriaEdit}
+						/>
+					{:else}
+						<div>
+							<div class="flex space-x-2 items-center">
+								<Button
+									type="button"
+									class="text-sm p-1"
+									variant="ghost"
+									on:click={() => startEditing('acceptance_criteria')}
+								>
+									<ChevronsUpDown size={16} />
+								</Button>
+								<h3 class="font-medium text-orange-700 dark:text-orange-400">
+									Acceptance Criteria:
+								</h3>
+							</div>
+							<ul class="list-disc list-inside space-y-2">
+								{#each ticket.acceptance_criteria as criterion}
+									<li>{criterion}</li>
+								{/each}
+							</ul>
+						</div>
+					{/if}
 				</div>
-			{/if}
 
-			{#if ticket.steps_to_reproduce}
-				<h3 class="mt-4 font-medium text-orange-700 dark:text-orange-400">Steps to Reproduce:</h3>
-				<ul class="list-disc list-inside">
-					{#each ticket.steps_to_reproduce as step}
-						<li>{step}</li>
-					{/each}
-				</ul>
-			{/if}
+				<div class="lg:w-1/2 mt-4 lg:mt-0">
+					{#if ticket.steps_to_reproduce}
+						<h3 class="font-medium text-orange-700 dark:text-orange-400">Steps to Reproduce:</h3>
+						<ul class="list-disc list-inside">
+							{#each ticket.steps_to_reproduce as step}
+								<li>{step}</li>
+							{/each}
+						</ul>
+					{/if}
+				</div>
+			</div>
 
 			{#if ticket.technical_notes}
 				<h3 class="mt-4 font-medium text-orange-700 dark:text-orange-400">Technical Notes:</h3>

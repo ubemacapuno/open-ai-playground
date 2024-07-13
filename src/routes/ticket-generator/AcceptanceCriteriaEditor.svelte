@@ -76,6 +76,7 @@
 						id={`edit-criteria-${index}`}
 						type="text"
 						bind:value={$editingValue}
+						on:keydown={(event) => event.key === 'Enter' && saveEditedCriteriaItem(index)}
 						class="w-full"
 					/>
 					<Button
@@ -118,7 +119,13 @@
 		{/each}
 	</ul>
 	<div class="flex items-center space-x-2 mt-2">
-		<Input type="text" bind:value={$newCriteriaItem} class="w-full" placeholder="Add new item" />
+		<Input
+			type="text"
+			bind:value={$newCriteriaItem}
+			class="w-full"
+			placeholder="Add new item"
+			on:keydown={(event) => event.key === 'Enter' && addCriteriaItem()}
+		/>
 		<Button type="button" on:click={addCriteriaItem} size="sm" class="text-sm p-1" variant="ghost">
 			<Plus size={16} color="#22c55e" />
 		</Button>

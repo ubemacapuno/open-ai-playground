@@ -13,9 +13,13 @@
 	function handleChange(event) {
 		dispatch('change', event.detail)
 	}
+
+	function handleClick() {
+		dispatch('selectClick')
+	}
 </script>
 
-<div class="select_wrapper">
+<div class="select_wrapper" on:click={handleClick}>
 	<Select {items} bind:value {placeholder} {disabled} {clearable} on:change={handleChange}>
 		<div slot="item" let:item>
 			{item.label}

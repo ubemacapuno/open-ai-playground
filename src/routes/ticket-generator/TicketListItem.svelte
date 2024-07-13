@@ -6,7 +6,7 @@
 	import { Trash2 } from 'lucide-svelte'
 	import TicketDrawer from './TicketDrawer.svelte'
 	import Select from './Select.svelte'
-	import { TICKET_STATUSES } from '$lib/constants'
+	import { TICKET_PRIORITIES, TICKET_STATUSES } from '$lib/constants'
 
 	export let ticket: TicketData
 	export let deleteTicket: (id: string) => void
@@ -17,14 +17,14 @@
 	let isEditingAcceptanceCriteria = writable(false)
 	let editingCriteriaIndex = writable(-1)
 
-	async function handleStatusChange(event) {
-		const newStatus = event.detail.value
-		if (newStatus !== ticket.status) {
+	async function handleFieldChange(fieldName: 'status' | 'priority', event) {
+		const newValue = event.detail.value
+		if (newValue !== ticket[fieldName]) {
 			try {
-				await updateTicket(ticket.id, { status: newStatus })
-				ticket.status = newStatus
+				await updateTicket(ticket.id, { [fieldName]: newValue })
+				ticket[fieldName] = newValue
 			} catch (error) {
-				console.error(`Error updating ticket status:`, error)
+				console.error(`Error updating ticket ${fieldName}:`, error)
 			}
 		}
 	}
@@ -61,19 +61,17 @@
 			<Select
 				items={TICKET_STATUSES}
 				value={TICKET_STATUSES.find((status) => status.value === ticket.status)}
-				on:change={handleStatusChange}
+				on:change={(event) => handleFieldChange('status', event)}
 			/>
 		</div>
 
 		<div class="flex flex-col">
 			<h3 class="font-medium text-orange-700 dark:text-orange-400">Priority:</h3>
-			<p
-				class:text-green-700={ticket.priority === 'low'}
-				class:text-yellow-600={ticket.priority === 'medium'}
-				class:text-red-600={ticket.priority === 'high'}
-			>
-				{toTitleCase(ticket.priority)}
-			</p>
+			<Select
+				items={TICKET_PRIORITIES}
+				value={TICKET_PRIORITIES.find((priority) => priority.value === ticket.priority)}
+				on:change={(event) => handleFieldChange('priority', event)}
+			/>
 		</div>
 
 		<div class="flex flex-col">
