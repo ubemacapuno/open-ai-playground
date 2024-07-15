@@ -3,14 +3,13 @@
 	import { Button } from '$lib/components/ui/button'
 	import * as Drawer from '$lib/components/ui/drawer/index.js'
 	import { ChevronsUpDown, ExternalLink } from 'lucide-svelte'
-	import AcceptanceCriteriaEditor from './AcceptanceCriteriaEditor.svelte'
 	import Badge from '$lib/components/ui/badge/badge.svelte'
 	import type { TicketData } from './ticket-generator-types'
 	import { tick } from 'svelte'
 	import Select from './Select.svelte'
 	import { TICKET_STATUSES } from '$lib/constants'
 	import EditableField from './EditableField.svelte'
-	import StepsToReproduceEditor from './StepsToReproduceEditor.svelte'
+	import EditableList from './EditableList.svelte'
 
 	export let ticket: TicketData
 	export let updateTicket: (id: string, updatedFields: Partial<TicketData>) => Promise<void>
@@ -20,8 +19,6 @@
 	let newTitle = writable(ticket.title)
 	let isEditingDescription = writable(false)
 	let newDescription = writable(ticket.description)
-
-	// TODO: Make reusable component for editing String[]
 
 	// Acceptance Criteria
 	let isEditingAcceptanceCriteria = writable(false)
@@ -137,6 +134,8 @@
 				isEditingDescription.set(false)
 			} else if (field === 'acceptance_criteria') {
 				editingCriteriaIndex.set(-1)
+			} else if (field === 'steps_to_reproduce') {
+				editingStepIndex.set(-1)
 			}
 		} catch (error) {
 			console.error(`Error updating ticket ${field}:`, error)
@@ -209,10 +208,11 @@
 			<div class="mt-4 lg:flex lg:gap-4">
 				<div class="lg:w-1/2">
 					{#if $isEditingAcceptanceCriteria}
-						<AcceptanceCriteriaEditor
-							criteria={$newAcceptanceCriteria}
+						<EditableList
+							items={$newAcceptanceCriteria}
 							onSave={saveAcceptanceCriteria}
 							onCancel={cancelAcceptanceCriteriaEdit}
+							title="Acceptance Criteria"
 						/>
 					{:else}
 						<div>
@@ -240,10 +240,11 @@
 
 				<div class="lg:w-1/2 mt-4 lg:mt-0">
 					{#if $isEditingStepsToReproduce}
-						<StepsToReproduceEditor
-							steps={$newStep}
+						<EditableList
+							items={$newStep}
 							onSave={saveStepsToReproduce}
 							onCancel={cancelStepsToReproduceEdit}
+							title="Steps to Reproduce"
 						/>
 					{:else}
 						<div>

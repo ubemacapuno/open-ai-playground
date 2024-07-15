@@ -7,51 +7,52 @@
 	import { tick } from 'svelte'
 	import { fly } from 'svelte/transition'
 
-	export let criteria: string[]
-	export let onSave: (newCriteria: string[]) => void
+	export let items: string[]
+	export let onSave: (newItems: string[]) => void
 	export let onCancel: () => void
+	export let title: string = 'Items'
 
-	let newCriteria = writable([...criteria])
-	let newCriteriaItem = writable('')
+	let newItems = writable([...items])
+	let newItem = writable('')
 	let editingIndex = writable(-1)
 	let editingValue = writable('')
 
-	function addCriteriaItem() {
-		const item = $newCriteriaItem.trim()
+	function addItem() {
+		const item = $newItem.trim()
 		if (!item) {
 			toast.error('Error', { description: 'Item cannot be empty.' })
 			return
 		}
-		newCriteria.update((items) => {
+		newItems.update((items) => {
 			const updatedItems = [...items, item]
 			onSave(updatedItems)
 			return updatedItems
 		})
-		newCriteriaItem.set('')
+		newItem.set('')
 	}
 
-	function removeCriteriaItem(index: number) {
-		newCriteria.update((items) => {
+	function removeItem(index: number) {
+		newItems.update((items) => {
 			const updatedItems = items.filter((_, i) => i !== index)
 			onSave(updatedItems)
 			return updatedItems
 		})
 	}
 
-	async function editCriteriaItem(index: number) {
+	async function editItem(index: number) {
 		editingIndex.set(index)
-		editingValue.set($newCriteria[index])
+		editingValue.set($newItems[index])
 		await tick() // Wait for the DOM to update
-		document.getElementById(`edit-criteria-${index}`)?.focus()
+		document.getElementById(`edit-item-${index}`)?.focus()
 	}
 
-	function saveEditedCriteriaItem(index: number) {
+	function saveEditedItem(index: number) {
 		const value = $editingValue.trim()
 		if (!value) {
-			toast.error('Error', { description: 'Criterion cannot be empty.' })
+			toast.error('Error', { description: 'Item cannot be empty.' })
 			return
 		}
-		newCriteria.update((items) => {
+		newItems.update((items) => {
 			items[index] = value
 			onSave(items)
 			return items
@@ -65,23 +66,23 @@
 		<Button type="button" on:click={onCancel} size="sm" class="text-sm p-1" variant="ghost">
 			<ChevronsDownUp size={16} />
 		</Button>
-		<h3 class="font-medium text-orange-700 dark:text-orange-400">Acceptance Criteria:</h3>
+		<h3 class="font-medium text-orange-700 dark:text-orange-400">{title}:</h3>
 	</div>
 
 	<ul class="list-disc list-inside space-y-2">
-		{#each $newCriteria as criterion, index}
+		{#each $newItems as item, index}
 			<li class="flex items-center space-x-2">
 				{#if $editingIndex === index}
 					<Input
-						id={`edit-criteria-${index}`}
+						id={`edit-item-${index}`}
 						type="text"
 						bind:value={$editingValue}
-						on:keydown={(event) => event.key === 'Enter' && saveEditedCriteriaItem(index)}
+						on:keydown={(event) => event.key === 'Enter' && saveEditedItem(index)}
 						class="w-full"
 					/>
 					<Button
 						type="button"
-						on:click={() => saveEditedCriteriaItem(index)}
+						on:click={() => saveEditedItem(index)}
 						size="sm"
 						class="text-sm p-1"
 						variant="ghost"
@@ -101,17 +102,12 @@
 					<span
 						role="button"
 						tabindex="0"
-						on:click={() => editCriteriaItem(index)}
-						on:keydown={(event) => event.key === 'Enter' && editCriteriaItem(index)}
+						on:click={() => editItem(index)}
+						on:keydown={(event) => event.key === 'Enter' && editItem(index)}
 					>
-						{criterion}
+						{item}
 					</span>
-					<Button
-						type="button"
-						on:click={() => removeCriteriaItem(index)}
-						size="icon"
-						variant="ghost"
-					>
+					<Button type="button" on:click={() => removeItem(index)} size="icon" variant="ghost">
 						<Trash2 size={16} color="#ef4444" />
 					</Button>
 				{/if}
@@ -121,12 +117,12 @@
 	<div class="flex items-center space-x-2 mt-2">
 		<Input
 			type="text"
-			bind:value={$newCriteriaItem}
+			bind:value={$newItem}
 			class="w-full"
 			placeholder="Add new item"
-			on:keydown={(event) => event.key === 'Enter' && addCriteriaItem()}
+			on:keydown={(event) => event.key === 'Enter' && addItem()}
 		/>
-		<Button type="button" on:click={addCriteriaItem} size="sm" class="text-sm p-1" variant="ghost">
+		<Button type="button" on:click={addItem} size="sm" class="text-sm p-1" variant="ghost">
 			<Plus size={16} color="#22c55e" />
 		</Button>
 	</div>
