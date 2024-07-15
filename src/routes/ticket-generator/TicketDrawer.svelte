@@ -36,21 +36,33 @@
 	let newStep = writable([...ticket.steps_to_reproduce])
 	let editingStepIndex = writable(-1)
 
+	// Technical Notes
+	let isEditingTechnicalNotes = writable(false)
+	let newTechnicalNotes = writable([...ticket.technical_notes])
+	let editingTechnicalNotesIndex = writable(-1)
+
 	// TODO - Add more fields to edit, move to constants file
 	const fields = {
 		title: newTitle,
 		description: newDescription,
 		acceptance_criteria: newAcceptanceCriteria,
-		steps_to_reproduce: newStep
+		steps_to_reproduce: newStep,
+		technical_notes: newTechnicalNotes
 	}
 
 	$: newTitle.set(ticket.title)
 	$: newDescription.set(ticket.description)
 	$: newAcceptanceCriteria.set([...ticket.acceptance_criteria])
 	$: newStep.set([...ticket.steps_to_reproduce])
+	$: newTechnicalNotes.set([...ticket.technical_notes])
 
 	async function startEditing(
-		field: 'title' | 'description' | 'acceptance_criteria' | 'steps_to_reproduce'
+		field:
+			| 'title'
+			| 'description'
+			| 'acceptance_criteria'
+			| 'steps_to_reproduce'
+			| 'technical_notes'
 	) {
 		exitAllEditModes()
 		if (field === 'title') {
@@ -61,6 +73,8 @@
 			isEditingAcceptanceCriteria.set(true)
 		} else if (field === 'steps_to_reproduce') {
 			isEditingStepsToReproduce.set(true)
+		} else if (field === 'technical_notes') {
+			isEditingTechnicalNotes.set(true)
 		}
 		await tick() // Wait for the DOM to update
 		document.getElementById(`edit-${field}-${ticket.id}`)?.focus()
@@ -94,6 +108,9 @@
 		} else if (field === 'steps_to_reproduce') {
 			resetFieldValue(field)
 			isEditingStepsToReproduce.set(false)
+		} else if (field === 'technical_notes') {
+			resetFieldValue(field)
+			isEditingTechnicalNotes.set(false)
 		}
 	}
 
@@ -102,6 +119,7 @@
 		isEditingDescription.set(false)
 		isEditingAcceptanceCriteria.set(false)
 		isEditingStepsToReproduce.set(false)
+		isEditingTechnicalNotes.set(false)
 	}
 
 	function handleSelectClick() {
@@ -113,7 +131,12 @@
 	}
 
 	function resetFieldValue(
-		field: 'title' | 'description' | 'acceptance_criteria' | 'steps_to_reproduce'
+		field:
+			| 'title'
+			| 'description'
+			| 'acceptance_criteria'
+			| 'steps_to_reproduce'
+			| 'technical_notes'
 	) {
 		if (fields[field]) {
 			fields[field].set(ticket[field])
@@ -122,7 +145,12 @@
 	}
 
 	async function saveField(
-		field: 'title' | 'description' | 'acceptance_criteria' | 'steps_to_reproduce',
+		field:
+			| 'title'
+			| 'description'
+			| 'acceptance_criteria'
+			| 'steps_to_reproduce'
+			| 'technical_notes',
 		value: any
 	) {
 		if (field === 'title' && !value.trim()) {
@@ -142,6 +170,8 @@
 				editingCriteriaIndex.set(-1)
 			} else if (field === 'steps_to_reproduce') {
 				editingStepIndex.set(-1)
+			} else if (field === 'technical_notes') {
+				editingTechnicalNotesIndex.set(-1)
 			}
 		} catch (error) {
 			console.error(`Error updating ticket ${field}:`, error)
@@ -159,6 +189,11 @@
 		saveField('steps_to_reproduce', newReproductionStep)
 	}
 
+	function saveTechnicalNotes(newNotes: string[]) {
+		newTechnicalNotes.set(newNotes)
+		saveField('technical_notes', newNotes)
+	}
+
 	function cancelAcceptanceCriteriaEdit() {
 		resetFieldValue('acceptance_criteria')
 		isEditingAcceptanceCriteria.set(false)
@@ -167,6 +202,11 @@
 	function cancelStepsToReproduceEdit() {
 		resetFieldValue('steps_to_reproduce')
 		isEditingStepsToReproduce.set(false)
+	}
+
+	function cancelTechnicalNotesEdit() {
+		resetFieldValue('technical_notes')
+		isEditingTechnicalNotes.set(false)
 	}
 </script>
 
@@ -278,12 +318,33 @@
 			</div>
 
 			{#if ticket.technical_notes}
-				<h3 class="mt-4 font-medium text-orange-700 dark:text-orange-400">Technical Notes:</h3>
-				<ul class="list-disc list-inside">
-					{#each ticket.technical_notes as note}
-						<li>{note}</li>
-					{/each}
-				</ul>
+				{#if $isEditingTechnicalNotes}
+					<EditableList
+						items={$newTechnicalNotes}
+						onSave={saveTechnicalNotes}
+						onCancel={cancelTechnicalNotesEdit}
+						title="Technical Notes"
+					/>
+				{:else}
+					<div>
+						<div class="flex space-x-2 items-center">
+							<Button
+								type="button"
+								class="text-sm p-1"
+								variant="ghost"
+								on:click={() => startEditing('technical_notes')}
+							>
+								<ChevronsUpDown size={16} />
+							</Button>
+							<h3 class="font-medium text-orange-700 dark:text-orange-400">Technical Notes:</h3>
+						</div>
+						<ul class="list-disc list-inside space-y-2">
+							{#each ticket.technical_notes as note}
+								<li>{note}</li>
+							{/each}
+						</ul>
+					</div>
+				{/if}
 			{/if}
 
 			{#if ticket.labels}
