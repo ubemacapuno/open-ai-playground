@@ -2,16 +2,25 @@
 	import { Button } from '$lib/components/ui/button'
 	import { writable } from 'svelte/store'
 	import * as Card from '$lib/components/ui/card'
-	import LoadingSpinner from '$lib/components/LoadingSpinner.svelte'
+	import Loading from '$lib/components/Loading.svelte'
 	import { toast } from 'svelte-sonner'
-	import { toTitleCase } from '../../utilities/transform'
 	import { Textarea } from '$lib/components/ui/textarea'
-	import Badge from '$lib/components/ui/badge/badge.svelte'
+	import type { PageData } from './$types'
+	import { pb } from '$lib/pocketbase'
+	import type { TicketData } from './ticket-generator-types'
+	import TicketCard from './TicketCard.svelte'
+	import TicketListItem from './TicketListItem.svelte'
+	import { mapRecordToTicketData } from '$lib/utils'
+
+	export let data: PageData
+
+	$: ({ user, tickets } = data)
 
 	// Ticket Vars
 	let ticketDescription = ''
-	let ticketData = writable(null)
+	let ticketData = writable<TicketData | null>(null)
 	let isProcessing = false
+	let hasTicketSaved = false
 
 	const onTicketSubmit = async () => {
 		if (!ticketDescription.trim()) {
@@ -30,6 +39,7 @@
 			const result = await response.json()
 			ticketData.set(result.data)
 			isProcessing = false
+			hasTicketSaved = false
 			toast.success('Ticket Generated', {
 				description: 'The ticket has been generated successfully.'
 			})
@@ -46,9 +56,77 @@
 	const resetTicketData = () => {
 		ticketData.set(null)
 		ticketDescription = ''
+		hasTicketSaved = false
 	}
 
 	$: isSubmitDisabled = isProcessing || !ticketDescription.trim()
+
+	const refreshTicketList = async () => {
+		const updatedTickets = await pb.collection('tickets').getList(1, 50, {
+			filter: `user="${user.id}"`,
+			sort: '-created'
+		})
+
+		// Map the response to TicketData type
+		tickets = updatedTickets.items.map(mapRecordToTicketData)
+	}
+
+	const saveTicket = async () => {
+		const ticket = $ticketData
+		if (!ticket) return
+
+		try {
+			const record = await pb.collection('tickets').create({
+				title: ticket.title,
+				description: ticket.description,
+				acceptance_criteria: ticket.acceptance_criteria,
+				steps_to_reproduce: ticket.steps_to_reproduce,
+				technical_notes: ticket.technical_notes,
+				priority: ticket.priority,
+				labels: ticket.labels,
+				assignee: ticket.assignee,
+				user: user.id,
+				status: 'open'
+			})
+
+			// Refresh the tickets list
+			await refreshTicketList()
+
+			hasTicketSaved = true
+			toast.success('Ticket Saved', { description: 'The ticket has been saved successfully.' })
+		} catch (error) {
+			console.error('Error saving ticket:', error)
+			toast.error('Error Saving Ticket', {
+				description: 'An error occurred while saving the ticket.'
+			})
+		}
+	}
+
+	const deleteTicket = async (ticketId: string) => {
+		try {
+			await pb.collection('tickets').delete(ticketId)
+			toast.success('Ticket Deleted', { description: 'The ticket has been deleted successfully.' })
+			await refreshTicketList()
+		} catch (error) {
+			console.error('Error deleting ticket:', error)
+			toast.error('Error Deleting Ticket', {
+				description: 'An error occurred while deleting the ticket.'
+			})
+		}
+	}
+
+	const updateTicket = async (ticketId: string, updatedFields: Partial<TicketData>) => {
+		try {
+			await pb.collection('tickets').update(ticketId, updatedFields)
+			toast.success('Ticket Updated', { description: 'The ticket has been updated successfully.' })
+			await refreshTicketList()
+		} catch (error) {
+			console.error('Error updating ticket:', error)
+			toast.error('Error Updating Ticket', {
+				description: 'An error occurred while updating the ticket.'
+			})
+		}
+	}
 </script>
 
 <div class="container mx-auto p-4 flex flex-col lg:flex-row">
@@ -70,71 +148,36 @@
 				/>
 			</Card.Content>
 			<Card.Footer class="flex justify-between">
-				<Button on:click={onTicketSubmit} disabled={isSubmitDisabled} class="text-sm lg:text-base"
-					>Generate Ticket</Button
-				>
+				<Button on:click={onTicketSubmit} disabled={isSubmitDisabled} class="text-sm lg:text-base">
+					Generate Ticket
+				</Button>
 				<Button
 					on:click={resetTicketData}
 					variant="outline"
 					disabled={isProcessing}
-					class="text-sm lg:text-base">Reset</Button
+					class="text-sm lg:text-base"
 				>
+					Reset
+				</Button>
 			</Card.Footer>
 		</Card.Root>
+
+		<h2 class="text-xl lg:text-2xl font-bold pt-6 pb-2 text-orange-700 dark:text-orange-400">
+			{tickets.length} Tickets
+		</h2>
+
+		{#each tickets as ticket}
+			<TicketListItem {ticket} {deleteTicket} {updateTicket} />
+		{/each}
 	</div>
 	<div class="w-1/2 lg:w-1/2 lg:pl-4 mt-4 lg:mt-0">
 		{#if isProcessing}
 			<div class="flex justify-center items-center h-screen">
-				<LoadingSpinner />
+				<Loading />
 			</div>
 		{/if}
 		{#if $ticketData}
-			<Card.Root class="w-full rounded-lg p-4 shadow-md">
-				<Card.Header>
-					<Card.Title class="text-lg lg:text-xl font-semibold">{$ticketData.Title}</Card.Title>
-				</Card.Header>
-				<Card.Content class="text-sm lg:text-base">
-					<p>{$ticketData.Description}</p>
-					<h3 class="mt-4 font-medium text-orange-700 dark:text-orange-400">
-						Acceptance Criteria:
-					</h3>
-					<ul class="list-disc list-inside">
-						{#each $ticketData.AcceptanceCriteria as criterion}
-							<li>{criterion}</li>
-						{/each}
-					</ul>
-					<h3 class="mt-4 font-medium text-orange-700 dark:text-orange-400">Steps to Reproduce:</h3>
-					<ul class="list-disc list-inside">
-						{#each $ticketData.StepsToReproduce as step}
-							<li>{step}</li>
-						{/each}
-					</ul>
-					<h3 class="mt-4 font-medium text-orange-700 dark:text-orange-400">Technical Notes:</h3>
-					<ul class="list-disc list-inside">
-						{#each $ticketData.TechnicalNotes as note}
-							<li>{note}</li>
-						{/each}
-					</ul>
-					<h3 class="mt-4 font-medium text-orange-700 dark:text-orange-400">Priority:</h3>
-					<p
-						class:text-green-700={$ticketData.Priority === 'Low'}
-						class:text-yellow-600={$ticketData.Priority === 'Medium'}
-						class:text-red-600={$ticketData.Priority === 'High'}
-					>
-						{toTitleCase($ticketData.Priority)}
-					</p>
-					<h3 class="mt-4 font-medium text-orange-700 dark:text-orange-400">Labels:</h3>
-					<div class="flex flex-wrap">
-						{#each $ticketData.Labels as label}
-							<div class="m-1">
-								<Badge>{label}</Badge>
-							</div>
-						{/each}
-					</div>
-					<h3 class="mt-4 font-medium text-orange-700 dark:text-orange-400">Assignee:</h3>
-					<p>{$ticketData.Assignee}</p>
-				</Card.Content>
-			</Card.Root>
+			<TicketCard ticketData={$ticketData} {saveTicket} {hasTicketSaved} />
 		{/if}
 	</div>
 </div>

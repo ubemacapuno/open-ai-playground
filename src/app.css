@@ -32,6 +32,16 @@
 		--input: 20 5.9% 90%;
 		--ring: 24.6 95% 53.1%;
 		--radius: 0.5rem;
+		--placeholder-color: hsl(var(--muted-foreground));
+		--bg-color: hsl(var(--background));
+		--input-border-color: hsl(var(--border));
+		--input-radius: var(--radius);
+		--hover-color: hsl(var(--primary));
+		--title-color: hsl(var(--foreground));
+		--modal-color: hsl(var(--card));
+		--button-border-color: hsl(var(--border));
+		--text-color: hsl(var(--foreground));
+		--disabled-color: hsl(var(--muted));
 	}
 	.dark {
 		--background: 20 14.3% 4.1%;
@@ -66,4 +76,13 @@
 	.text-primary {
 		color: var(--primary);
 	}
+}
+
+/*
+!important: Override to allow text selection in the `vaul-svelte` drawer
+*/
+[data-vaul-drawer] {
+	-webkit-user-select: text !important;
+	-moz-user-select: text !important;
+	user-select: text !important;
 }

@@ -3,6 +3,7 @@ import { twMerge } from 'tailwind-merge'
 import { cubicOut } from 'svelte/easing'
 import type { RequestEvent } from '@sveltejs/kit'
 import type { TransitionConfig } from 'svelte/transition'
+import type { TicketData } from '../routes/ticket-generator/ticket-generator-types'
 
 // This file is a collection of utility functions that can be used in any Svelte component or server route.
 
@@ -65,4 +66,20 @@ export function handleLoginRedirect(
 ) {
 	const redirectTo = event.url.pathname + event.url.search
 	return `/login?redirectTo=${redirectTo}&message=${message}`
+}
+
+// Utility function to map RecordModel to TicketData
+export function mapRecordToTicketData(record: any): TicketData {
+	return {
+		id: record.id,
+		title: record.title,
+		description: record.description,
+		acceptance_criteria: record.acceptance_criteria || [],
+		steps_to_reproduce: record.steps_to_reproduce || [],
+		technical_notes: record.technical_notes || [],
+		priority: record.priority,
+		labels: record.labels || [],
+		assignee: record.assignee,
+		status: record.status
+	}
 }

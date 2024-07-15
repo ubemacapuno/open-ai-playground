@@ -28,22 +28,22 @@ export const POST: RequestHandler = async ({ request }) => {
 					role: 'system',
 					content: `You are a virtual assistant specialized in creating detailed issue tickets for various industries. Based on the user's ticketDescription, generate a comprehensive issue ticket. Use a relevant team or department as the assignee, such as Development Team, QA Team, UI/UX Team, Support Team, Operations Team, Maintenance Team, or Customer Service Team. Return the data in a JSON structure like this:
 							{
-									"Title": "string",
-									"Description": "string",
-									"AcceptanceCriteria": [
+									"title": "string",
+									"description": "string",
+									"acceptance_criteria": [
 											"string"
 									],
-									"StepsToReproduce": [
+									"steps_to_reproduce": [
 											"string"
 									],
-									"TechnicalNotes": [
+									"technical_notes": [
 											"string"
 									],
-									"Priority": "Low" | "Medium" | "High",
-									"Labels": [
+									"priority": "low" | "medium" | "high",
+									"labels": [
 											"string"
 									],
-									"Assignee": "string"
+									"assignee": "string"
 							}`
 				},
 				{
