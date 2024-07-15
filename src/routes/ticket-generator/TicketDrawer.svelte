@@ -11,6 +11,12 @@
 	import EditableField from './EditableField.svelte'
 	import EditableList from './EditableList.svelte'
 
+	/**
+	 * TODO:
+	 * Update for assignee (string for now, will be User type later if I ever get to it)
+	 * Update for technical notes (Editable Field, but display using tags component)
+	 */
+
 	export let ticket: TicketData
 	export let updateTicket: (id: string, updatedFields: Partial<TicketData>) => Promise<void>
 	export let handleDrawerClose: () => void

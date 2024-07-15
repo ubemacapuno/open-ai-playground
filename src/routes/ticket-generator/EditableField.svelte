@@ -10,7 +10,7 @@
 	export let fieldType: 'input' | 'textarea' = 'input'
 	export let id: string
 
-	let newValue = value
+	let newValue: string = value
 
 	const dispatch = createEventDispatcher()
 
