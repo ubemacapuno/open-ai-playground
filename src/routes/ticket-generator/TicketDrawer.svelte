@@ -10,6 +10,7 @@
 	import Select from './Select.svelte'
 	import { TICKET_STATUSES } from '$lib/constants'
 	import EditableField from './EditableField.svelte'
+	import StepsToReproduceEditor from './StepsToReproduceEditor.svelte'
 
 	export let ticket: TicketData
 	export let updateTicket: (id: string, updatedFields: Partial<TicketData>) => Promise<void>
@@ -19,22 +20,35 @@
 	let newTitle = writable(ticket.title)
 	let isEditingDescription = writable(false)
 	let newDescription = writable(ticket.description)
+
+	// TODO: Make reusable component for editing String[]
+
+	// Acceptance Criteria
 	let isEditingAcceptanceCriteria = writable(false)
 	let newAcceptanceCriteria = writable([...ticket.acceptance_criteria])
 	let editingCriteriaIndex = writable(-1)
+
+	// Steps to Reproduce
+	let isEditingStepsToReproduce = writable(false)
+	let newStep = writable([...ticket.steps_to_reproduce])
+	let editingStepIndex = writable(-1)
 
 	// TODO - Add more fields to edit, move to constants file
 	const fields = {
 		title: newTitle,
 		description: newDescription,
-		acceptance_criteria: newAcceptanceCriteria
+		acceptance_criteria: newAcceptanceCriteria,
+		steps_to_reproduce: newStep
 	}
 
 	$: newTitle.set(ticket.title)
 	$: newDescription.set(ticket.description)
 	$: newAcceptanceCriteria.set([...ticket.acceptance_criteria])
+	$: newStep.set([...ticket.steps_to_reproduce])
 
-	async function startEditing(field: 'title' | 'description' | 'acceptance_criteria') {
+	async function startEditing(
+		field: 'title' | 'description' | 'acceptance_criteria' | 'steps_to_reproduce'
+	) {
 		exitAllEditModes()
 		if (field === 'title') {
 			isEditingTitle.set(true)
@@ -42,6 +56,8 @@
 			isEditingDescription.set(true)
 		} else if (field === 'acceptance_criteria') {
 			isEditingAcceptanceCriteria.set(true)
+		} else if (field === 'steps_to_reproduce') {
+			isEditingStepsToReproduce.set(true)
 		}
 		await tick() // Wait for the DOM to update
 		document.getElementById(`edit-${field}-${ticket.id}`)?.focus()
@@ -60,7 +76,9 @@
 		}
 	}
 
-	function cancelEdit(field: 'title' | 'description' | 'acceptance_criteria') {
+	function cancelEdit(
+		field: 'title' | 'description' | 'acceptance_criteria' | 'steps_to_reproduce'
+	) {
 		if (field === 'title') {
 			resetFieldValue(field)
 			isEditingTitle.set(false)
@@ -70,6 +88,9 @@
 		} else if (field === 'acceptance_criteria') {
 			resetFieldValue(field)
 			isEditingAcceptanceCriteria.set(false)
+		} else if (field === 'steps_to_reproduce') {
+			resetFieldValue(field)
+			isEditingStepsToReproduce.set(false)
 		}
 	}
 
@@ -77,6 +98,7 @@
 		isEditingTitle.set(false)
 		isEditingDescription.set(false)
 		isEditingAcceptanceCriteria.set(false)
+		isEditingStepsToReproduce.set(false)
 	}
 
 	function handleSelectClick() {
@@ -87,14 +109,19 @@
 		saveField(field, value)
 	}
 
-	function resetFieldValue(field: 'title' | 'description' | 'acceptance_criteria') {
+	function resetFieldValue(
+		field: 'title' | 'description' | 'acceptance_criteria' | 'steps_to_reproduce'
+	) {
 		if (fields[field]) {
 			fields[field].set(ticket[field])
 		}
 		editingCriteriaIndex.set(-1)
 	}
 
-	async function saveField(field: 'title' | 'description' | 'acceptance_criteria', value: any) {
+	async function saveField(
+		field: 'title' | 'description' | 'acceptance_criteria' | 'steps_to_reproduce',
+		value: any
+	) {
 		if (field === 'title' && !value.trim()) {
 			console.error('Title cannot be empty')
 			resetFieldValue(field)
@@ -122,9 +149,19 @@
 		saveField('acceptance_criteria', newCriteria)
 	}
 
+	function saveStepsToReproduce(newReproductionStep: string[]) {
+		newStep.set(newReproductionStep)
+		saveField('steps_to_reproduce', newReproductionStep)
+	}
+
 	function cancelAcceptanceCriteriaEdit() {
 		resetFieldValue('acceptance_criteria')
 		isEditingAcceptanceCriteria.set(false)
+	}
+
+	function cancelStepsToReproduceEdit() {
+		resetFieldValue('steps_to_reproduce')
+		isEditingStepsToReproduce.set(false)
 	}
 </script>
 
@@ -202,13 +239,33 @@
 				</div>
 
 				<div class="lg:w-1/2 mt-4 lg:mt-0">
-					{#if ticket.steps_to_reproduce}
-						<h3 class="font-medium text-orange-700 dark:text-orange-400">Steps to Reproduce:</h3>
-						<ul class="list-disc list-inside">
-							{#each ticket.steps_to_reproduce as step}
-								<li>{step}</li>
-							{/each}
-						</ul>
+					{#if $isEditingStepsToReproduce}
+						<StepsToReproduceEditor
+							steps={$newStep}
+							onSave={saveStepsToReproduce}
+							onCancel={cancelStepsToReproduceEdit}
+						/>
+					{:else}
+						<div>
+							<div class="flex space-x-2 items-center">
+								<Button
+									type="button"
+									class="text-sm p-1"
+									variant="ghost"
+									on:click={() => startEditing('steps_to_reproduce')}
+								>
+									<ChevronsUpDown size={16} />
+								</Button>
+								<h3 class="font-medium text-orange-700 dark:text-orange-400">
+									Steps to Reproduce:
+								</h3>
+							</div>
+							<ul class="list-disc list-inside space-y-2">
+								{#each ticket.steps_to_reproduce as steps}
+									<li>{steps}</li>
+								{/each}
+							</ul>
+						</div>
 					{/if}
 				</div>
 			</div>

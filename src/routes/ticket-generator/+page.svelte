@@ -63,9 +63,6 @@
 
 	$: isSubmitDisabled = isProcessing || !ticketDescription.trim()
 
-	$: console.log('ticketData', $ticketData)
-	$: console.log('user', user)
-
 	const refreshTicketList = async () => {
 		const updatedTickets = await pb.collection('tickets').getList(1, 50, {
 			filter: `user="${user.id}"`,
