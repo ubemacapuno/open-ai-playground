@@ -16,8 +16,6 @@
 
 	$: ({ user, tickets } = data)
 
-	$: console.log('user', user)
-
 	// Ticket Vars
 	let ticketDescription = ''
 	let ticketData = writable<TicketData | null>(null)
@@ -74,7 +72,6 @@
 	}
 
 	const saveTicket = async () => {
-		console.log('saveTicket called')
 		const ticket = $ticketData
 		if (!ticket) return
 
@@ -91,9 +88,6 @@
 				user: user.id,
 				status: 'open'
 			})
-
-			console.log('ticket in saveTicket', ticket)
-			console.log('record in saveTicket', record)
 
 			// Refresh the tickets list
 			await refreshTicketList()
@@ -133,8 +127,6 @@
 			})
 		}
 	}
-
-	$: console.log('tickets', tickets)
 </script>
 
 <div class="container mx-auto p-4 flex flex-col lg:flex-row">
