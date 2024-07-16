@@ -11,12 +11,6 @@
 	import EditableField from './EditableField.svelte'
 	import EditableList from './EditableList.svelte'
 
-	/**
-	 * TODO:
-	 * Update for assignee (string for now, will be User type later if I ever get to it)
-	 * Update for technical notes (Editable Field, but display using tags component)
-	 */
-
 	export let ticket: TicketData
 	export let updateTicket: (id: string, updatedFields: Partial<TicketData>) => Promise<void>
 	export let handleDrawerClose: () => void
@@ -41,13 +35,19 @@
 	let newTechnicalNotes = writable([...ticket.technical_notes])
 	let editingTechnicalNotesIndex = writable(-1)
 
+	// Labels
+	let isEditingLabels = writable(false)
+	let newLabels = writable([...ticket.technical_notes])
+	let editingLabelsIndex = writable(-1)
+
 	// TODO - Add more fields to edit, move to constants file
 	const fields = {
 		title: newTitle,
 		description: newDescription,
 		acceptance_criteria: newAcceptanceCriteria,
 		steps_to_reproduce: newStep,
-		technical_notes: newTechnicalNotes
+		technical_notes: newTechnicalNotes,
+		labels: newLabels
 	}
 
 	$: newTitle.set(ticket.title)
@@ -55,6 +55,7 @@
 	$: newAcceptanceCriteria.set([...ticket.acceptance_criteria])
 	$: newStep.set([...ticket.steps_to_reproduce])
 	$: newTechnicalNotes.set([...ticket.technical_notes])
+	$: newLabels.set([...ticket.labels])
 
 	async function startEditing(
 		field:
@@ -63,6 +64,7 @@
 			| 'acceptance_criteria'
 			| 'steps_to_reproduce'
 			| 'technical_notes'
+			| 'labels'
 	) {
 		exitAllEditModes()
 		if (field === 'title') {
@@ -75,6 +77,8 @@
 			isEditingStepsToReproduce.set(true)
 		} else if (field === 'technical_notes') {
 			isEditingTechnicalNotes.set(true)
+		} else if (field === 'labels') {
+			isEditingLabels.set(true)
 		}
 		await tick() // Wait for the DOM to update
 		document.getElementById(`edit-${field}-${ticket.id}`)?.focus()
@@ -94,7 +98,13 @@
 	}
 
 	function cancelEdit(
-		field: 'title' | 'description' | 'acceptance_criteria' | 'steps_to_reproduce'
+		field:
+			| 'title'
+			| 'description'
+			| 'acceptance_criteria'
+			| 'steps_to_reproduce'
+			| 'technical_notes'
+			| 'labels'
 	) {
 		if (field === 'title') {
 			resetFieldValue(field)
@@ -111,6 +121,9 @@
 		} else if (field === 'technical_notes') {
 			resetFieldValue(field)
 			isEditingTechnicalNotes.set(false)
+		} else if (field === 'labels') {
+			resetFieldValue(field)
+			isEditingLabels.set(false)
 		}
 	}
 
@@ -120,6 +133,7 @@
 		isEditingAcceptanceCriteria.set(false)
 		isEditingStepsToReproduce.set(false)
 		isEditingTechnicalNotes.set(false)
+		isEditingLabels.set(false)
 	}
 
 	function handleSelectClick() {
@@ -137,6 +151,7 @@
 			| 'acceptance_criteria'
 			| 'steps_to_reproduce'
 			| 'technical_notes'
+			| 'labels'
 	) {
 		if (fields[field]) {
 			fields[field].set(ticket[field])
@@ -150,7 +165,8 @@
 			| 'description'
 			| 'acceptance_criteria'
 			| 'steps_to_reproduce'
-			| 'technical_notes',
+			| 'technical_notes'
+			| 'labels',
 		value: any
 	) {
 		if (field === 'title' && !value.trim()) {
@@ -172,6 +188,8 @@
 				editingStepIndex.set(-1)
 			} else if (field === 'technical_notes') {
 				editingTechnicalNotesIndex.set(-1)
+			} else if (field === 'labels') {
+				editingLabelsIndex.set(-1)
 			}
 		} catch (error) {
 			console.error(`Error updating ticket ${field}:`, error)
@@ -194,6 +212,11 @@
 		saveField('technical_notes', newNotes)
 	}
 
+	function saveLabels(newBadgeLabels: string[]) {
+		newLabels.set(newBadgeLabels)
+		saveField('labels', newBadgeLabels)
+	}
+
 	function cancelAcceptanceCriteriaEdit() {
 		resetFieldValue('acceptance_criteria')
 		isEditingAcceptanceCriteria.set(false)
@@ -207,6 +230,11 @@
 	function cancelTechnicalNotesEdit() {
 		resetFieldValue('technical_notes')
 		isEditingTechnicalNotes.set(false)
+	}
+
+	function cancelLabels() {
+		resetFieldValue('labels')
+		isEditingLabels.set(false)
 	}
 </script>
 
@@ -348,14 +376,44 @@
 			{/if}
 
 			{#if ticket.labels}
-				<h3 class="mt-4 font-medium text-orange-700 dark:text-orange-400">Labels:</h3>
+				<!-- <h3 class="mt-4 font-medium text-orange-700 dark:text-orange-400">Labels:</h3>
 				<div class="flex flex-wrap">
 					{#each ticket.labels as label}
 						<div class="m-1">
 							<Badge>{label}</Badge>
 						</div>
 					{/each}
-				</div>
+				</div> -->
+				{#if $isEditingLabels}
+					<EditableList
+						displayTags
+						items={$newLabels}
+						onSave={saveLabels}
+						onCancel={cancelLabels}
+						title="Labels"
+					/>
+				{:else}
+					<div>
+						<div class="flex space-x-2 items-center">
+							<Button
+								type="button"
+								class="text-sm p-1"
+								variant="ghost"
+								on:click={() => startEditing('labels')}
+							>
+								<ChevronsUpDown size={16} />
+							</Button>
+							<h3 class="font-medium text-orange-700 dark:text-orange-400">Labels</h3>
+						</div>
+						<ul class="list-disc list-inside space-y-2">
+							{#each ticket.labels as label}
+								<div class="m-1 inline-flex flex">
+									<Badge>{label}</Badge>
+								</div>
+							{/each}
+						</ul>
+					</div>
+				{/if}
 			{/if}
 			<Drawer.Footer>
 				<Drawer.Close asChild let:builder>
