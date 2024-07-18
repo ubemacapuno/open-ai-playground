@@ -51,7 +51,7 @@
 				<Trash2 size={16} />
 			</Button>
 
-			<TicketDrawer {ticket} {updateTicket} {handleDrawerClose} />
+			<TicketDrawer {ticket} {updateTicket} />
 		</div>
 	</div>
 

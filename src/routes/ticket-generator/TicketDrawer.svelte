@@ -10,10 +10,18 @@
 	import { TICKET_STATUSES } from '$lib/constants'
 	import EditableField from './EditableField.svelte'
 	import EditableList from './EditableList.svelte'
+	import { createEventDispatcher } from 'svelte'
+
+	const dispatch = createEventDispatcher()
 
 	export let ticket: TicketData
 	export let updateTicket: (id: string, updatedFields: Partial<TicketData>) => Promise<void>
-	export let handleDrawerClose: () => void
+	// export let handleDrawerClose: () => void
+
+	function handleDrawerClose() {
+		dispatch('closeDrawer') // Dispatch the custom event
+		exitAllEditModes() // Optionally, if you want to handle all edit modes exit here
+	}
 
 	let isEditingTitle = writable(false)
 	let newTitle = writable(ticket.title)
@@ -376,17 +384,8 @@
 			{/if}
 
 			{#if ticket.labels}
-				<!-- <h3 class="mt-4 font-medium text-orange-700 dark:text-orange-400">Labels:</h3>
-				<div class="flex flex-wrap">
-					{#each ticket.labels as label}
-						<div class="m-1">
-							<Badge>{label}</Badge>
-						</div>
-					{/each}
-				</div> -->
 				{#if $isEditingLabels}
 					<EditableList
-						displayTags
 						items={$newLabels}
 						onSave={saveLabels}
 						onCancel={cancelLabels}

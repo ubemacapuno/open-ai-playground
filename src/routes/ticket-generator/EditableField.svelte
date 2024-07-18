@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { onMount } from 'svelte'
 	import { createEventDispatcher } from 'svelte'
 	import { Input } from '$lib/components/ui/input'
 	import { Textarea } from '$lib/components/ui/textarea'
@@ -31,6 +32,15 @@
 		}
 		dispatch('saveEdit', newValue)
 	}
+
+	onMount(() => {
+		// Listen for the 'closeDrawer' event from parent
+		window.addEventListener('closeDrawer', cancelEdit)
+
+		return () => {
+			window.removeEventListener('closeDrawer', cancelEdit)
+		}
+	})
 </script>
 
 {#if isEditing}
