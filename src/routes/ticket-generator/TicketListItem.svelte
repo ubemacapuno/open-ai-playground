@@ -1,21 +1,33 @@
 <script lang="ts">
-	import { toTitleCase } from '../../utilities/transform'
+	import { writable } from 'svelte/store'
 	import { Button } from '$lib/components/ui/button'
 	import type { TicketData } from './ticket-generator-types'
-	import { writable } from 'svelte/store'
 	import { Trash2 } from 'lucide-svelte'
 	import TicketDrawer from './TicketDrawer.svelte'
 	import Select from './Select.svelte'
 	import { TICKET_PRIORITIES, TICKET_STATUSES } from '$lib/constants'
+	import EditableField from './EditableField.svelte'
+	import { toast } from 'svelte-sonner'
 
 	export let ticket: TicketData
 	export let deleteTicket: (id: string) => void
 	export let updateTicket: (id: string, updatedFields: Partial<TicketData>) => Promise<void>
 
-	let isEditingTitle = writable(false)
-	let isEditingDescription = writable(false)
-	let isEditingAcceptanceCriteria = writable(false)
-	let editingCriteriaIndex = writable(-1)
+	let isEditingAssignee = writable(false)
+
+	async function startEditingAssignee() {
+		isEditingAssignee.set(true)
+	}
+
+	function cancelEditingAssignee() {
+		isEditingAssignee.set(false)
+	}
+
+	function handleSaveEditAssignee(newValue: string) {
+		ticket.assignee = newValue
+		isEditingAssignee.set(false)
+		toast.success('Ticket Updated', { description: 'The ticket has been updated successfully.' })
+	}
 
 	async function handleFieldChange(fieldName: 'status' | 'priority', event) {
 		const newValue = event.detail.value
@@ -27,13 +39,6 @@
 				console.error(`Error updating ticket ${fieldName}:`, error)
 			}
 		}
-	}
-
-	function handleDrawerClose() {
-		isEditingTitle.set(false)
-		isEditingDescription.set(false)
-		isEditingAcceptanceCriteria.set(false)
-		editingCriteriaIndex.set(-1)
 	}
 </script>
 
@@ -76,7 +81,15 @@
 
 		<div class="flex flex-col">
 			<h3 class="font-medium text-orange-700 dark:text-orange-400">Assignee:</h3>
-			<p>{ticket.assignee}</p>
+			<EditableField
+				value={ticket.assignee}
+				isEditing={$isEditingAssignee}
+				fieldType="input"
+				id={`edit-title-${ticket.id}`}
+				on:startEdit={() => startEditingAssignee()}
+				on:cancelEdit={() => cancelEditingAssignee()}
+				on:saveEdit={({ detail }) => handleSaveEditAssignee(detail)}
+			/>
 		</div>
 	</div>
 </div>

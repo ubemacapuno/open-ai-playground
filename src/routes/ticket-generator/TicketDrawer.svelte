@@ -7,7 +7,7 @@
 	import type { TicketData } from './ticket-generator-types'
 	import { tick } from 'svelte'
 	import Select from './Select.svelte'
-	import { TICKET_STATUSES } from '$lib/constants'
+	import { TICKET_PRIORITIES, TICKET_STATUSES } from '$lib/constants'
 	import EditableField from './EditableField.svelte'
 	import EditableList from './EditableList.svelte'
 	import { createEventDispatcher } from 'svelte'
@@ -16,7 +16,6 @@
 
 	export let ticket: TicketData
 	export let updateTicket: (id: string, updatedFields: Partial<TicketData>) => Promise<void>
-	// export let handleDrawerClose: () => void
 
 	function handleDrawerClose() {
 		dispatch('closeDrawer') // Dispatch the custom event
@@ -101,6 +100,19 @@
 				ticket.status = newStatus
 			} catch (error) {
 				console.error(`Error updating ticket status:`, error)
+			}
+		}
+	}
+
+	async function handlePriorityChange(event) {
+		exitAllEditModes()
+		const newPriority = event.detail.value
+		if (newPriority !== ticket.priority) {
+			try {
+				await updateTicket(ticket.id, { priority: newPriority })
+				ticket.priority = newPriority
+			} catch (error) {
+				console.error(`Error updating ticket priority:`, error)
 			}
 		}
 	}
@@ -277,14 +289,27 @@
 						on:saveEdit={({ detail }) => handleSaveEdit('description', detail)}
 					/>
 				</Drawer.Description>
+				<div class="flex space-x-4 justify-start items-center mt-4">
+					<div class="flex items-center space-x-2 mx-4">
+						<h3 class="font-medium text-orange-700 dark:text-orange-400">Status:</h3>
+						<Select
+							items={TICKET_STATUSES}
+							value={TICKET_STATUSES.find((status) => status.value === ticket.status)}
+							on:change={handleStatusChange}
+							on:selectClick={handleSelectClick}
+						/>
+					</div>
 
-				<h3 class="font-medium text-orange-700 dark:text-orange-400 mt-4">Status:</h3>
-				<Select
-					items={TICKET_STATUSES}
-					value={TICKET_STATUSES.find((status) => status.value === ticket.status)}
-					on:change={handleStatusChange}
-					on:selectClick={handleSelectClick}
-				/>
+					<div class="flex items-center space-x-2">
+						<h3 class="font-medium text-orange-700 dark:text-orange-400">Priority:</h3>
+						<Select
+							items={TICKET_PRIORITIES}
+							value={TICKET_PRIORITIES.find((priority) => priority.value === ticket.priority)}
+							on:change={handlePriorityChange}
+							on:selectClick={handleSelectClick}
+						/>
+					</div>
+				</div>
 			</Drawer.Header>
 
 			<div class="mt-4 lg:flex lg:gap-4">
@@ -406,7 +431,7 @@
 						</div>
 						<ul class="list-disc list-inside space-y-2">
 							{#each ticket.labels as label}
-								<div class="m-1 inline-flex flex">
+								<div class="m-1 inline-flex">
 									<Badge>{label}</Badge>
 								</div>
 							{/each}

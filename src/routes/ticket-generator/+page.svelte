@@ -178,6 +178,10 @@
 		{/if}
 		{#if $ticketData}
 			<TicketCard ticketData={$ticketData} {saveTicket} {hasTicketSaved} />
+		{:else}
+			<div class="flex justify-center items-center h-1/4">
+				<h2 class="text-xl">Generate a ticket! 🤖</h2>
+			</div>
 		{/if}
 	</div>
 </div>
