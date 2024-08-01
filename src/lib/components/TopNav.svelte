@@ -21,7 +21,7 @@
 		<span class="hidden font-bold sm:inline-block">OpenAI Playground</span>
 	</a>
 	{#if $currentUser}
-		<span class="mr-4">Logged in as {$currentUser.email}</span>
+		<span class="mr-4">Hello, {$currentUser.email} 👋</span>
 	{/if}
 	<div class="flex gap-2">
 		<LightSwitch />

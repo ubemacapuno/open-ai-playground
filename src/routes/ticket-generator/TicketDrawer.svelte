@@ -289,7 +289,7 @@
 						on:saveEdit={({ detail }) => handleSaveEdit('description', detail)}
 					/>
 				</Drawer.Description>
-				<div class="flex space-x-4 justify-start items-center mt-4">
+				<div class="flex space-x-4 mt-4">
 					<div class="flex items-center space-x-2 mx-4">
 						<h3 class="font-medium text-orange-700 dark:text-orange-400">Status:</h3>
 						<Select
