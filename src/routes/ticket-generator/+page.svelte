@@ -170,7 +170,7 @@
 						{tickets.length !== 1 ? 'Tickets' : 'Ticket'}
 					</h2>
 				</div>
-				<div class="overflow-y-auto h-[calc(100%-3rem)] pb-4">
+				<div class="overflow-y-auto h-[calc(100vh-3rem)] pb-4">
 					{#each tickets as ticket}
 						<div class="py-2 px-4">
 							<TicketListItem {ticket} {deleteTicket} {updateTicket} />
