@@ -42,7 +42,7 @@
 	}
 </script>
 
-<div class="p-4 border rounded-lg shadow-md mb-4">
+<div class="p-4 border rounded-lg shadow-md">
 	<div class="flex justify-between">
 		<h2 class="text-lg font-semibold truncate">{ticket.title}</h2>
 		<div class="flex flex-row flex-nowrap">

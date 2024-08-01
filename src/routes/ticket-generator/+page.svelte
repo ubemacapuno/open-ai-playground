@@ -163,18 +163,24 @@
 		</Card.Root>
 
 		{#if tickets.length}
-			<div class="p-4 border rounded-lg shadow-md my-3 h-[calc(100vh-30rem)">
-				<h2 class="text-xl lg:text-2xl font-bold pb-2 text-orange-700 dark:text-orange-400">
-					{tickets.length}
-					{tickets.length !== 1 ? 'Tickets' : 'Ticket'}
-				</h2>
-				{#each tickets as ticket}
-					<TicketListItem {ticket} {deleteTicket} {updateTicket} />
-				{/each}
+			<div class="border rounded-lg shadow-md my-3 h-[calc(100vh-30rem)] overflow-hidden">
+				<div class="sticky top-0 z-10 p-4 bg-card bg-opacity-75 backdrop-blur-lg backdrop-filter">
+					<h2 class="text-xl lg:text-2xl font-bold text-orange-700 dark:text-orange-400">
+						{tickets.length}
+						{tickets.length !== 1 ? 'Tickets' : 'Ticket'}
+					</h2>
+				</div>
+				<div class="overflow-y-auto h-[calc(100%-3rem)] pb-4">
+					{#each tickets as ticket}
+						<div class="py-2 px-4">
+							<TicketListItem {ticket} {deleteTicket} {updateTicket} />
+						</div>
+					{/each}
+				</div>
 			</div>
 		{:else}
 			<div class="p-4 border rounded-lg shadow-md my-4 h-[calc(100vh-30rem)]">
-				<div class="flex justify-center items-center h-1/4">
+				<div class="flex justify-center items-center h-full">
 					<h2 class="text-xl">No tickets found! 🤷‍♂️</h2>
 				</div>
 			</div>

@@ -8,10 +8,6 @@
 	import { LogOut, LogIn } from 'lucide-svelte'
 
 	export let currentUser
-
-	let activeRoute = ''
-
-	$: activeRoute = $page.url.pathname
 </script>
 
 <div

@@ -5,6 +5,7 @@
 	import { Textarea } from '$lib/components/ui/textarea'
 	import { Button } from '$lib/components/ui/button'
 	import { Check, CircleX } from 'lucide-svelte'
+	import { toast } from 'svelte-sonner'
 
 	export let value: string
 	export let isEditing: boolean
@@ -28,6 +29,7 @@
 		if (fieldType === 'input' && !newValue.trim()) {
 			console.error('Value cannot be empty')
 			newValue = value
+			toast.error('Error', { description: 'Value cannot be empty' })
 			return
 		}
 		dispatch('saveEdit', newValue)
