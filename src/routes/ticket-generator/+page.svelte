@@ -162,13 +162,29 @@
 			</Card.Footer>
 		</Card.Root>
 
-		<h2 class="text-xl lg:text-2xl font-bold pt-6 pb-2 text-orange-700 dark:text-orange-400">
-			{tickets.length} Tickets
-		</h2>
-
-		{#each tickets as ticket}
-			<TicketListItem {ticket} {deleteTicket} {updateTicket} />
-		{/each}
+		{#if tickets.length}
+			<div class="border rounded-lg shadow-md my-3 h-[calc(100vh-30rem)] overflow-hidden">
+				<div class="sticky top-0 z-10 p-4 bg-card bg-opacity-75 backdrop-blur-lg backdrop-filter">
+					<h2 class="text-xl lg:text-2xl font-bold text-orange-700 dark:text-orange-400">
+						{tickets.length}
+						{tickets.length !== 1 ? 'Tickets' : 'Ticket'}
+					</h2>
+				</div>
+				<div class="overflow-y-auto h-[calc(100vh-3rem)] pb-4">
+					{#each tickets as ticket}
+						<div class="py-2 px-4">
+							<TicketListItem {ticket} {deleteTicket} {updateTicket} />
+						</div>
+					{/each}
+				</div>
+			</div>
+		{:else}
+			<div class="p-4 border rounded-lg shadow-md my-4 h-[calc(100vh-30rem)]">
+				<div class="flex justify-center items-center h-full">
+					<h2 class="text-xl">No tickets found! 🤷‍♂️</h2>
+				</div>
+			</div>
+		{/if}
 	</div>
 	<div class="w-1/2 lg:w-1/2 lg:pl-4 mt-4 lg:mt-0">
 		{#if isProcessing}
@@ -178,6 +194,12 @@
 		{/if}
 		{#if $ticketData}
 			<TicketCard ticketData={$ticketData} {saveTicket} {hasTicketSaved} />
+		{:else}
+			<div class="py-4 border rounded-lg shadow-md h-[calc(100vh-6rem)]">
+				<div class="flex justify-center items-center h-1/4">
+					<h2 class="text-xl">Generate a ticket! 🤖</h2>
+				</div>
+			</div>
 		{/if}
 	</div>
 </div>

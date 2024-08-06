@@ -10,7 +10,7 @@
 	export let hasTicketSaved: boolean
 </script>
 
-<Card.Root class="w-full rounded-lg p-4 shadow-md">
+<Card.Root class="w-full rounded-lg p-4 shadow-md overflow-y-auto h-[calc(100vh-6rem)]">
 	<Card.Header>
 		<Card.Title class="text-lg lg:text-xl font-semibold">{ticketData.title}</Card.Title>
 	</Card.Header>

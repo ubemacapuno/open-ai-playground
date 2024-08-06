@@ -11,6 +11,7 @@
 	export let onSave: (newItems: string[]) => void
 	export let onCancel: () => void
 	export let title: string = 'Items'
+	export let displayTags = false
 
 	let newItems = writable([...items])
 	let newItem = writable('')

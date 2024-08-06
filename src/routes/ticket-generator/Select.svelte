@@ -7,6 +7,7 @@
 	export let placeholder = 'Choose an option'
 	export let disabled = false
 	export let clearable = false
+	export let width = 'w-40'
 
 	const dispatch = createEventDispatcher()
 
@@ -19,7 +20,7 @@
 	}
 </script>
 
-<div class="select_wrapper" on:click={handleClick}>
+<div class="select_wrapper {width}" on:click={handleClick}>
 	<Select {items} bind:value {placeholder} {disabled} {clearable} on:change={handleChange}>
 		<div slot="item" let:item>
 			{item.label}

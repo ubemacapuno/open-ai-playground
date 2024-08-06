@@ -8,8 +8,6 @@
 	>
 		OpenAI API Apps
 	</h1>
-
-	<Button href="/pdf-drawing">PDF Drawing Parser</Button>
-
 	<Button href="/ticket-generator">Bug Ticket Generator</Button>
+	<Button href="/pdf-drawing">PDF Drawing Parser</Button>
 </section>

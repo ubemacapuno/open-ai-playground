@@ -1,16 +1,18 @@
 <script lang="ts">
+	import { onMount } from 'svelte'
 	import { createEventDispatcher } from 'svelte'
 	import { Input } from '$lib/components/ui/input'
 	import { Textarea } from '$lib/components/ui/textarea'
 	import { Button } from '$lib/components/ui/button'
 	import { Check, CircleX } from 'lucide-svelte'
+	import { toast } from 'svelte-sonner'
 
 	export let value: string
 	export let isEditing: boolean
 	export let fieldType: 'input' | 'textarea' = 'input'
 	export let id: string
 
-	let newValue = value
+	let newValue: string = value
 
 	const dispatch = createEventDispatcher()
 
@@ -27,10 +29,20 @@
 		if (fieldType === 'input' && !newValue.trim()) {
 			console.error('Value cannot be empty')
 			newValue = value
+			toast.error('Error', { description: 'Value cannot be empty' })
 			return
 		}
 		dispatch('saveEdit', newValue)
 	}
+
+	onMount(() => {
+		// Listen for the 'closeDrawer' event from parent
+		window.addEventListener('closeDrawer', cancelEdit)
+
+		return () => {
+			window.removeEventListener('closeDrawer', cancelEdit)
+		}
+	})
 </script>
 
 {#if isEditing}
