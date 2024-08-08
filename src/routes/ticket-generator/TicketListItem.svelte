@@ -7,7 +7,6 @@
 	import Select from './Select.svelte'
 	import { TICKET_PRIORITIES, TICKET_STATUSES } from '$lib/constants'
 	import EditableField from './EditableField.svelte'
-	import { toast } from 'svelte-sonner'
 
 	export let ticket: TicketData
 	export let deleteTicket: (id: string) => void
