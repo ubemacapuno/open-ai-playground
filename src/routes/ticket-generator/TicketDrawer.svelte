@@ -27,8 +27,12 @@
 
 	let isEditingTitle = writable(false)
 	let newTitle = writable(ticket.title)
+
 	let isEditingDescription = writable(false)
 	let newDescription = writable(ticket.description)
+
+	let isEditingAssignee = writable(false)
+	let newAssignee = writable(ticket.assignee)
 
 	// Acceptance Criteria
 	let isEditingAcceptanceCriteria = writable(false)
@@ -54,6 +58,7 @@
 	const fields = {
 		title: newTitle,
 		description: newDescription,
+		assignee: newAssignee,
 		acceptance_criteria: newAcceptanceCriteria,
 		steps_to_reproduce: newStep,
 		technical_notes: newTechnicalNotes,
@@ -62,6 +67,7 @@
 
 	$: newTitle.set(ticket.title)
 	$: newDescription.set(ticket.description)
+	$: newAssignee.set(ticket.assignee)
 	$: newAcceptanceCriteria.set([...ticket.acceptance_criteria])
 	$: newStep.set([...ticket.steps_to_reproduce])
 	$: newTechnicalNotes.set([...ticket.technical_notes])
@@ -71,6 +77,7 @@
 		field:
 			| 'title'
 			| 'description'
+			| 'assignee'
 			| 'acceptance_criteria'
 			| 'steps_to_reproduce'
 			| 'technical_notes'
@@ -81,6 +88,8 @@
 			isEditingTitle.set(true)
 		} else if (field === 'description') {
 			isEditingDescription.set(true)
+		} else if (field === 'assignee') {
+			isEditingAssignee.set(true)
 		} else if (field === 'acceptance_criteria') {
 			isEditingAcceptanceCriteria.set(true)
 		} else if (field === 'steps_to_reproduce') {
@@ -124,6 +133,7 @@
 		field:
 			| 'title'
 			| 'description'
+			| 'assignee'
 			| 'acceptance_criteria'
 			| 'steps_to_reproduce'
 			| 'technical_notes'
@@ -135,6 +145,9 @@
 		} else if (field === 'description') {
 			resetFieldValue(field)
 			isEditingDescription.set(false)
+		} else if (field === 'assignee') {
+			resetFieldValue(field)
+			isEditingAssignee.set(false)
 		} else if (field === 'acceptance_criteria') {
 			resetFieldValue(field)
 			isEditingAcceptanceCriteria.set(false)
@@ -157,13 +170,14 @@
 		isEditingStepsToReproduce.set(false)
 		isEditingTechnicalNotes.set(false)
 		isEditingLabels.set(false)
+		isEditingAssignee.set(false)
 	}
 
 	function handleSelectClick() {
 		exitAllEditModes()
 	}
 
-	function handleSaveEdit(field: 'title' | 'description', value: string) {
+	function handleSaveEdit(field: 'title' | 'description' | 'assignee', value: string) {
 		saveField(field, value)
 	}
 
@@ -171,6 +185,7 @@
 		field:
 			| 'title'
 			| 'description'
+			| 'assignee'
 			| 'acceptance_criteria'
 			| 'steps_to_reproduce'
 			| 'technical_notes'
@@ -186,6 +201,7 @@
 		field:
 			| 'title'
 			| 'description'
+			| 'assignee'
 			| 'acceptance_criteria'
 			| 'steps_to_reproduce'
 			| 'technical_notes'
@@ -205,6 +221,8 @@
 				isEditingTitle.set(false)
 			} else if (field === 'description') {
 				isEditingDescription.set(false)
+			} else if (field === 'assignee') {
+				isEditingAssignee.set(false)
 			} else if (field === 'acceptance_criteria') {
 				editingCriteriaIndex.set(-1)
 			} else if (field === 'steps_to_reproduce') {
@@ -311,6 +329,19 @@
 							value={TICKET_PRIORITIES.find((priority) => priority.value === ticket.priority)}
 							on:change={handlePriorityChange}
 							on:selectClick={handleSelectClick}
+						/>
+					</div>
+
+					<div class="flex items-center space-x-2">
+						<h3 class="font-medium text-orange-700 dark:text-orange-400">Assignee:</h3>
+						<EditableField
+							value={ticket.assignee}
+							isEditing={$isEditingAssignee}
+							fieldType="input"
+							id={`edit-assignee-${ticket.id}`}
+							on:startEdit={() => startEditing('assignee')}
+							on:cancelEdit={() => cancelEdit('assignee')}
+							on:saveEdit={({ detail }) => handleSaveEdit('assignee', detail)}
 						/>
 					</div>
 				</div>
