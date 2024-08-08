@@ -11,6 +11,7 @@
 	export let isEditing: boolean
 	export let fieldType: 'input' | 'textarea' = 'input'
 	export let id: string
+	export let isTicketDrawerDescription = false // boolean to use different styles for drawer description
 
 	let newValue: string = value
 
@@ -32,13 +33,13 @@
 			toast.error('Error', { description: 'Value cannot be empty' })
 			return
 		}
+		console.log('newValue: ', newValue)
 		dispatch('saveEdit', newValue)
 	}
 
 	onMount(() => {
 		// Listen for the 'closeDrawer' event from parent
 		window.addEventListener('closeDrawer', cancelEdit)
-
 		return () => {
 			window.removeEventListener('closeDrawer', cancelEdit)
 		}
@@ -65,6 +66,11 @@
 	</form>
 {:else}
 	<span
+		class={`font-semibold ${
+			isTicketDrawerDescription
+				? 'inline-block w-full max-w-[50%] whitespace-normal break-words cursor-pointer'
+				: 'overflow-hidden truncate'
+		}`}
 		role="button"
 		tabindex="0"
 		on:click={startEditing}

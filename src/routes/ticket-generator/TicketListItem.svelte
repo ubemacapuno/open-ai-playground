@@ -23,10 +23,18 @@
 		isEditingAssignee.set(false)
 	}
 
-	function handleSaveEditAssignee(newValue: string) {
-		ticket.assignee = newValue
-		isEditingAssignee.set(false)
-		toast.success('Ticket Updated', { description: 'The ticket has been updated successfully.' })
+	// TODO: combine handleSaveEditAssignee and handleFieldChange ?
+	async function handleSaveEditAssignee(newValue: string) {
+		if (newValue !== ticket.assignee) {
+			try {
+				await updateTicket(ticket.id, { assignee: newValue })
+				ticket.assignee = newValue
+				isEditingAssignee.set(false)
+			} catch (error) {
+				console.error(`Error updating ticket assignee:`, error)
+				isEditingAssignee.set(false)
+			}
+		}
 	}
 
 	async function handleFieldChange(fieldName: 'status' | 'priority', event) {

@@ -7,7 +7,7 @@
 
 	export let ticketData: TicketData
 	export let saveTicket: () => void
-	export let hasTicketSaved: boolean
+	export let hasTicketSaved = false
 </script>
 
 <Card.Root class="w-full rounded-lg p-4 shadow-md overflow-y-auto h-[calc(100vh-6rem)]">

@@ -12,6 +12,9 @@
 	import EditableList from './EditableList.svelte'
 	import { createEventDispatcher } from 'svelte'
 
+	// TODO: Find a way to lose focus on inputs after making an edit,
+	// otherwise the drawer locks on and any movement will move the drawer
+
 	const dispatch = createEventDispatcher()
 
 	export let ticket: TicketData
@@ -280,6 +283,7 @@
 				</Drawer.Title>
 				<Drawer.Description>
 					<EditableField
+						isTicketDrawerDescription
 						value={ticket.description}
 						isEditing={$isEditingDescription}
 						fieldType="textarea"
