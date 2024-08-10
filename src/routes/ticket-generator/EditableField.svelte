@@ -33,7 +33,6 @@
 			toast.error('Error', { description: 'Value cannot be empty' })
 			return
 		}
-		console.log('newValue: ', newValue)
 		dispatch('saveEdit', newValue)
 	}
 
