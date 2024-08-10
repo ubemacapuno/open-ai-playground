@@ -21,11 +21,24 @@ export const load: PageServerLoad = async (event) => {
 		sort: '-created'
 	})
 
+	const example_ticket = {
+		title: 'Example: Test Ticket',
+		description: 'Save and edit this ticket with real issue details.',
+		acceptance_criteria: ['Update this list with your actual acceptance criteria'],
+		steps_to_reproduce: ['Replace with the actual reproduction steps for your issue'],
+		technical_notes: ['Add your own technical notes and findings here'],
+		priority: 'medium',
+		labels: ['example'],
+		assignee: event.locals.user.email || 'me',
+		status: 'open'
+	}
+
 	// Map the response to TicketData type
 	const mappedTickets: TicketData[] = tickets.items.map(mapRecordToTicketData)
 
 	return {
 		user: event.locals.user,
-		tickets: mappedTickets // items is an array of ticket objects
+		tickets: mappedTickets, // tickets.items is an array of ticket objects
+		example_ticket
 	}
 }

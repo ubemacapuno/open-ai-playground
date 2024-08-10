@@ -64,7 +64,7 @@
 <div class="mt-4 border-2 border-orange-700 rounded-md p-2" in:fly={{ duration: 150, y: '100%' }}>
 	<div class="flex space-x-2 items-center mt-4">
 		<Button type="button" on:click={onCancel} size="sm" class="text-sm p-1" variant="ghost">
-			<ChevronsDownUp size={16} />
+			<ChevronsDownUp size={16} color="#3b82f6" />
 		</Button>
 		<h3 class="font-medium text-orange-700 dark:text-orange-400">{title}:</h3>
 	</div>
