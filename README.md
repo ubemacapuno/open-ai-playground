@@ -8,7 +8,9 @@ This repository is a personal project space to experiment with the OpenAI API:
 
 - **Upload Feature**: Upload CAD PDF drawings directly through the UI.
 - **PDF Parsing**: Parse the uploaded PDF to extract text.
-- **Data Extraction Using OpenAI API**: Use OpenAI API to extract fields such as the part name, description, and revision from the parsed PDF text. Down the road, suggest necessary operations/steps to design the part (ex: milling, galvanizing, etc.).
+- **Data Extraction Using OpenAI API**: Use OpenAI API to extract fields such as the part number, description, and revision from the parsed PDF text. It also suggests necessary operations/steps to manufacture the part (e.g., milling, galvanizing, laser cutting, etc.) based on the information in the drawing.
+
+![PDF Scanner](https://raw.githubusercontent.com/ubemacapuno/images-for-github-readme/main/pdf-scanner.webp)
 
 ### Bug Ticket Generator
 
@@ -22,6 +24,8 @@ This repository is a personal project space to experiment with the OpenAI API:
   - **Priority**: The priority level of the bug (Low, Medium, High).
   - **Labels**: Tags or labels associated with the bug for categorization.
   - **Assignee**: The individual assigned to address the bug.
+
+![Ticket Generator](https://raw.githubusercontent.com/ubemacapuno/images-for-github-readme/main/ticket-generator.webp)
 
 ## Future Enhancements
 
@@ -39,7 +43,7 @@ cd open-ai-playground
 
 2. **Install Dependencies**
 
-```
+```bash
 pnpm install
 ```
 
@@ -51,11 +55,18 @@ See the [official OpenAI API documentation](https://help.openai.com/en/articles/
 OPENAI_API_KEY=your_openai_api_key_here
 ```
 
-See the [official Pocketbase documentation] for setting up a database
+See the [official Pocketbase documentation](https://pocketbase.io/docs/) for setting up a database
+
+```
 PUBLIC_POCKETBASE_URL=your_pocketbase_server_url
+```
 
 4. **Run the Application**
 
-```
+```bash
 pnpm run dev
 ```
+
+## Contributing
+
+This is a personal project, but suggestions and feedback are welcome. Please open an issue to discuss any changes you'd like to propose.
