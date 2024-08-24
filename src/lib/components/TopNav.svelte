@@ -1,11 +1,11 @@
 <script lang="ts">
-	import { page } from '$app/stores'
 	import LightSwitch from './LightSwitch.svelte'
 	import { ModeWatcher } from 'mode-watcher'
 	import { applyAction, enhance } from '$app/forms'
 	import { pb } from '$lib/pocketbase'
 	import { Button } from '$lib/components/ui/button/index.js'
 	import { LogOut, LogIn } from 'lucide-svelte'
+	import { toast } from 'svelte-sonner'
 
 	export let currentUser
 </script>
@@ -27,8 +27,20 @@
 				action="/logout"
 				use:enhance={() => {
 					return async ({ result }) => {
-						pb.authStore.clear()
-						await applyAction(result)
+						try {
+							await applyAction(result)
+							pb.authStore.clear()
+							toast.success('Sign Out Success', {
+								description: 'You have been signed out.'
+							})
+							console.log('signed out')
+						} catch (err) {
+							console.error(err)
+							pb.authStore.clear()
+							toast.error('Sign Out Failed', {
+								description: 'Failed to sign out.'
+							})
+						}
 					}
 				}}
 			>

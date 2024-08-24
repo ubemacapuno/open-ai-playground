@@ -192,8 +192,7 @@
 			<div class="flex justify-center items-center h-screen">
 				<Loading />
 			</div>
-		{/if}
-		{#if $ticketData}
+		{:else if $ticketData}
 			<!-- TODO: Redo/test logic and implement `hasTicketSaved` -->
 			<TicketCard ticketData={$ticketData} {saveTicket} />
 		{:else}

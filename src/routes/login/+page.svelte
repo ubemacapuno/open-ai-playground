@@ -8,6 +8,7 @@
 	import { page } from '$app/stores'
 	import CircleAlert from 'lucide-svelte/icons/circle-alert'
 	import * as Alert from '$lib/components/ui/alert/index.js'
+	import { toast } from 'svelte-sonner'
 
 	let message: string
 
@@ -33,8 +34,26 @@
 				class="grid gap-4"
 				use:enhance={() => {
 					return async ({ result }) => {
-						pb.authStore.loadFromCookie(document.cookie)
-						await applyAction(result)
+						try {
+							await applyAction(result)
+							pb.authStore.loadFromCookie(document.cookie)
+							// if successful, show toast:
+							if (pb.authStore.isValid) {
+								toast.success('Sign In Success', {
+									description: 'You have been signed in.'
+								})
+							} else {
+								toast.error('Sign In Failed', {
+									description: 'Failed to sign in.'
+								})
+							}
+						} catch (err) {
+							console.error(err)
+							pb.authStore.clear()
+							toast.error('Sign In Failed', {
+								description: 'Failed to sign in.'
+							})
+						}
 					}
 				}}
 			>
