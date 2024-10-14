@@ -242,7 +242,7 @@
 	}
 
 	const importDemoStep = async () => {
-		const filePath = '/demo-step.stp' // Path to the demo STEP file
+		const filePath = '/demo-step.stp' // demo STEP file location
 		const response = await fetch(filePath)
 		if (response.ok) {
 			const arrayBuffer = await response.arrayBuffer()
