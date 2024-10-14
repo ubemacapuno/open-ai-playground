@@ -241,6 +241,19 @@
 		isModelRendered = false
 	}
 
+	const importDemoStep = async () => {
+		const filePath = '/demo-step.stp' // Path to the demo STEP file
+		const response = await fetch(filePath)
+		if (response.ok) {
+			const arrayBuffer = await response.arrayBuffer()
+			modelFileName = 'demo-step.stp'
+			src = URL.createObjectURL(new Blob([arrayBuffer]))
+		} else {
+			console.error('Failed to load demo STEP file')
+			toast.error('Failed to load demo STEP file')
+		}
+	}
+
 	onMount(() => {
 		if (container) {
 			initScene()
@@ -275,14 +288,8 @@
 	{/if}
 	{#if !isModelRendered && !isModelLoading}
 		<div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
-			<Button
-				on:click={() => {
-					modelFileInput.click()
-				}}
-				variant="outline"
-			>
-				Import STEP
-			</Button>
+			<Button on:click={() => modelFileInput.click()}>Import STEP</Button>
+			<Button variant="outline" on:click={importDemoStep}>Import Demo Step</Button>
 		</div>
 	{:else}
 		<div class="absolute top-1 right-1">
