@@ -73,6 +73,21 @@
 		}
 	}
 
+	const importDemoPdf = async () => {
+		const filePath = '/demo-pdf.PDF' // demo PDF location
+		const response = await fetch(filePath)
+		if (response.ok) {
+			const blob = await response.blob()
+			const file = new File([blob], 'demo-pdf.PDF', { type: 'application/pdf' })
+			onPdfFileUpload(file)
+			src = URL.createObjectURL(blob) // set src for the PDF component
+			fileInput.value = ''
+		} else {
+			console.error('Failed to load demo PDF')
+			toast.error('Failed to load demo PDF')
+		}
+	}
+
 	function onPdfFilesChange(event: Event) {
 		const input = event.target as HTMLInputElement
 		const currentFiles = Array.from(input?.files ?? [])
@@ -93,6 +108,7 @@
 <div class="mx-auto flex flex-col items-center">
 	<div class="pt-4 pb-12">
 		<Button on:click={() => fileInput.click()}>Import PDF</Button>
+		<Button variant="outline" on:click={importDemoPdf}>Import Demo PDF</Button>
 	</div>
 </div>
 <input on:change={onPdfFilesChange} multiple bind:this={fileInput} type="file" hidden {accept} />
@@ -106,10 +122,13 @@
 	<div class="my-4 flex items-start justify-between gap-4">
 		<Card.Root class="max-w-lg rounded-lg p-4 shadow-md">
 			<Card.Header>
-				<Card.Title>{$pdfData.part_number}</Card.Title>
-				<Card.Description>{$pdfData.description}</Card.Description>
+				<Card.Title>{$pdfData.part_number ? `Part Number: ${$pdfData.part_number}` : ''}</Card.Title
+				>
 				<Card.Description
-					>{$pdfData.revision ? `Revision ${$pdfData.revision}` : ''}</Card.Description
+					>{$pdfData.description ? `Name: ${$pdfData.description}` : ''}</Card.Description
+				>
+				<Card.Description
+					>{$pdfData.revision ? `Revision: ${$pdfData.revision}` : ''}</Card.Description
 				>
 			</Card.Header>
 			<Card.Content>

@@ -6,7 +6,7 @@
 	<h1
 		class="text-center text-3xl font-bold leading-tight tracking-tighter md:text-6xl lg:leading-[1.1]"
 	>
-		OpenAI API Apps
+		OpenAI Playground Apps
 	</h1>
 	<Button href="/ticket-generator">Bug Ticket Generator</Button>
 	<Button href="/pdf-drawing">PDF Drawing Parser</Button>
