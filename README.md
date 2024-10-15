@@ -1,72 +1,91 @@
 # Open AI Playground
 
-This repository is a personal project space to experiment with the OpenAI API:
+This repository is a personal project space to experiment with and showcase various implementations of OpenAI API, including a bug ticket generator and engineering CAD drawing PDF parser.
 
-## Features
+> **Note:** This project is currently in active development, and I'm working on deploying a live demo. Please run locally for now with your own Open AI API an Pocketbase credentials.
+
+## Key Features (In Development)
+
+- CAD PDF Drawing Upload and Parsing
+  - Upload CAD PDF drawings through the UI
+  - Parse uploaded PDFs to extract text
+  - Use OpenAI API to extract key fields and suggest manufacturing steps
+- Bug Ticket Generator
+  - Submit issue summaries through the UI
+  - Automatically generate detailed bug tickets using the OpenAI API
+
+## Feature Previews
 
 ### CAD PDF Drawing Upload and Parsing
-
-- **Upload Feature**: Upload CAD PDF drawings directly through the UI.
-- **PDF Parsing**: Parse the uploaded PDF to extract text.
-- **Data Extraction Using OpenAI API**: Use OpenAI API to extract fields such as the part number, description, and revision from the parsed PDF text. It also suggests necessary operations/steps to manufacture the part (e.g., milling, galvanizing, laser cutting, etc.) based on the information in the drawing.
 
 ![PDF Scanner](https://raw.githubusercontent.com/ubemacapuno/images-for-github-readme/main/pdf-scanner.webp)
 
 ### Bug Ticket Generator
 
-- **Issue Summary Submission**: Users can submit a summary of their issue through the UI.
-- **PDF-Generator API Integration**: The PDF-Generator API automatically fills in a JSON template with the issue details, including:
-  - **Title**: The title of the bug.
-  - **Description**: A detailed description of the issue.
-  - **Acceptance Criteria**: A list of conditions that must be met for the bug to be considered resolved.
-  - **Steps To Reproduce**: Ordered steps to reproduce the bug.
-  - **Technical Notes**: Any technical notes or comments related to the bug.
-  - **Priority**: The priority level of the bug (Low, Medium, High).
-  - **Labels**: Tags or labels associated with the bug for categorization.
-  - **Assignee**: The individual assigned to address the bug.
-
 ![Ticket Generator](https://raw.githubusercontent.com/ubemacapuno/images-for-github-readme/main/ticket-generator.webp)
 
-## Future Enhancements
+## Current Status
 
-- **CSV File Parsing**: Plans to support uploading and parsing CSV files to extract relevant information using the OpenAI API.
-- **Expanded Data Extraction**: Extend the capabilities to extract additional fields and possibly support more document types beyond PDFs and CSVs.
+Open AI Playground is in its early stages. Here's a rough overview of current MVP progress:
 
-## Getting Started
+- [ ] Deploy a LIVE DEMO (currently runs locally only)
+- [x] Project setup and configuration
+- [x] CAD PDF upload and parsing functionality
+- [x] Bug ticket generator implementation
+- [ ] User interface refinements/mobile
+- [ ] Error handling and input validation
+- [ ] Performance optimizations
 
-1. **Clone the Repository**
+## Stack
 
-```bash
+- Frontend:
+  - [SvelteKit](https://kit.svelte.dev/)
+  - [Tailwind CSS](https://tailwindcss.com/)
+  - [shadcn-svelte](https://www.shadcn-svelte.com/)
+- Backend:
+  - [SvelteKit](https://kit.svelte.dev/)
+  - [OpenAI API](https://openai.com/api/)
+- Database:
+  - [PocketBase](https://pocketbase.io/)
+
+## Setup
+
+1. Clone the repository:
+
+```sh
 git clone https://github.com/ubemacapuno/open-ai-playground.git
 cd open-ai-playground
 ```
 
-2. **Install Dependencies**
+2. Install dependencies:
 
-```bash
+```sh
 pnpm install
 ```
 
-3. **Set Up Environment Variables**
+3. Set up environment variables:
 
-See the [official OpenAI API documentation](https://help.openai.com/en/articles/9186755-managing-your-work-in-the-api-platform-with-projects) for setting up an OpenAI API key.
+Create a `.env` file in the root directory and add the following:
 
 ```
 OPENAI_API_KEY=your_openai_api_key_here
-```
-
-See the [official Pocketbase documentation](https://pocketbase.io/docs/) for setting up a database
-
-```
 PUBLIC_POCKETBASE_URL=your_pocketbase_server_url
 ```
 
-4. **Run the Application**
+See the [official OpenAI API documentation](https://help.openai.com/en/articles/9186755-managing-your-work-in-the-api-platform-with-projects) for setting up an OpenAI API key.
 
-```bash
+See the [official Pocketbase documentation](https://pocketbase.io/docs/) for setting up a database.
+
+4. Run the application:
+
+```sh
 pnpm run dev
 ```
 
-## Contributing
+## Future Improvements
 
-This is a personal project, but suggestions and feedback are welcome. Please open an issue to discuss any changes you'd like to propose.
+Here are some exciting features I'd like to implement in the future:
+
+- CSV File Parsing: Support uploading and parsing CSV files to extract relevant information using the OpenAI API
+- Expanded Data Extraction: Extend capabilities to extract additional fields and support more document types beyond PDFs and CSVs.
+- Google OAuth
