@@ -15,6 +15,7 @@
 		<Card.Content class="grid gap-4">
 			<form
 				method="POST"
+				action="?/traditional"
 				class="grid gap-4"
 				use:enhance={() => {
 					return async ({ result }) => {
@@ -50,6 +51,18 @@
 				<Card.Footer class="w-full px-0">
 					<Button type="submit" class="w-full">Register</Button>
 				</Card.Footer>
+			</form>
+			<form method="post" action="?/OAuth2">
+				<div>
+					<p>Or</p>
+					<button class="btn-auth" type="submit">
+						<img
+							class="btn-auth-img"
+							src="/google_signin_buttons/web/1x/btn_google_signin_dark_pressed_web.png"
+							alt="google sign in"
+						/>
+					</button>
+				</div>
 			</form>
 		</Card.Content>
 	</Card.Root>

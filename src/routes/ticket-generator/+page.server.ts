@@ -6,6 +6,7 @@ import { PUBLIC_POCKETBASE_URL } from '$env/static/public'
 import type { TicketData } from './ticket-generator-types'
 
 export const load: PageServerLoad = async (event) => {
+	console.log('EVENT:', event)
 	if (!event.locals.user) {
 		throw redirect(
 			302,
