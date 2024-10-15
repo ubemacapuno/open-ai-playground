@@ -63,8 +63,5 @@
 		"tailwind-merge": "^2.3.0",
 		"tailwind-variants": "^0.2.1",
 		"vaul-svelte": "^0.3.2"
-	},
-	"engines": {
-		"node": "^18.18.0 || >=20.0.0"
 	}
 }
