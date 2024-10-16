@@ -72,7 +72,6 @@
 										toast.success('Sign Out Success', {
 											description: 'You have been signed out.'
 										})
-										console.log('signed out')
 									} catch (err) {
 										console.error(err)
 										pb.authStore.clear()

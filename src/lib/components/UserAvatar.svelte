@@ -24,7 +24,7 @@
 	}
 
 	$: initial = userEmail ? getInitial(userEmail) : '?'
-	$: [gradientStart, gradientEnd] = userEmail ? getGradientColors(initial) : ['#FFA500', '#FF8C00'] // Default orange
+	$: [gradientStart, gradientEnd] = userEmail ? getGradientColors(initial) : ['#FFA500', '#FF8C00']
 	$: textColor = getContrastColor(gradientStart)
 </script>
 

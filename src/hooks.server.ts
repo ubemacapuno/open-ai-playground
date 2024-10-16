@@ -6,19 +6,14 @@ export const handle: Handle = async ({ event, resolve }) => {
 
 	// load the auth store from the cookie if it exists
 	const cookie = event.request.headers.get('cookie') || ''
-	console.log('Received cookie:', cookie)
 
 	event.locals.pb.authStore.loadFromCookie(cookie)
-
-	console.log('Auth store after loading:', event.locals.pb.authStore)
 
 	// set auth'd user in locals object
 	if (event.locals.pb.authStore.isValid) {
 		event.locals.user = structuredClone(event.locals.pb.authStore.model)
-		console.log('User set in locals:', event.locals.user)
 	} else {
 		console.log('No valid auth store found')
-		console.log('Auth store:', event.locals.pb.authStore)
 	}
 
 	const response = await resolve(event)
