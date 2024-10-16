@@ -1,58 +1,66 @@
 import { redirect } from '@sveltejs/kit'
 
 export const GET = async ({ locals, url, cookies }) => {
-	console.log('All Cookies in GET:', cookies.getAll()) // Log all cookies for debugging
-	console.log('url.searchParams:', url.searchParams)
 	const redirectURL = `${url.origin}/oauth`
 	const expectedState = cookies.get('state')
 	const expectedVerifier = cookies.get('verifier')
-	console.log('expected verifier be buggin?', expectedVerifier)
 
-	console.log('All Cookies Before Retrieval:', cookies.getAll()) // Log all cookies for debugging
-	console.log('Expected State:', expectedState) // Should log the expected state
-
-	const state = url.searchParams.get('state') // Get state from searchParams
+	const state = url.searchParams.get('state')
 	const code = url.searchParams.get('code')
 
-	console.log('Returned State:', state)
-	console.log('Returned Code', code)
+	console.log('Expected state from cookie:', expectedState)
+	console.log('Received state from URL:', state)
 
-	// Check if expectedState is still undefined
-	if (!expectedState) {
-		console.error('Expected State is undefined. Check if the cookie is set correctly.')
-	}
-
-	const authMethods = await locals.pb?.collection('users').listAuthMethods()
-	if (!authMethods?.authProviders) {
-		console.log('No Auth Providers')
+	if (!expectedState || expectedState !== state) {
+		console.error('Invalid state: ', expectedState, state)
 		throw redirect(303, '/register')
 	}
 
-	const provider = authMethods.authProviders[0]
-	if (!provider) {
-		console.log('Provider Not Found')
-		throw redirect(303, '/register')
-	}
-
-	if (expectedState !== state) {
-		console.log('Returned State Does Not Match Expected', expectedState, state)
+	if (!code || !expectedVerifier) {
+		console.error('Missing code or verifier')
 		throw redirect(303, '/register')
 	}
 
 	try {
-		if (code && expectedVerifier) {
-			await locals.pb
-				?.collection('users')
-				.authWithOAuth2Code(provider.name, code, expectedVerifier, redirectURL, {
-					name: 'My Awesome User'
-				})
-		} else {
-			console.log('Code or Verifier is null', code, expectedVerifier)
-			throw redirect(303, '/register')
-		}
-	} catch (err) {
-		console.log('Error Signing Up With OAuth2', err)
-	}
+		const authMethods = await locals.pb?.collection('users').listAuthMethods()
+		const provider = authMethods?.authProviders[0]
 
-	throw redirect(303, '/')
+		if (!provider) {
+			throw new Error('No auth provider found')
+		}
+
+		const authData = await locals.pb
+			.collection('users')
+			.authWithOAuth2Code(provider.name, code, expectedVerifier, redirectURL)
+
+		// Explicitly update the auth store
+		locals.pb.authStore.save(authData.token, authData.record)
+
+		// Store the user data in locals
+		locals.user = authData.record
+
+		console.log('User authenticated:', locals.user)
+		console.log('Auth store after authentication:', locals.pb.authStore)
+
+		// Set the auth cookie
+		const authCookie = locals.pb.authStore.exportToCookie({
+			httpOnly: false,
+			secure: process.env.NODE_ENV === 'production',
+			sameSite: 'lax',
+			path: '/'
+		})
+
+		console.log('Setting auth cookie:', authCookie)
+
+		return new Response(null, {
+			status: 302,
+			headers: {
+				Location: '/',
+				'Set-Cookie': authCookie
+			}
+		})
+	} catch (err) {
+		console.error('Error signing in with OAuth2', err)
+		throw redirect(303, '/register')
+	}
 }

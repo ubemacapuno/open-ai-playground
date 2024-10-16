@@ -1,4 +1,4 @@
-import { redirect } from '@sveltejs/kit'
+import { redirect, fail } from '@sveltejs/kit'
 import type { Actions, PageServerLoad } from './$types'
 
 export const load: PageServerLoad = async ({ locals }) => {
@@ -9,25 +9,46 @@ export const load: PageServerLoad = async ({ locals }) => {
 }
 
 export const actions: Actions = {
-	default: async (event) => {
-		const data = Object.fromEntries(await event.request.formData()) as {
-			email: string
-			password: string
-		}
-
+	OAuth2: async ({ cookies, url, locals }) => {
 		try {
-			await event.locals.pb.collection('users').authWithPassword(data.email, data.password)
-		} catch (e) {
-			console.error(e)
-			throw e
-		}
+			const authMethods = await locals.pb?.collection('users').listAuthMethods()
+			if (!authMethods) {
+				return fail(500, { message: 'Unable to retrieve auth methods' })
+			}
 
-		// grab the redirectTo query param
-		// if the user was redirected to the login page, redirect them back to the page they were on
-		const redirectTo = event.url.searchParams.get('redirectTo')
-		if (redirectTo) {
-			throw redirect(302, `/${redirectTo.slice(1)}`)
+			const redirectURL = `${url.origin}/oauth`
+			const googleAuthProvider = authMethods.authProviders[0]
+			const authProviderRedirect = `${googleAuthProvider.authUrl}${redirectURL}`
+
+			const state = googleAuthProvider.state
+			const verifier = googleAuthProvider.codeVerifier
+
+			if (!state || !verifier) {
+				console.error('State or Verifier is missing, cannot set cookies.')
+				return fail(500, { message: 'Authentication setup failed' })
+			}
+
+			// Set cookies with appropriate options
+			cookies.set('state', state, {
+				path: '/',
+				httpOnly: true,
+				sameSite: 'lax',
+				secure: process.env.NODE_ENV === 'production'
+			})
+			cookies.set('verifier', verifier, {
+				path: '/',
+				httpOnly: true,
+				sameSite: 'lax',
+				secure: process.env.NODE_ENV === 'production'
+			})
+
+			console.log('Setting state cookie:', state)
+
+			// Instead of throwing a redirect, return it
+			return { redirect: authProviderRedirect }
+		} catch (error) {
+			console.error('Error in OAuth2 action:', error)
+			return fail(500, { message: 'An unexpected error occurred' })
 		}
-		redirect(303, '/')
 	}
 }

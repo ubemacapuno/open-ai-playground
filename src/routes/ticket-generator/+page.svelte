@@ -130,8 +130,8 @@
 	}
 </script>
 
-<div class="container mx-auto p-4 flex flex-col lg:flex-row">
-	<div class="w-1/2 lg:w-1/2 lg:pr-4">
+<div class="container mx-auto p-4 flex flex-col lg:flex-row items-stretch">
+	<div class="w-full lg:w-1/2 lg:pr-4 min-w-[300px]">
 		<Card.Root class="w-full">
 			<Card.Header>
 				<Card.Title>
@@ -164,7 +164,7 @@
 		</Card.Root>
 
 		{#if tickets.length}
-			<div class="border rounded-lg shadow-md my-3 h-[calc(100vh-30rem)] overflow-y-auto">
+			<div class="border rounded-lg shadow-md mt-3 h-[calc(100vh-30rem)] overflow-y-auto">
 				<div
 					class="sticky top-0 z-10 p-4 bg-card bg-opacity-75 backdrop-blur-lg backdrop-filter border-b"
 				>
@@ -187,16 +187,15 @@
 			</div>
 		{/if}
 	</div>
-	<div class="w-1/2 lg:w-1/2 lg:pl-4 mt-4 lg:mt-0">
+	<div class="w-full lg:w-1/2 lg:pl-4 mt-4 lg:mt-0 min-w-[300px] flex flex-col">
 		{#if isProcessing}
 			<div class="flex justify-center items-center h-screen">
 				<Loading />
 			</div>
 		{:else if $ticketData}
-			<!-- TODO: Redo/test logic and implement `hasTicketSaved` -->
 			<TicketCard ticketData={$ticketData} {saveTicket} />
 		{:else}
-			<div class="py-4 border rounded-lg shadow-md h-[calc(100vh-6rem)]">
+			<div class="py-4 border rounded-lg shadow-md flex-grow flex justify-center items-center">
 				<div class="flex justify-center items-center h-1/4">
 					<h2 class="text-xl">Generate a ticket! 🤖</h2>
 				</div>

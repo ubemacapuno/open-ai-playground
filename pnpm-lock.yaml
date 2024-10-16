@@ -14,9 +14,6 @@ importers:
       bits:
         specifier: ^0.1.1
         version: 0.1.1
-      bits-ui:
-        specifier: ^0.21.9
-        version: 0.21.9(svelte@4.2.17)
       clsx:
         specifier: ^2.1.1
         version: 2.1.1
@@ -42,8 +39,8 @@ importers:
         specifier: ^0.13.0
         version: 0.13.0
       openai:
-        specifier: ^4.47.1
-        version: 4.47.1(encoding@0.1.13)
+        specifier: ^4.67.3
+        version: 4.67.3(encoding@0.1.13)(zod@3.23.8)
       papaparse:
         specifier: ^5.4.1
         version: 5.4.1
@@ -53,9 +50,6 @@ importers:
       pocketbase:
         specifier: ^0.21.1
         version: 0.21.3
-      svelte-radix:
-        specifier: ^1.1.0
-        version: 1.1.0(svelte@4.2.17)
       svelte-select:
         specifier: ^5.8.3
         version: 5.8.3
@@ -71,6 +65,9 @@ importers:
       vaul-svelte:
         specifier: ^0.3.2
         version: 0.3.2(svelte@4.2.17)
+      zod:
+        specifier: ^3.23.8
+        version: 3.23.8
     devDependencies:
       '@sveltejs/adapter-auto':
         specifier: ^3.2.1
@@ -105,6 +102,9 @@ importers:
       autoprefixer:
         specifier: ^10.4.19
         version: 10.4.19(postcss@8.4.38)
+      bits-ui:
+        specifier: ^0.21.9
+        version: 0.21.9(svelte@4.2.17)
       eslint:
         specifier: ^8.57.0
         version: 8.57.0
@@ -132,6 +132,9 @@ importers:
       svelte-check:
         specifier: ^3.7.1
         version: 3.7.1(postcss-load-config@4.0.2(postcss@8.4.38))(postcss@8.4.38)(svelte@4.2.17)
+      svelte-radix:
+        specifier: ^1.1.0
+        version: 1.1.0(svelte@4.2.17)
       tailwindcss:
         specifier: ^3.4.3
         version: 3.4.3
@@ -1407,9 +1410,14 @@ packages:
   online-3d-viewer@0.13.0:
     resolution: {integrity: sha512-Ypbm8dqjPJ50GiqJDyLxbHJ+Gm9189gEQKcKUZxGrVf8pF34HK3kOHxAgq+fSVhfjhEOsxaKb50C8wH9X/VOIg==}
 
-  openai@4.47.1:
-    resolution: {integrity: sha512-WWSxhC/69ZhYWxH/OBsLEirIjUcfpQ5+ihkXKp06hmeYXgBBIUCa9IptMzYx6NdkiOCsSGYCnTIsxaic3AjRCQ==}
+  openai@4.67.3:
+    resolution: {integrity: sha512-HT2tZgjLgRqbLQNKmYtjdF/4TQuiBvg1oGvTDhwpSEQzxo6/oM1us8VQ53vBK2BiKvCxFuq6gKGG70qfwrNhKg==}
     hasBin: true
+    peerDependencies:
+      zod: ^3.23.8
+    peerDependenciesMeta:
+      zod:
+        optional: true
 
   optionator@0.9.4:
     resolution: {integrity: sha512-6IpQ7mKUxRcZNLIObR0hz7lxsapSSIYNZJwXPGeF0mTVqGKFIXj1DQcMoT22S3ROcLyY/rz0PWaWZ9ayWmad9g==}
@@ -2036,10 +2044,6 @@ packages:
     resolution: {integrity: sha512-EqPmREeOzttaLRm5HS7io98goBgZ7IVz79aDvqjD0kYXLtFZTc0T/U6wHTPKyIjb+MdN7DFIIX6hgdBEpWmfPA==}
     engines: {node: '>= 8'}
 
-  web-streams-polyfill@3.3.3:
-    resolution: {integrity: sha512-d2JWLCivmZYTSIoge9MsgFCZrt571BikcWGYkjC1khllbTeDlGqZ2D8vD8E/lJa8WGWbb7Plm8/XJYV7IJHZZw==}
-    engines: {node: '>= 8'}
-
   web-streams-polyfill@4.0.0-beta.3:
     resolution: {integrity: sha512-QW95TCTaHmsYfHDybGMwO5IJIM93I/6vTRk+daHTWFPhwh+C8Cg7j7XyKrwrj8Ib6vYXe0ocYNrmzY4xAAN6ug==}
     engines: {node: '>= 14'}
@@ -2091,6 +2095,9 @@ packages:
   yocto-queue@1.0.0:
     resolution: {integrity: sha512-9bnSc/HEW2uRy67wc+T8UwauLuPJVn28jb+GtJY16iiKWyvmYJRXVT4UamsAEGQfPohgr2q4Tq0sQbQlxTfi1g==}
     engines: {node: '>=12.20'}
+
+  zod@3.23.8:
+    resolution: {integrity: sha512-XBx9AXhXktjUqnepgTiE5flcKIYWi/rme0Eaj+5Y0lftuGBq+jyRu/md4WnuxqgP1ubdpNCsYEYPxrzVHD8d6g==}
 
 snapshots:
 
@@ -2409,7 +2416,7 @@ snapshots:
 
   '@types/node-fetch@2.6.11':
     dependencies:
-      '@types/node': 18.19.33
+      '@types/node': 20.12.12
       form-data: 4.0.0
 
   '@types/node@18.19.33':
@@ -3308,7 +3315,7 @@ snapshots:
       fflate: 0.8.2
       three: 0.163.0
 
-  openai@4.47.1(encoding@0.1.13):
+  openai@4.67.3(encoding@0.1.13)(zod@3.23.8):
     dependencies:
       '@types/node': 18.19.33
       '@types/node-fetch': 2.6.11
@@ -3317,7 +3324,8 @@ snapshots:
       form-data-encoder: 1.7.2
       formdata-node: 4.4.1
       node-fetch: 2.7.0(encoding@0.1.13)
-      web-streams-polyfill: 3.3.3
+    optionalDependencies:
+      zod: 3.23.8
     transitivePeerDependencies:
       - encoding
 
@@ -3884,8 +3892,6 @@ snapshots:
 
   web-streams-polyfill@3.2.0: {}
 
-  web-streams-polyfill@3.3.3: {}
-
   web-streams-polyfill@4.0.0-beta.3: {}
 
   webidl-conversions@3.0.1: {}
@@ -3927,3 +3933,5 @@ snapshots:
   yocto-queue@0.1.0: {}
 
   yocto-queue@1.0.0: {}
+
+  zod@3.23.8: {}
