@@ -6,7 +6,7 @@ export const load: PageServerLoad = async (event) => {
 	if (!event.locals.user) {
 		throw redirect(
 			302,
-			handleLoginRedirect(event, 'You must be logged in to access the PDF Drawing page.')
+			handleLoginRedirect(event, 'You must be logged in to access the Drawing Parser page.')
 		)
 	}
 

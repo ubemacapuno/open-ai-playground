@@ -1,28 +1,34 @@
-import { createInstance } from '$lib/pocketbase'
+import { pb } from '$lib/pocketbase'
 import type { Handle } from '@sveltejs/kit'
 
 export const handle: Handle = async ({ event, resolve }) => {
-	const pb = createInstance()
-
-	// load the store data from the request cookie string
-	pb.authStore.loadFromCookie(event.request.headers.get('cookie') || '')
-	try {
-		// get an up-to-date auth store state by verifying and refreshing the loaded auth model (if any)
-		if (pb.authStore.isValid) {
-			await pb.collection('users').authRefresh()
-		}
-	} catch (_) {
-		// clear the auth store on failed refresh
-		pb.authStore.clear()
-	}
-
 	event.locals.pb = pb
-	event.locals.user = pb.authStore.model
+
+	// load the auth store from the cookie if it exists
+	const cookie = event.request.headers.get('cookie') || ''
+
+	event.locals.pb.authStore.loadFromCookie(cookie)
+
+	// set auth'd user in locals object
+	if (event.locals.pb.authStore.isValid) {
+		event.locals.user = structuredClone(event.locals.pb.authStore.model)
+	} else {
+		console.log('No valid auth store found')
+	}
 
 	const response = await resolve(event)
 
-	// send back the default 'pb_auth' cookie to the client with the latest store state
-	response.headers.set('set-cookie', pb.authStore.exportToCookie({ httpOnly: false }))
+	// save the auth store to the cookie if it's valid
+	if (event.locals.pb.authStore.isValid) {
+		const authCookie = event.locals.pb.authStore.exportToCookie({
+			httpOnly: false,
+			secure: process.env.NODE_ENV === 'production',
+			sameSite: 'lax',
+			path: '/'
+		})
+		console.log('Setting auth cookie in response:', authCookie)
+		response.headers.append('Set-Cookie', authCookie)
+	}
 
 	return response
 }

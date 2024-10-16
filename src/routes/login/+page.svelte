@@ -1,88 +1,51 @@
 <script lang="ts">
-	import { applyAction, enhance } from '$app/forms'
-	import { pb } from '$lib/pocketbase'
-	import { Input } from '$lib/components/ui/input'
-	import { Label } from '$lib/components/ui/label/index.js'
-	import { Button } from '$lib/components/ui/button'
-	import * as Card from '$lib/components/ui/card'
-	import { page } from '$app/stores'
-	import CircleAlert from 'lucide-svelte/icons/circle-alert'
-	import * as Alert from '$lib/components/ui/alert/index.js'
+	import { onMount } from 'svelte'
 	import { toast } from 'svelte-sonner'
+	import * as Card from '$lib/components/ui/card'
+	import { Button } from '$lib/components/ui/button/index.js'
+	import { enhance } from '$app/forms'
 
-	let message: string
+	let message: string | null = null
 
-	$: message = $page.url.searchParams.get('message') ?? ''
+	onMount(() => {
+		const urlParams = new URLSearchParams(window.location.search)
+		message = urlParams.get('message')
+	})
 </script>
 
-{#if message}
-	<Alert.Root variant="caution" class="mt-2">
-		<CircleAlert class="h-4 w-4" />
-		<Alert.Title>Caution</Alert.Title>
-		<Alert.Description>{message}</Alert.Description>
-	</Alert.Root>
-{/if}
-
-<div class="flex items-center justify-center min-h-[calc(100vh-4rem)] pt-4">
+<div class="flex items-center flex-col justify-center min-h-[calc(100vh-4rem)] pt-4">
+	{#if message}
+		<h2 class="my-2 text-lg font-bold alert alert-warning">{message}</h2>
+	{/if}
 	<Card.Root class="w-full max-w-md p-4 sm:p-6 lg:p-8 mx-4">
 		<Card.Header class="space-y-1">
-			<Card.Title class="text-2xl">Log in</Card.Title>
+			<Card.Title class="text-2xl text-center">Login with Google OAuth 2.0</Card.Title>
 		</Card.Header>
-		<Card.Content class="grid gap-4">
+		<Card.Content class="gap-4 flex flex-col items-center justify-center">
 			<form
-				method="POST"
-				class="grid gap-4"
+				method="post"
+				action="/login?/OAuth2"
 				use:enhance={() => {
 					return async ({ result }) => {
-						try {
-							await applyAction(result)
-							pb.authStore.loadFromCookie(document.cookie)
-							// if successful, show toast:
-							if (pb.authStore.isValid) {
-								toast.success('Sign In Success', {
-									description: 'You have been signed in.'
-								})
-							} else {
-								toast.error('Sign In Failed', {
-									description: 'Failed to sign in.'
-								})
-							}
-						} catch (err) {
-							console.error(err)
-							pb.authStore.clear()
-							toast.error('Sign In Failed', {
-								description: 'Failed to sign in.'
+						if (result.type === 'success' && result.data?.redirect) {
+							window.location.href = result.data.redirect
+						} else if (result.type === 'failure') {
+							toast.error('Login Failed', {
+								description: result.data?.message || 'An error occurred while trying to log in.'
 							})
 						}
 					}
 				}}
 			>
-				<div class="grid gap-2 w-full">
-					<Label for="email">Email</Label>
-					<Input type="email" id="email" name="email" placeholder="Email" class="w-full" />
-				</div>
-				<div class="grid gap-2 w-full">
-					<Label for="password">Password</Label>
-					<Input
-						type="password"
-						id="password"
-						name="password"
-						placeholder="Password"
-						class="w-full"
-					/>
-				</div>
-				<Card.Footer class="w-full px-0">
-					<Button type="submit" class="w-full">Log in</Button>
-				</Card.Footer>
+				<Button
+					variant="outline"
+					type="submit"
+					class="flex items-center justify-center space-x-2 bg-white text-black hover:bg-gray-200 dark:bg-gray-800 dark:text-white dark:hover:bg-gray-700"
+				>
+					<img src="/google.svg" alt="Google Icon" class="h-5 w-5" />
+					<span>Sign in with Google</span>
+				</Button>
 			</form>
-			<div class="flex items-center justify-center space-x-2">
-				<hr class="w-1/2 border-t border-gray-500" />
-				<p class="text-gray-500">or</p>
-				<hr class="w-1/2 border-t border-gray-500" />
-			</div>
-			<Card.Footer class="w-full px-0">
-				<Button href="/register" class="w-full" variant="outline">Register</Button>
-			</Card.Footer></Card.Content
-		>
+		</Card.Content>
 	</Card.Root>
 </div>

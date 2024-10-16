@@ -1,10 +1,21 @@
-import { PUBLIC_POCKETBASE_URL } from '$env/static/public'
 import PocketBase from 'pocketbase'
+import { PUBLIC_POCKETBASE_URL } from '$env/static/public'
 
-// Reference sample repo for pocketbase implementation @see https://github.com/jianyuan/pocketbase-sveltekit-auth
+export const pb = new PocketBase(PUBLIC_POCKETBASE_URL)
 
-export function createInstance() {
-	return new PocketBase(PUBLIC_POCKETBASE_URL)
+// Disable auto cancellation
+pb.autoCancellation(false)
+
+// Check if we're in a browser environment
+if (typeof window !== 'undefined') {
+	// Client-side only code
+	pb.authStore.loadFromCookie(document.cookie)
+	pb.authStore.onChange(() => {
+		document.cookie = pb.authStore.exportToCookie({
+			httpOnly: false,
+			secure: false,
+			sameSite: 'lax',
+			path: '/'
+		})
+	})
 }
-
-export const pb = createInstance()
