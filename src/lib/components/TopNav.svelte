@@ -1,5 +1,6 @@
 <script lang="ts">
 	import * as DropdownMenu from '$lib/components/ui/dropdown-menu/index.js'
+	import LightSwitch from './LightSwitch.svelte'
 	import { Button } from '$lib/components/ui/button/index.js'
 	import { ModeWatcher } from 'mode-watcher'
 	import { applyAction, enhance } from '$app/forms'
@@ -91,6 +92,7 @@
 				</DropdownMenu.Content>
 			</DropdownMenu.Root>
 		{:else}
+			<LightSwitch />
 			<form
 				method="POST"
 				action="/login?/OAuth2"
