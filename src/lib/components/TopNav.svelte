@@ -5,7 +5,7 @@
 	import { ModeWatcher } from 'mode-watcher'
 	import { applyAction, enhance } from '$app/forms'
 	import { pb } from '$lib/pocketbase'
-	import { Sun, Moon, LogOut, User, Home } from 'lucide-svelte'
+	import { Sun, Moon, LogOut, User, Home, SunDim } from 'lucide-svelte'
 	import { toast } from 'svelte-sonner'
 	import UserAvatar from './UserAvatar.svelte'
 	import { toggleMode } from 'mode-watcher'
@@ -52,10 +52,10 @@
 					<DropdownMenu.Item on:click={handleThemeToggle}>
 						<span class="flex items-center">
 							{#if isDarkMode}
-								<Sun class="mr-2 h-4 w-4" />
+								<Moon class="mr-2 h-4 w-4" />
 								Theme
 							{:else}
-								<Moon class="mr-2 h-4 w-4" />
+								<SunDim class="mr-2 h-4 w-4" />
 								Theme
 							{/if}
 						</span>
