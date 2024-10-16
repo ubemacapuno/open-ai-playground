@@ -13,7 +13,6 @@ const openai = new OpenAI({
 	apiKey: OPENAI_KEY
 })
 
-// Define the Zod schema for the PDF extraction result
 const PDFExtraction = z.object({
 	part_number: z.string(),
 	description: z.string(),
