@@ -21,9 +21,13 @@ test.describe('Homepage tour', () => {
 		await page.goto('/')
 		await expect(page.getByTestId('homepage-btn')).toHaveCount(1)
 		await page.getByTestId('homepage-btn').click()
+
 		await expect(page.getByTestId('bug-ticket-navigate')).toHaveCount(1)
-		await expect(page.getByTestId('pdf-drawing-navigate')).toHaveCount(1)
 		await page.getByTestId('bug-ticket-navigate').click()
+
+		await page.getByTestId('homepage-btn').click()
+
+		await expect(page.getByTestId('pdf-drawing-navigate')).toHaveCount(1)
 		await page.getByTestId('pdf-drawing-navigate').click()
 	})
 })
