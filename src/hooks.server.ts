@@ -26,7 +26,6 @@ export const handle: Handle = async ({ event, resolve }) => {
 			sameSite: 'lax',
 			path: '/'
 		})
-		console.log('Setting auth cookie in response:', authCookie)
 		response.headers.append('Set-Cookie', authCookie)
 	}
 
