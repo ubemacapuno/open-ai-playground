@@ -1,8 +1,8 @@
-# Open AI Playground
+# Open AI Playground [DEMO](https://ai-ssue.vercel.app/)
 
 This repository is a personal project space to experiment with and showcase various implementations of OpenAI API, including a bug ticket generator and engineering CAD drawing PDF parser.
 
-> **Note:** This project is currently in active development, and I'm working on deploying a live demo. Please run locally for now with your own Open AI API an Pocketbase credentials.
+> **Note:** This project is currently in active development. The PDF parser does not currently work with Vercel (serverless environment). Please run locally for now with your own credentials to get that feature working.
 
 ## Key Features (In Development)
 
@@ -70,6 +70,8 @@ Create a `.env` file in the root directory and add the following:
 ```
 OPENAI_API_KEY=your_openai_api_key_here
 PUBLIC_POCKETBASE_URL=your_pocketbase_server_url
+GOOGLE_CLIENT_ID=example
+GOOGLE_CLIENT_SECRET=example
 ```
 
 See the [official OpenAI API documentation](https://help.openai.com/en/articles/9186755-managing-your-work-in-the-api-platform-with-projects) for setting up an OpenAI API key.
