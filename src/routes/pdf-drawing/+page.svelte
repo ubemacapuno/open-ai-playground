@@ -11,6 +11,8 @@
 	import { toast } from 'svelte-sonner'
 	import type { PdfData } from '../api/pdf-processor/pdf_processor_types'
 
+	const viteEnvironment = import.meta.env.VITE_ENVIRONMENT
+
 	// PDF Vars
 	let fileInput: HTMLInputElement
 	let fileName = ''
@@ -105,12 +107,23 @@
 </script>
 
 <CallToAction />
+
 <div class="mx-auto flex flex-col items-center">
 	<div class="pt-4 pb-12">
-		<Button on:click={() => fileInput.click()}>Import PDF</Button>
-		<Button variant="outline" on:click={importDemoPdf}>Import Demo PDF</Button>
+		<Button on:click={() => fileInput.click()} disabled={viteEnvironment !== 'dev'}
+			>Import PDF</Button
+		>
+		<Button variant="outline" on:click={importDemoPdf} disabled={viteEnvironment !== 'dev'}
+			>Import Demo PDF</Button
+		>
 	</div>
 </div>
+{#if viteEnvironment !== 'dev'}
+	<h2 class="text-lg font-bold text-orange-700 dark:text-orange-400 text-center">
+		🚨 pdf.js-extract does not currently work in production due to Vercel serverless environment
+		limitations. Please try this feature locally. 🚨
+	</h2>
+{/if}
 <input on:change={onPdfFilesChange} multiple bind:this={fileInput} type="file" hidden {accept} />
 {#if isProcessing}
 	<div class="flex justify-center items-start h-screen py-12">

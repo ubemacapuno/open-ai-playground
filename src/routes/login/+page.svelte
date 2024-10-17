@@ -15,7 +15,7 @@
 
 <div class="flex items-center flex-col justify-center min-h-[calc(100vh-4rem)] pt-4">
 	{#if message}
-		<h2 class="my-2 text-lg font-bold alert alert-warning">{message}</h2>
+		<h2 class="my-2 text-lg font-bold text-orange-700 dark:text-orange-400">{message}</h2>
 	{/if}
 	<Card.Root class="w-full max-w-md p-4 sm:p-6 lg:p-8 mx-4">
 		<Card.Header class="space-y-1">
