@@ -19,7 +19,7 @@
 	{/if}
 	<Card.Root class="w-full max-w-md p-4 sm:p-6 lg:p-8 mx-4" data-testid="login-card">
 		<Card.Header class="space-y-1">
-			<Card.Title class="text-2xl text-center">Login with Google OAuth 2.0</Card.Title>
+			<Card.Title class="text-2xl text-center">Login with Google OAuth</Card.Title>
 		</Card.Header>
 		<Card.Content class="gap-4 flex flex-col items-center justify-center">
 			<form

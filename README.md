@@ -28,10 +28,11 @@ This repository is a personal project space to experiment with and showcase vari
 
 Open AI Playground is in its early stages. Here's a rough overview of current MVP progress:
 
-- [ ] Deploy a LIVE DEMO (currently runs locally only)
+- [x] Deploy a LIVE DEMO
 - [x] Project setup and configuration
 - [x] CAD PDF upload and parsing functionality
 - [x] Bug ticket generator implementation
+- [x] Google OAuth
 - [ ] User interface refinements/mobile
 - [ ] Error handling and input validation
 - [ ] Performance optimizations
@@ -72,6 +73,7 @@ OPENAI_API_KEY=your_openai_api_key_here
 PUBLIC_POCKETBASE_URL=your_pocketbase_server_url
 GOOGLE_CLIENT_ID=example
 GOOGLE_CLIENT_SECRET=example
+VITE_ENVIRONMENT=environment-variable-here ('dev', 'prod')
 ```
 
 See the [official OpenAI API documentation](https://help.openai.com/en/articles/9186755-managing-your-work-in-the-api-platform-with-projects) for setting up an OpenAI API key.
@@ -90,4 +92,4 @@ Here are some exciting features I'd like to implement in the future:
 
 - CSV File Parsing: Support uploading and parsing CSV files to extract relevant information using the OpenAI API
 - Expanded Data Extraction: Extend capabilities to extract additional fields and support more document types beyond PDFs and CSVs.
-- Google OAuth
+- Video summaries: Provide summaries given a YouTube video link
