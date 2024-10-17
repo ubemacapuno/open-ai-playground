@@ -24,7 +24,7 @@
 	class="sticky top-0 z-10 flex h-12 items-center justify-between border-b border-border bg-card bg-opacity-75 px-4 text-card-foreground backdrop-blur-lg backdrop-filter"
 >
 	<div>
-		<a href="/" class="hidden sm:inline-block">
+		<a href="/" class="hidden sm:inline-block" data-testid="homepage-btn">
 			<span class="font-bold">OpenAI Playground</span>
 		</a>
 		<a href="/" class="sm:hidden">
