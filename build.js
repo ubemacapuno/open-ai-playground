@@ -1,11 +1,17 @@
 import { readFileSync, writeFileSync } from 'fs'
 import { fileURLToPath } from 'url'
 import { dirname, join } from 'path'
+import { execSync } from 'child_process'
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = dirname(__filename)
 
-// Path to the pdf.js file in pdf.js-extract
+// First, run the SvelteKit build
+console.log('Running SvelteKit build...')
+execSync('pnpm run build', { stdio: 'inherit' })
+console.log('SvelteKit build completed.')
+
+// Now, update the pdf.js file
 const dir = join(__dirname, 'node_modules', 'pdf.js-extract', 'lib', 'pdfjs', 'pdf.js')
 
 // Read the content of the pdf.js file
