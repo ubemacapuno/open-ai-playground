@@ -146,6 +146,7 @@
 			</Card.Header>
 			<Card.Content>
 				{#if $pdfData.operations && $pdfData.operations.length > 0}
+					<Card.Description>Recommended Operations:</Card.Description>
 					<div class="my-1">
 						<ul class="flex flex-wrap">
 							{#each $pdfData.operations as operation}
