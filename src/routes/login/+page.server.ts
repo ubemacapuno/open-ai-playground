@@ -2,7 +2,6 @@ import { redirect, fail } from '@sveltejs/kit'
 import type { Actions, PageServerLoad } from './$types'
 
 export const load: PageServerLoad = async ({ locals }) => {
-	// If the user is already authenticated, redirect to the home page
 	if (locals.pb.authStore.isValid) {
 		throw redirect(303, '/')
 	}
@@ -28,7 +27,6 @@ export const actions: Actions = {
 				return fail(500, { message: 'Authentication setup failed' })
 			}
 
-			// Set cookies with appropriate options
 			cookies.set('state', state, {
 				path: '/',
 				httpOnly: true,
@@ -44,7 +42,6 @@ export const actions: Actions = {
 
 			console.log('Setting state cookie:', state)
 
-			// Instead of throwing a redirect, return it
 			return { redirect: authProviderRedirect }
 		} catch (error) {
 			console.error('Error in OAuth2 action:', error)

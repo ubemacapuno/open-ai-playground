@@ -9,7 +9,8 @@
 		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
 		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
 		"lint": "prettier --check . && eslint .",
-		"format": "prettier --write ."
+		"format": "prettier --write .",
+		"now-build": "node build.js"
 	},
 	"devDependencies": {
 		"@sveltejs/adapter-auto": "^3.2.1",
@@ -55,7 +56,7 @@
 		"online-3d-viewer": "^0.13.0",
 		"openai": "^4.67.3",
 		"papaparse": "^5.4.1",
-		"pdf.js-extract": "^0.2.1",
+		"pdf-parse": "^1.1.1",
 		"pocketbase": "^0.21.1",
 		"svelte-select": "^5.8.3",
 		"svelte-sonner": "^0.3.24",
