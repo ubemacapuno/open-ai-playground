@@ -21,8 +21,8 @@
 	export let updateTicket: (id: string, updatedFields: Partial<TicketData>) => Promise<void>
 
 	function handleDrawerClose() {
-		dispatch('closeDrawer') // Dispatch the custom event
-		exitAllEditModes() // Optionally, if you want to handle all edit modes exit here
+		dispatch('closeDrawer')
+		exitAllEditModes()
 	}
 
 	let isEditingTitle = writable(false)
@@ -99,7 +99,7 @@
 		} else if (field === 'labels') {
 			isEditingLabels.set(true)
 		}
-		await tick() // Wait for the DOM to update
+		await tick() // wait for the DOM to update ?
 		document.getElementById(`edit-${field}-${ticket.id}`)?.focus()
 	}
 

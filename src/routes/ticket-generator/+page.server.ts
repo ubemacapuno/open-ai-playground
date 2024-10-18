@@ -10,7 +10,6 @@ export const load: PageServerLoad = async (event) => {
 			handleLoginRedirect(event, 'You must be logged in to access the Ticket Generator page.')
 		)
 	}
-
 	// Grab the first 50 tickets created by the logged-in user
 	const tickets = await event.locals.pb.collection('tickets').getList(1, 50, {
 		filter: `user="${event.locals.user?.id}"`,
