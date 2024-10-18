@@ -17,7 +17,7 @@
 	{#if message}
 		<h2 class="my-2 text-lg font-bold text-orange-700 dark:text-orange-400">{message}</h2>
 	{/if}
-	<Card.Root class="w-full max-w-md p-4 sm:p-6 lg:p-8 mx-4">
+	<Card.Root class="w-full max-w-md p-4 sm:p-6 lg:p-8 mx-4" data-testid="login-card">
 		<Card.Header class="space-y-1">
 			<Card.Title class="text-2xl text-center">Login with Google OAuth</Card.Title>
 		</Card.Header>

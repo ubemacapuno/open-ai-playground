@@ -8,6 +8,6 @@
 	>
 		OpenAI Playground Apps
 	</h1>
-	<Button href="/ticket-generator">Bug Ticket Generator</Button>
-	<Button href="/pdf-drawing">PDF Drawing Parser</Button>
+	<Button href="/ticket-generator" data-testid="bug-ticket-navigate">Bug Ticket Generator</Button>
+	<Button href="/pdf-drawing" data-testid="pdf-drawing-navigate">PDF Drawing Parser</Button>
 </section>
