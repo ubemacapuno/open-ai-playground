@@ -6,6 +6,7 @@ export const actions: Actions = {
 		console.log('RUNNING LOGOUT ACTION')
 		locals.pb.authStore.clear()
 		locals.user = null
+		console.log('LOCALS AFTER LOGOUT ACTION: ', locals)
 		console.log('redirecting to /')
 		redirect(303, '/')
 	}

@@ -31,3 +31,47 @@ test.describe('Homepage tour', () => {
 		await page.getByTestId('pdf-drawing-navigate').click()
 	})
 })
+
+test('Theme toggle functionality', async ({ page }) => {
+	await page.goto('/')
+
+	// get the current theme from 'mode-watcher-mode' in local storage
+	const getTheme = async () => {
+		return await page.evaluate(() => {
+			return localStorage.getItem('mode-watcher-mode')
+		})
+	}
+
+	// check initial theme is default 'dark'
+	let initialTheme = await getTheme()
+	expect(initialTheme).toBe('dark')
+
+	// find the theme toggle button
+	const themeToggle = page.getByRole('button', { name: 'Toggle theme' })
+
+	// check if the Moon icon is present for dark mode
+	let moonIcon = await page.getByRole('img', { name: 'moon' }).isVisible()
+	expect(moonIcon).toBe(true)
+
+	// click the theme toggle button
+	await themeToggle.click()
+
+	// check if the theme has changed in local storage - expect it to be 'light'
+	let newTheme = await getTheme()
+	expect(newTheme).toBe('light')
+
+	// check if the Sun icon is present for light mode
+	let sunIcon = await page.getByRole('img', { name: 'sun' }).isVisible()
+	expect(sunIcon).toBe(true)
+
+	// toggle again
+	await themeToggle.click()
+
+	// Check if the theme has changed back to 'dark'
+	newTheme = await getTheme()
+	expect(newTheme).toBe('dark')
+
+	// check if the Moon icon is back for dark mode
+	moonIcon = await page.getByRole('img', { name: 'moon' }).isVisible()
+	expect(moonIcon).toBe(true)
+})

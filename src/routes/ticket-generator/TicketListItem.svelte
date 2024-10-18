@@ -2,7 +2,7 @@
 	import { writable } from 'svelte/store'
 	import { Button } from '$lib/components/ui/button'
 	import type { TicketData } from './ticket-generator-types'
-	import { Trash2 } from 'lucide-svelte'
+	import { ExternalLink, Trash2 } from 'lucide-svelte'
 	import TicketDrawer from './TicketDrawer.svelte'
 	import Select from './Select.svelte'
 	import { TICKET_PRIORITIES, TICKET_STATUSES } from '$lib/constants'
@@ -62,8 +62,10 @@
 			>
 				<Trash2 size={16} />
 			</Button>
-
 			<TicketDrawer {ticket} {updateTicket} />
+			<Button as="a" href={`/ticket-generator/${ticket.id}`} variant="ghost" size="icon">
+				<ExternalLink size={16} />
+			</Button>
 		</div>
 	</div>
 
