@@ -20,3 +20,11 @@
 </script>
 
 <p>Ticket Title: {ticket.title}</p>
+<p>Ticket Description: {ticket.description}</p>
+<p>Priority: {ticket.priority}</p>
+<p>Status: {ticket.status}</p>
+<p>Assignee: {ticket.assignee}</p>
+<p>Labels: {ticket.labels.join(', ')}</p>
+<p>Acceptance Criteria: {ticket.acceptance_criteria.join(', ')}</p>
+<p>Steps to Reproduce: {ticket.steps_to_reproduce.join(', ')}</p>
+<p>Technical Notes: {ticket.technical_notes.join(', ')}</p>
