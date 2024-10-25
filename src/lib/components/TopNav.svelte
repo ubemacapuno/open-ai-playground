@@ -9,8 +9,7 @@
 	import { toast } from 'svelte-sonner'
 	import UserAvatar from './UserAvatar.svelte'
 	import { toggleMode } from 'mode-watcher'
-
-	export let currentUser
+	import { currentUser } from '$lib/stores/user' // Import the currentUser store
 
 	let isDarkMode = false
 
@@ -69,6 +68,7 @@
 									try {
 										await applyAction(result)
 										pb.authStore.clear()
+										currentUser.set(null) // Clear the currentUser store on logout
 										toast.success('Sign Out Success', {
 											description: 'You have been signed out.'
 										})

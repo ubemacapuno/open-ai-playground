@@ -12,7 +12,7 @@
 </script>
 
 <Toaster expand richColors closeButton />
-<TopNav {currentUser} />
+<TopNav />
 <div class="mx-4">
 	<slot />
 </div>
