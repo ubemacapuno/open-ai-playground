@@ -2,7 +2,7 @@
 	import { writable } from 'svelte/store'
 	import { Button } from '$lib/components/ui/button'
 	import * as Drawer from '$lib/components/ui/drawer/index.js'
-	import { ChevronsUpDown, ExternalLink } from 'lucide-svelte'
+	import { ChevronsUpDown, PanelBottomOpen } from 'lucide-svelte'
 	import Badge from '$lib/components/ui/badge/badge.svelte'
 	import type { TicketData } from './ticket-generator-types'
 	import { tick } from 'svelte'
@@ -21,8 +21,8 @@
 	export let updateTicket: (id: string, updatedFields: Partial<TicketData>) => Promise<void>
 
 	function handleDrawerClose() {
-		dispatch('closeDrawer') // Dispatch the custom event
-		exitAllEditModes() // Optionally, if you want to handle all edit modes exit here
+		dispatch('closeDrawer')
+		exitAllEditModes()
 	}
 
 	let isEditingTitle = writable(false)
@@ -99,7 +99,7 @@
 		} else if (field === 'labels') {
 			isEditingLabels.set(true)
 		}
-		await tick() // Wait for the DOM to update
+		await tick() // wait for the DOM to update ?
 		document.getElementById(`edit-${field}-${ticket.id}`)?.focus()
 	}
 
@@ -281,8 +281,14 @@
 
 <Drawer.Root onOpenChange={handleDrawerClose}>
 	<Drawer.Trigger asChild let:builder>
-		<Button builders={[builder]} type="submit" size="icon" class="text-sm" variant="ghost">
-			<ExternalLink size={16} />
+		<Button
+			builders={[builder]}
+			type="submit"
+			size="icon"
+			class="text-sm hidden lg:flex items-center justify-center"
+			variant="ghost"
+		>
+			<PanelBottomOpen size={16} />
 		</Button>
 	</Drawer.Trigger>
 	<Drawer.Content>

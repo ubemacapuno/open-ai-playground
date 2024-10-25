@@ -49,9 +49,20 @@
 	<form on:submit|preventDefault={saveEdit} class="flex flex-col space-y-2">
 		<div class="flex gap-2">
 			{#if fieldType === 'input'}
-				<Input {id} type="text" bind:value={newValue} class="w-full text-lg font-semibold" />
+				<Input
+					{id}
+					type="text"
+					bind:value={newValue}
+					class="w-full max-w-full text-lg font-semibold"
+					{...$$restProps}
+				/>
 			{:else}
-				<Textarea {id} bind:value={newValue} class="w-full text-sm font-semibold" />
+				<Textarea
+					{id}
+					bind:value={newValue}
+					class="w-full max-w-full text-sm font-semibold"
+					{...$$restProps}
+				/>
 			{/if}
 			<div class="flex space-x-2">
 				<Button type="submit" size="sm" class="text-sm p-1" variant="ghost">
@@ -74,6 +85,7 @@
 		tabindex="0"
 		on:click={startEditing}
 		on:keydown={(event) => event.key === 'Enter' && startEditing()}
+		{...$$restProps}
 	>
 		{value}
 	</span>
