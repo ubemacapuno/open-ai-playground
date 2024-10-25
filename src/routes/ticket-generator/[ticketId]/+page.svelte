@@ -11,6 +11,9 @@
 	import { toast } from 'svelte-sonner'
 	import type { PageData } from '../$types'
 	import { Pencil } from 'lucide-svelte'
+	import { goto } from '$app/navigation'
+	import { ArrowLeft, Trash2 } from 'lucide-svelte'
+	import { pb } from '$lib/pocketbase'
 
 	export let data: PageData
 
@@ -62,9 +65,41 @@
 			await updateTicket(ticket.id, { priority: newPriority })
 		}
 	}
+
+	async function deleteTicket(ticketId: string) {
+		if (confirm('Are you sure you want to delete this ticket?')) {
+			try {
+				await pb.collection('tickets').delete(ticketId)
+				toast.success('Ticket Deleted', {
+					description: 'The ticket has been deleted successfully.'
+				})
+				goto('/ticket-generator')
+			} catch (error) {
+				console.error('Error deleting ticket:', error)
+				toast.error('Error Deleting Ticket', {
+					description: 'An error occurred while deleting the ticket.'
+				})
+			}
+		}
+	}
 </script>
 
 <div class="container mx-auto p-4 space-y-4">
+	<div class="flex justify-between items-center mb-4">
+		<Button variant="ghost" on:click={() => goto('/ticket-generator')}>
+			<ArrowLeft class="mr-2 h-4 w-4" />
+			Back
+		</Button>
+		<Button
+			variant="ghost"
+			on:click={() => deleteTicket(ticket.id)}
+			class="text-red-500 hover:text-red-700"
+		>
+			<Trash2 class="mr-2 h-4 w-4" />
+			Delete
+		</Button>
+	</div>
+
 	<Card.Root class="p-4 relative">
 		<Button
 			on:click={() => toggleEditing('title')}
