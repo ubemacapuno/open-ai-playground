@@ -9,7 +9,7 @@
 	import { toast } from 'svelte-sonner'
 	import UserAvatar from './UserAvatar.svelte'
 	import { toggleMode } from 'mode-watcher'
-	import { currentUser } from '$lib/stores/user' // Import the currentUser store
+	import { currentUser } from '$lib/stores/user'
 
 	let isDarkMode = false
 
