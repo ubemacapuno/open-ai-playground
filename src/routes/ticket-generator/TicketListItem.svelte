@@ -8,6 +8,7 @@
 	import { TICKET_PRIORITIES, TICKET_STATUSES } from '$lib/constants'
 	import EditableField from './EditableField.svelte'
 
+	export let isDemo = false
 	export let ticket: TicketData
 	export let deleteTicket: (id: string) => void
 	export let updateTicket: (id: string, updatedFields: Partial<TicketData>) => Promise<void>
@@ -72,33 +73,45 @@
 	<div class="mt-4 grid grid-cols-1 md:grid-cols-3 gap-4">
 		<div class="flex flex-col">
 			<h3 class="font-medium text-orange-700 dark:text-orange-400">Status:</h3>
-			<Select
-				items={TICKET_STATUSES}
-				value={TICKET_STATUSES.find((status) => status.value === ticket.status)}
-				on:change={(event) => handleFieldChange('status', event)}
-			/>
+			{#if isDemo}
+				{ticket.status}
+			{:else}
+				<Select
+					items={TICKET_STATUSES}
+					value={TICKET_STATUSES.find((status) => status.value === ticket.status)}
+					on:change={(event) => handleFieldChange('status', event)}
+				/>
+			{/if}
 		</div>
 
 		<div class="flex flex-col">
 			<h3 class="font-medium text-orange-700 dark:text-orange-400">Priority:</h3>
-			<Select
-				items={TICKET_PRIORITIES}
-				value={TICKET_PRIORITIES.find((priority) => priority.value === ticket.priority)}
-				on:change={(event) => handleFieldChange('priority', event)}
-			/>
+			{#if isDemo}
+				{ticket.priority}
+			{:else}
+				<Select
+					items={TICKET_PRIORITIES}
+					value={TICKET_PRIORITIES.find((priority) => priority.value === ticket.priority)}
+					on:change={(event) => handleFieldChange('priority', event)}
+				/>
+			{/if}
 		</div>
 
 		<div class="flex flex-col">
 			<h3 class="font-medium text-orange-700 dark:text-orange-400">Assignee:</h3>
-			<EditableField
-				value={ticket.assignee}
-				isEditing={$isEditingAssignee}
-				fieldType="input"
-				id={`edit-title-${ticket.id}`}
-				on:startEdit={() => startEditingAssignee()}
-				on:cancelEdit={() => cancelEditingAssignee()}
-				on:saveEdit={({ detail }) => handleSaveEditAssignee(detail)}
-			/>
+			{#if isDemo}
+				{ticket.assignee}
+			{:else}
+				<EditableField
+					value={ticket.assignee}
+					isEditing={$isEditingAssignee}
+					fieldType="input"
+					id={`edit-title-${ticket.id}`}
+					on:startEdit={() => startEditingAssignee()}
+					on:cancelEdit={() => cancelEditingAssignee()}
+					on:saveEdit={({ detail }) => handleSaveEditAssignee(detail)}
+				/>
+			{/if}
 		</div>
 	</div>
 </div>

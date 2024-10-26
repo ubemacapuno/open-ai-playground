@@ -15,6 +15,8 @@
 	import { ArrowLeft, Trash2 } from 'lucide-svelte'
 	import { pb } from '$lib/pocketbase'
 
+	// TODO: Break-up page into separate components
+
 	export let data: PageData
 
 	$: ({ ticket } = data)
@@ -38,13 +40,16 @@
 	}
 
 	function toggleEditing(field: string) {
-		if (field === 'title') isEditingTitle.update((v) => !v)
-		else if (field === 'description') isEditingDescription.update((v) => !v)
-		else if (field === 'assignee') isEditingAssignee.update((v) => !v)
-		else if (field === 'acceptance_criteria') isEditingAcceptanceCriteria.update((v) => !v)
-		else if (field === 'steps_to_reproduce') isEditingStepsToReproduce.update((v) => !v)
-		else if (field === 'technical_notes') isEditingTechnicalNotes.update((v) => !v)
-		else if (field === 'labels') isEditingLabels.update((v) => !v)
+		if (field === 'title') isEditingTitle.update((currentValue) => !currentValue)
+		else if (field === 'description') isEditingDescription.update((currentValue) => !currentValue)
+		else if (field === 'assignee') isEditingAssignee.update((currentValue) => !currentValue)
+		else if (field === 'acceptance_criteria')
+			isEditingAcceptanceCriteria.update((currentValue) => !currentValue)
+		else if (field === 'steps_to_reproduce')
+			isEditingStepsToReproduce.update((currentValue) => !currentValue)
+		else if (field === 'technical_notes')
+			isEditingTechnicalNotes.update((currentValue) => !currentValue)
+		else if (field === 'labels') isEditingLabels.update((currentValue) => !currentValue)
 	}
 
 	async function handleSaveEdit(field: string, value: any) {
