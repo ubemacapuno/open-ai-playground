@@ -35,7 +35,7 @@
 	</h1>
 
 	<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-		<a href="/ticket-generator" class="flex">
+		<a href="/ticket-generator" class="flex" data-testid="bug-ticket-link">
 			<Card class="p-6 flex flex-col justify-between w-full">
 				<div>
 					<h2 class="text-xl font-semibold mb-2 text-orange-700 dark:text-orange-400">
@@ -50,7 +50,7 @@
 			</Card>
 		</a>
 
-		<a href="/pdf-drawing" class="flex">
+		<a href="/pdf-drawing" class="flex" data-testid="pdf-drawing-link">
 			<Card class="p-6 flex flex-col justify-between w-full">
 				<div>
 					<h2 class="text-xl font-semibold mb-2 text-orange-700 dark:text-orange-400">
