@@ -5,7 +5,7 @@
 	import { ModeWatcher } from 'mode-watcher'
 	import { applyAction, enhance } from '$app/forms'
 	import { pb } from '$lib/pocketbase'
-	import { Sun, Moon, LogOut, User, Home, SunDim } from 'lucide-svelte'
+	import { Moon, LogOut, User, Home, SunDim } from 'lucide-svelte'
 	import { toast } from 'svelte-sonner'
 	import UserAvatar from './UserAvatar.svelte'
 	import { toggleMode } from 'mode-watcher'

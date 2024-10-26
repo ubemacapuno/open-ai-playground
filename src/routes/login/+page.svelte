@@ -13,7 +13,7 @@
 	})
 </script>
 
-<div class="flex items-center flex-col justify-center min-h-[calc(100vh-4rem)] pt-4">
+<div class="flex items-center flex-col min-h-[calc(100vh-4rem)] pt-4">
 	{#if message}
 		<h2 class="my-2 text-lg font-bold text-orange-700 dark:text-orange-400">{message}</h2>
 	{/if}
