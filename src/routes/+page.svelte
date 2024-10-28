@@ -31,7 +31,7 @@
 	<h1
 		class="text-center text-3xl font-bold leading-tight tracking-tighter md:text-6xl lg:leading-[1.1] mb-8"
 	>
-		OpenAI Playground Apps
+		OpenAI Playground
 	</h1>
 
 	<div class="grid grid-cols-1 md:grid-cols-2 gap-6">

@@ -4,6 +4,7 @@
 	import '../app.css'
 	import { currentUser } from '$lib/stores/user'
 	import type { PageData } from './$types'
+	import Footer from '$lib/components/Footer.svelte'
 
 	export let data: PageData
 
@@ -13,6 +14,7 @@
 
 <Toaster expand richColors closeButton />
 <TopNav />
-<div class="mx-4">
+<div class="bg-background relative flex min-h-screen flex-col mx-2">
 	<slot />
 </div>
+<Footer />
