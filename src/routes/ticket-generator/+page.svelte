@@ -130,7 +130,7 @@
 	}
 </script>
 
-<div class="container mx-auto p-4 flex flex-col lg:flex-row items-stretch">
+<div class="container mx-auto p-1 flex flex-col lg:flex-row items-stretch">
 	<div class="w-full lg:w-1/2 lg:pr-4 min-w-[300px]">
 		<Card.Root class="w-full">
 			<Card.Header>
