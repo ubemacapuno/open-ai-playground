@@ -48,7 +48,7 @@ export const POST: RequestHandler = async ({ request }) => {
 
 		const openaiResponse = await openai.chat.completions.create({
 			// TODO: Upgrade to latest model
-			model: 'gpt-3.5-turbo-1106',
+			model: 'gpt-4o-2024-08-06',
 			messages: [
 				{
 					role: 'system',

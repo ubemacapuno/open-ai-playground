@@ -1,15 +1,16 @@
-import GPT3TokenizerImport from 'gpt3-tokenizer'
+import { encode, isWithinTokenLimit, encodeChat } from 'gpt-tokenizer/model/gpt-4o'
 
-// @see https://github.com/botisan-ai/gpt3-tokenizer
+/* Tokenizer for ChatGPT
+ - Used for counting tokens (gpt-4o)
+ - Can help prevent token count from exceeding the limit
+*/
 
-const GPT3Tokenizer: typeof GPT3TokenizerImport =
-	typeof GPT3TokenizerImport === 'function'
-		? GPT3TokenizerImport
-		: (GPT3TokenizerImport as any).default
-
-const tokenizer = new GPT3Tokenizer({ type: 'gpt3' })
+type ChatMessage = {
+	role: 'system' | 'user' | 'assistant'
+	content: string
+}
 
 export function getTokens(input: string): number {
-	const tokens = tokenizer.encode(input)
-	return tokens.text.length
+	const tokens = encode(input)
+	return tokens.length
 }
