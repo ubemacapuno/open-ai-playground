@@ -4,7 +4,6 @@ import { getTokens } from '$lib/tokenizer'
 import { json } from '@sveltejs/kit'
 import OpenAI from 'openai'
 
-// Define types for our messages
 type ChatMessage = {
 	role: 'user' | 'assistant' | 'system' | 'function'
 	content: string

@@ -1,11 +1,9 @@
 <script lang="ts">
-	// In newer versions of OpenAI, we can define the role type directly
 	type ChatRole = 'user' | 'assistant' | 'system' | 'function'
 
 	export let type: ChatRole
 	export let message: string
 
-	// Function to copy text to the clipboard
 	async function copyToClipboard() {
 		try {
 			await navigator.clipboard.writeText(message)

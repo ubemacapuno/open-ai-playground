@@ -18,7 +18,7 @@
 	let chatMessages: ChatMessageType[] = []
 	let scrollToDiv: HTMLDivElement
 	let youtubeUrl: string = ''
-	let transcript: TranscriptItem[] | null = null // TODO: define TranscriptItem type
+	let transcript: TranscriptItem[] | null = null
 
 	function scrollToBottom() {
 		setTimeout(function () {
@@ -26,9 +26,9 @@
 		}, 100)
 	}
 
-	const handleSubmit = async () => {
+	async function handleSubmit(hideMessage: boolean = false) {
 		isLoading = true
-		chatMessages = [...chatMessages, { role: 'user', content: query }]
+		chatMessages = [...chatMessages, { role: 'user', content: query, hidden: hideMessage }]
 
 		const eventSource = new SSE('/api/chat', {
 			headers: {
@@ -86,12 +86,9 @@
 
 			transcript = data.transcript
 
-			// mark the initial message as hidden
 			chatMessages = []
-			query = 'Give a 3 sentence summary of the Youtube video with relevant timestamps'
-			chatMessages = [...chatMessages, { role: 'user', content: query, hidden: true }] // TODO: This is still showing with hidden; true - fix
-
-			await handleSubmit()
+			query = 'Give up to a concise 3 sentence summary of the Youtube video without time stamps.'
+			await handleSubmit(true) // pass true to hide the initial message
 		} catch (error) {
 			console.error(error)
 			alert('Failed to fetch transcript')
@@ -99,7 +96,7 @@
 	}
 </script>
 
-<Card class="bg-neutral-focus mx-1 max-w-3xl shadow-xl">
+<Card class="bg-neutral-focus mx-1 max-w-3xl shadow-xl m-2">
 	<div class="flex w-full flex-col items-start gap-2 px-2 py-4">
 		<div>
 			<h1 class="text-primary w-full text-center text-2xl font-bold">YouTube Video Assistant</h1>
