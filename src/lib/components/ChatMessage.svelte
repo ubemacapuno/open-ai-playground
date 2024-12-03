@@ -1,43 +1,35 @@
 <script lang="ts">
 	// In newer versions of OpenAI, we can define the role type directly
-	type ChatRole = 'user' | 'assistant' | 'system' | 'function';
+	type ChatRole = 'user' | 'assistant' | 'system' | 'function'
 
-	export let type: ChatRole;
-	export let message: string;
+	export let type: ChatRole
+	export let message: string
 
 	// Function to copy text to the clipboard
 	async function copyToClipboard() {
 		try {
-			await navigator.clipboard.writeText(message);
-			console.log('Text copied to clipboard');
-			// sendToast('Text copied to clipboard', 'success')
+			await navigator.clipboard.writeText(message)
+			console.log('Text copied to clipboard')
 		} catch (err) {
-			console.log('Failed to copy text: ', err);
-			// sendToast('Failed to copy text', 'error')
+			console.log('Failed to copy text: ', err)
 		}
 	}
 </script>
 
-<div class="chat {type === 'user' ? 'chat-end' : 'chat-start'} justify-end">
+<div class={`flex ${type === 'user' ? 'justify-end' : 'justify-start'} mb-2`}>
 	<div class="chat-image avatar online z-0">
-		{#if type === 'user'}
-			<div class="avatar online placeholder">
-				<div class="bg-neutral-focus text-neutral-content w-10 rounded-full">TEST</div>
-			</div>
-		{:else}
+		{#if type !== 'user'}
 			<div class="user_avatar_wrapper bg-neutral-focus text-secondary w-10 rounded-full">
-				<span class="text-xl">🍪</span>
+				<span class="text-xl">🤖</span>
 			</div>
 		{/if}
 	</div>
-	<div class="chat-header">
-		{type === 'user' ? 'Me' : 'Assistant'}
-	</div>
-	<div class="flex items-center">
+	<div class="flex flex-col">
+		<div class="chat-header">
+			{type !== 'user' ? 'Assistant' : ''}
+		</div>
 		<div
-			class="chat-bubble max-w-sm {type === 'user'
-				? 'chat-bubble-primary'
-				: 'chat-bubble-secondary'}"
+			class={`chat-bubble max-w-sm ${type === 'user' ? 'bg-blue-500 text-white' : 'bg-green-500 text-white'} p-3 rounded-lg`}
 		>
 			{message}
 			<slot />

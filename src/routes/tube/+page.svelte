@@ -2,6 +2,9 @@
 	import ChatMessage from '$lib/components/ChatMessage.svelte'
 	import type { TranscriptItem } from '$lib/utils/youtube'
 	import { SSE } from 'sse.js'
+	import { Input } from '$lib/components/ui/input'
+	import { Button } from '$lib/components/ui/button'
+	import { Card } from '$lib/components/ui/card'
 
 	type ChatMessageType = {
 		role: 'user' | 'assistant' | 'system' | 'function'
@@ -96,7 +99,7 @@
 	}
 </script>
 
-<div class="bg-neutral-focus card mx-1 max-w-3xl shadow-xl">
+<Card class="bg-neutral-focus mx-1 max-w-3xl shadow-xl">
 	<div class="flex w-full flex-col items-start gap-2 px-2 py-4">
 		<div>
 			<h1 class="text-primary w-full text-center text-2xl font-bold">YouTube Video Assistant</h1>
@@ -107,15 +110,15 @@
 			class="bg-neutral-focus flex w-full gap-4 rounded-md p-4"
 			on:submit|preventDefault={handleTranscriptSubmit}
 		>
-			<input
+			<Input
 				type="text"
-				class="input input-bordered w-full"
 				bind:value={youtubeUrl}
 				placeholder="Enter YouTube URL..."
+				class="input-bordered w-full"
 			/>
-			<button type="submit" class="btn btn-primary" disabled={!youtubeUrl.trim()}>
+			<Button type="submit" class="btn btn-primary" disabled={!youtubeUrl.trim()}>
 				Load Video
-			</button>
+			</Button>
 		</form>
 
 		<!-- show chat if transcript is loaded -->
@@ -142,16 +145,16 @@
 				class="bg-neutral-focus flex w-full gap-4 rounded-md p-4"
 				on:submit|preventDefault={() => handleSubmit()}
 			>
-				<input
+				<Input
 					type="text"
-					class="input input-bordered w-full"
 					bind:value={query}
 					placeholder="Type your message here..."
+					class="input-bordered w-full"
 				/>
-				<button type="submit" class="btn btn-primary" disabled={isLoading || !query.trim()}>
+				<Button type="submit" class="btn btn-primary" disabled={isLoading || !query.trim()}>
 					Send
-				</button>
+				</Button>
 			</form>
 		{/if}
 	</div>
-</div>
+</Card>
