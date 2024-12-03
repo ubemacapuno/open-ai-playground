@@ -17,9 +17,9 @@ importers:
       clsx:
         specifier: ^2.1.1
         version: 2.1.1
-      gpt3-tokenizer:
-        specifier: ^1.1.5
-        version: 1.1.5
+      gpt-tokenizer:
+        specifier: ^2.6.2
+        version: 2.7.0
       lodash.camelcase:
         specifier: ^4.3.0
         version: 4.3.0
@@ -50,12 +50,18 @@ importers:
       pocketbase:
         specifier: ^0.21.1
         version: 0.21.3
+      sse.js:
+        specifier: ^2.5.0
+        version: 2.5.0
       svelte-select:
         specifier: ^5.8.3
         version: 5.8.3
       svelte-sonner:
         specifier: ^0.3.24
         version: 0.3.24(svelte@4.2.17)
+      svelte-youtube-embed:
+        specifier: ^0.3.3
+        version: 0.3.3(svelte@4.2.17)
       tailwind-merge:
         specifier: ^2.3.0
         version: 2.3.0
@@ -65,6 +71,9 @@ importers:
       vaul-svelte:
         specifier: ^0.3.2
         version: 0.3.2(svelte@4.2.17)
+      youtube-transcript:
+        specifier: ^1.2.1
+        version: 1.2.1
       zod:
         specifier: ^3.23.8
         version: 3.23.8
@@ -711,9 +720,6 @@ packages:
   aria-query@5.3.0:
     resolution: {integrity: sha512-b0P0sZPKtyu8HkeRAfCq0IfURZK+SuwMjY1UXGBU27wpAiTwQAIlq56IbIO+ytk/JjS1fMR14ee5WBBfKi5J6A==}
 
-  array-keyed-map@2.1.3:
-    resolution: {integrity: sha512-JIUwuFakO+jHjxyp4YgSiKXSZeC0U+R1jR94bXWBcVlFRBycqXlb+kH9JHxBGcxnVuSqx5bnn0Qz9xtSeKOjiA==}
-
   array-union@2.1.0:
     resolution: {integrity: sha512-HGyxoOTYUyCM6stUe6EJgnd4EoewAI7zMdfqO+kGjnlZmBDz/cR5pf8r/cR4Wq60sL/p0IkcjUEEPwS3GFrIyw==}
     engines: {node: '>=8'}
@@ -1116,9 +1122,8 @@ packages:
   globrex@0.1.2:
     resolution: {integrity: sha512-uHJgbwAMwNFf5mLst7IWLNg14x1CkeqglJb/K3doi4dw6q2IvAAmM/Y81kevy83wP+Sst+nutFTYOGg3d1lsxg==}
 
-  gpt3-tokenizer@1.1.5:
-    resolution: {integrity: sha512-O9iCL8MqGR0Oe9wTh0YftzIbysypNQmS5a5JG3cB3M4LMYjlAVvNnf8LUzVY9MrI7tj+YLY356uHtO2lLX2HpA==}
-    engines: {node: '>=12'}
+  gpt-tokenizer@2.7.0:
+    resolution: {integrity: sha512-QjxaGgCZgKp8ecZzy7AmrCbYs+DD+y7GWSRwbe2ZiHPBs1EaK8xUIrt8irnmkAQcNMflpD27tk5yF4m9ig3wgw==}
 
   graceful-fs@4.2.11:
     resolution: {integrity: sha512-RbJ5/jmFcNNCcDV5o9eTnBLJ/HszWV0P73bc+Ff4nS/rJj+YaS6IGyiOL0VoBYX+l1Wrl3k63h/KrH+nhJ0XvQ==}
@@ -1776,6 +1781,9 @@ packages:
     resolution: {integrity: sha512-UXWMKhLOwVKb728IUtQPXxfYU+usdybtUrK/8uGE8CQMvrhOpwvzDBwj0QhSL7MQc7vIsISBG8VQ8+IDQxpfQA==}
     engines: {node: '>=0.10.0'}
 
+  sse.js@2.5.0:
+    resolution: {integrity: sha512-I7zYndqOOkNpz9KIdFZ8c8A7zs1YazNewBr8Nsi/tqThfJkVPuP1q7UE2h4B0RwoWZxbBYpd06uoW3NI3SaZXg==}
+
   stackback@0.0.2:
     resolution: {integrity: sha512-1XMJE5fQo1jGH6Y/7ebnwPOBEkIEnT4QF32d5R1+VXdXveM0IBMJt8zfaxX1P3QhVwrYe+576+jkANtSS2mBbw==}
 
@@ -1899,6 +1907,11 @@ packages:
     resolution: {integrity: sha512-txuL0JBUs0v6qGrr0PGCsbXmKHuthdrAkfISYi8umuveF7+gINb6EXl6VmKY9aHhyxCqvVgqd6yophQNrnor4w==}
     peerDependencies:
       svelte: '>=3 <5'
+
+  svelte-youtube-embed@0.3.3:
+    resolution: {integrity: sha512-g4+53JauVB+Jwz486lVqW8PUTnoP1SinECWhmQSCaKuh6zrYiAOFRpzMG6vW1TaQfSigiLWyUactFWipo4lsfQ==}
+    peerDependencies:
+      svelte: ^4.0.0
 
   svelte@4.2.17:
     resolution: {integrity: sha512-N7m1YnoXtRf5wya5Gyx3TWuTddI4nAyayyIWFojiWV5IayDYNV5i2mRp/7qNGol4DtxEYxljmrbgp1HM6hUbmQ==}
@@ -2141,6 +2154,10 @@ packages:
   yocto-queue@1.0.0:
     resolution: {integrity: sha512-9bnSc/HEW2uRy67wc+T8UwauLuPJVn28jb+GtJY16iiKWyvmYJRXVT4UamsAEGQfPohgr2q4Tq0sQbQlxTfi1g==}
     engines: {node: '>=12.20'}
+
+  youtube-transcript@1.2.1:
+    resolution: {integrity: sha512-TvEGkBaajKw+B6y91ziLuBLsa5cawgowou+Bk0ciGpjELDfAzSzTGXaZmeSSkUeknCPpEr/WGApOHDwV7V+Y9Q==}
+    engines: {node: '>=18.0.0'}
 
   zod@3.23.8:
     resolution: {integrity: sha512-XBx9AXhXktjUqnepgTiE5flcKIYWi/rme0Eaj+5Y0lftuGBq+jyRu/md4WnuxqgP1ubdpNCsYEYPxrzVHD8d6g==}
@@ -2658,8 +2675,6 @@ snapshots:
     dependencies:
       dequal: 2.0.3
 
-  array-keyed-map@2.1.3: {}
-
   array-union@2.1.0: {}
 
   assertion-error@1.1.0: {}
@@ -3119,9 +3134,7 @@ snapshots:
 
   globrex@0.1.2: {}
 
-  gpt3-tokenizer@1.1.5:
-    dependencies:
-      array-keyed-map: 2.1.3
+  gpt-tokenizer@2.7.0: {}
 
   graceful-fs@4.2.11: {}
 
@@ -3655,6 +3668,8 @@ snapshots:
 
   source-map-js@1.2.1: {}
 
+  sse.js@2.5.0: {}
+
   stackback@0.0.2: {}
 
   std-env@3.7.0: {}
@@ -3770,6 +3785,10 @@ snapshots:
       svelte-floating-ui: 1.5.8
 
   svelte-sonner@0.3.24(svelte@4.2.17):
+    dependencies:
+      svelte: 4.2.17
+
+  svelte-youtube-embed@0.3.3(svelte@4.2.17):
     dependencies:
       svelte: 4.2.17
 
@@ -4010,5 +4029,7 @@ snapshots:
   yocto-queue@0.1.0: {}
 
   yocto-queue@1.0.0: {}
+
+  youtube-transcript@1.2.1: {}
 
   zod@3.23.8: {}
