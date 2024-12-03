@@ -19,6 +19,7 @@
 	let scrollToDiv: HTMLDivElement
 	let youtubeUrl: string = ''
 	let transcript: TranscriptItem[] | null = null
+	let videoLoaded: boolean = false
 
 	function scrollToBottom() {
 		setTimeout(function () {
@@ -89,6 +90,8 @@
 			chatMessages = []
 			query = 'Give up to a concise 3 sentence summary of the Youtube video without time stamps.'
 			await handleSubmit(true) // pass true to hide the initial message
+
+			videoLoaded = true
 		} catch (error) {
 			console.error(error)
 			alert('Failed to fetch transcript')
@@ -96,62 +99,81 @@
 	}
 </script>
 
-<Card class="bg-neutral-focus mx-1 max-w-3xl shadow-xl m-2">
-	<div class="flex w-full flex-col items-start gap-2 px-2 py-4">
-		<div>
-			<h1 class="text-primary w-full text-center text-2xl font-bold">YouTube Video Assistant</h1>
-		</div>
-
-		<!-- YouTube URL Input -->
-		<form
-			class="bg-neutral-focus flex w-full gap-4 rounded-md p-4"
-			on:submit|preventDefault={handleTranscriptSubmit}
-		>
-			<Input
-				type="text"
-				bind:value={youtubeUrl}
-				placeholder="Enter YouTube URL..."
-				class="input-bordered w-full"
-			/>
-			<Button type="submit" class="btn btn-primary" disabled={!youtubeUrl.trim()}>
-				Load Video
-			</Button>
-		</form>
-
-		<!-- show chat if transcript is loaded -->
-		{#if transcript}
-			<div class="bg-neutral flex h-[500px] w-full flex-col gap-4 overflow-y-auto rounded-md p-4">
-				<div class="flex flex-col gap-2">
-					{#each chatMessages as message}
-						{#if !message.hidden}
-							<ChatMessage type={message.role} message={message.content} />
-							{message.hidden ? 'This should be hidden' : ''}
-						{/if}
-					{/each}
-					{#if answer}
-						<ChatMessage type="assistant" message={answer} />
-					{/if}
-					{#if isLoading}
-						<div class="loading loading-dots loading-md"></div>
-					{/if}
-				</div>
-				<div class="" bind:this={scrollToDiv} />
+<div class="grid grid-cols-1 md:grid-cols-3 gap-4 h-[calc(100vh-5rem)]">
+	<Card class="bg-neutral-focus mx-1 shadow-xl m-2 md:col-span-2 h-full">
+		<div class="flex w-full flex-col items-start gap-2 px-2 py-4 h-full">
+			<div>
+				<h1 class="text-primary w-full text-center text-2xl font-bold">YouTube Video Assistant</h1>
 			</div>
 
+			<!-- YouTube URL Input -->
 			<form
 				class="bg-neutral-focus flex w-full gap-4 rounded-md p-4"
-				on:submit|preventDefault={() => handleSubmit()}
+				on:submit|preventDefault={handleTranscriptSubmit}
 			>
 				<Input
 					type="text"
-					bind:value={query}
-					placeholder="Type your message here..."
+					bind:value={youtubeUrl}
+					placeholder="Enter YouTube URL..."
 					class="input-bordered w-full"
 				/>
-				<Button type="submit" class="btn btn-primary" disabled={isLoading || !query.trim()}>
-					Send
+				<Button type="submit" class="btn btn-primary" disabled={!youtubeUrl.trim()}>
+					Load Video
 				</Button>
 			</form>
-		{/if}
-	</div>
-</Card>
+
+			<!-- New Iframe for Video -->
+			{#if videoLoaded}
+				<iframe
+					class="w-full h-64 flex-grow"
+					src={`https://www.youtube.com/embed/${youtubeUrl.split('v=')[1]}`}
+					frameborder="0"
+					allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+					allowfullscreen
+				></iframe>
+			{/if}
+		</div>
+	</Card>
+
+	<!-- New Card for Chat Messages -->
+	{#if videoLoaded}
+		<Card class="bg-neutral-focus mx-1 shadow-xl m-2 md:col-span-1 h-full">
+			<div class="flex flex-col gap-2 h-full">
+				<!-- show chat if transcript is loaded -->
+				{#if transcript}
+					<div class="bg-neutral flex h-full w-full flex-col gap-4 overflow-y-auto rounded-md p-4">
+						<div class="flex flex-col gap-2">
+							{#each chatMessages as message}
+								{#if !message.hidden}
+									<ChatMessage type={message.role} message={message.content} />
+								{/if}
+							{/each}
+							{#if answer}
+								<ChatMessage type="assistant" message={answer} />
+							{/if}
+							{#if isLoading}
+								<div class="loading loading-dots loading-md"></div>
+							{/if}
+						</div>
+						<div class="" bind:this={scrollToDiv} />
+					</div>
+
+					<form
+						class="bg-neutral-focus flex w-full gap-4 rounded-md p-4"
+						on:submit|preventDefault={() => handleSubmit()}
+					>
+						<Input
+							type="text"
+							bind:value={query}
+							placeholder="Type your message here..."
+							class="input-bordered w-full"
+						/>
+						<Button type="submit" class="btn btn-primary" disabled={isLoading || !query.trim()}>
+							Send
+						</Button>
+					</form>
+				{/if}
+			</div>
+		</Card>
+	{/if}
+</div>
