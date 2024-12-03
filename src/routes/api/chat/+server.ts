@@ -4,6 +4,8 @@ import { getTokens } from '$lib/tokenizer'
 import { json } from '@sveltejs/kit'
 import OpenAI from 'openai'
 
+const viteEnvironment = import.meta.env.VITE_ENVIRONMENT
+
 type ChatMessage = {
 	role: 'user' | 'assistant' | 'system' | 'function'
 	content: string
@@ -38,6 +40,11 @@ function formatTimestamp(offset: number): string {
 }
 
 export const POST: RequestHandler = async ({ request }) => {
+	// Safeguard check for environment
+	if (viteEnvironment !== 'dev') {
+		return json({ error: 'Endpoint not available in production' }, { status: 403 }) // TODO: Remove when ready for prod
+	}
+
 	try {
 		if (!OPENAI_KEY) {
 			throw new Error('OPENAI_KEY env variable not set')
