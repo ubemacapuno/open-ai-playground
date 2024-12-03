@@ -122,7 +122,7 @@
 				</Button>
 			</form>
 
-			<!-- New Iframe for Video -->
+			<!-- Iframe for Video -->
 			{#if videoLoaded}
 				<iframe
 					class="w-full h-64 flex-grow"
@@ -135,7 +135,7 @@
 		</div>
 	</Card>
 
-	<!-- New Card for Chat Messages -->
+	<!-- Card for Chat Messages -->
 	{#if videoLoaded}
 		<Card class="bg-neutral-focus mx-1 shadow-xl m-2 md:col-span-1 h-full">
 			<div class="flex flex-col gap-2 h-full">
