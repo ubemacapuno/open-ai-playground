@@ -6,6 +6,7 @@ import OpenAI from 'openai'
 import { getTokens } from '$lib/tokenizer'
 
 // This endpoint processes a CSV file and generates TypeScript types based on the structure of the CSV rows.
+const viteEnvironment = import.meta.env.VITE_ENVIRONMENT
 
 const openai = new OpenAI({
 	apiKey: OPENAI_KEY
@@ -47,7 +48,7 @@ export const POST: RequestHandler = async ({ request }) => {
 		}
 
 		const openaiResponse = await openai.chat.completions.create({
-			model: 'gpt-4o-2024-08-06',
+			model: viteEnvironment === 'dev' ? 'gpt-4o-2024-08-06' : 'gpt-4o-mini-2024-07-18',
 			messages: [
 				{
 					role: 'system',

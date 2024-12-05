@@ -3,6 +3,7 @@ import type { RequestHandler } from '@sveltejs/kit'
 import { getTokens } from '$lib/tokenizer'
 import { json } from '@sveltejs/kit'
 import OpenAI from 'openai'
+import { MAX_TOKENS, MAX_TRANSCRIPT_TOKENS } from '../../../constants/tokens'
 
 const viteEnvironment = import.meta.env.VITE_ENVIRONMENT
 
@@ -16,8 +17,8 @@ const openai = new OpenAI({
 	apiKey: OPENAI_KEY
 })
 
-const MAX_TOKENS = 4000
-const MAX_TRANSCRIPT_TOKENS = 2000
+// const MAX_TOKENS = 4000
+// const MAX_TRANSCRIPT_TOKENS = 2000
 
 function formatTimestamp(offset: number): string {
 	/**
@@ -41,9 +42,9 @@ function formatTimestamp(offset: number): string {
 
 export const POST: RequestHandler = async ({ request }) => {
 	// Safeguard check for environment
-	if (viteEnvironment !== 'dev') {
-		return json({ error: 'Endpoint not available in production' }, { status: 403 }) // TODO: Remove when ready for prod
-	}
+	// if (viteEnvironment !== 'dev') {
+	// 	return json({ error: 'Endpoint not available in production' }, { status: 403 }) // TODO: Remove when ready for prod
+	// }
 
 	try {
 		if (!OPENAI_KEY) {
@@ -69,6 +70,7 @@ export const POST: RequestHandler = async ({ request }) => {
 				return `[${timestamp}] ${item.text}`
 			})
 			.join('\n')
+		console.log('transcriptText: ', transcriptText)
 
 		const transcriptTokens = getTokens(transcriptText)
 		console.log('\n=== TOKEN USAGE BREAKDOWN ===')
@@ -144,7 +146,7 @@ When answering questions, please reference specific timestamps HH:MM:SS from the
 
 		// create chat completion with streaming
 		const stream = await openai.chat.completions.create({
-			model: 'gpt-4o-2024-08-06',
+			model: viteEnvironment === 'dev' ? 'gpt-4o-2024-08-06' : 'gpt-4o-mini-2024-07-18',
 			messages,
 			temperature: 0.3,
 			max_tokens: Math.min(200, remainingTokens),
