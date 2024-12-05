@@ -4,7 +4,7 @@
 
 	import TicketListItem from './ticket-generator/TicketListItem.svelte'
 	import Badge from '$lib/components/ui/badge/badge.svelte'
-	import { toTitleCase } from '../utilities/transform'
+	import DemoChatMessage from '$lib/components/DemoChatMessage.svelte'
 
 	const demoTicket = {
 		id: '',
@@ -47,6 +47,30 @@
 					</p>
 				</div>
 				<TicketListItem ticket={demoTicket} isDemo />
+			</Card>
+		</a>
+
+		<a href="/tube" class="flex" data-testid="bug-ticket-link">
+			<Card class="p-6 flex flex-col justify-between w-full">
+				<div>
+					<h2 class="text-xl font-semibold mb-2 text-orange-700 dark:text-orange-400">
+						Video Assistant
+					</h2>
+					<p class="mb-4">
+						Extract transcripts from YouTube videos and interact with an AI chatbot to summarize
+						content and provide timestamps for key moments.
+					</p>
+					<div class="flex justify-start mb-2">
+						<div class="chat-image avatar online z-0">
+							<div class="user_avatar_wrapper bg-neutral-focus text-secondary w-10 rounded-full">
+								<span class="text-xl">🤖</span>
+							</div>
+						</div>
+						<DemoChatMessage
+							message="This video covers the basics of Svelte, including components, reactivity, and state management."
+						/>
+					</div>
+				</div>
 			</Card>
 		</a>
 

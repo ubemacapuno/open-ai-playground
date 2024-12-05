@@ -5,6 +5,7 @@
 	import { Input } from '$lib/components/ui/input'
 	import { Button } from '$lib/components/ui/button'
 	import { Card } from '$lib/components/ui/card'
+	import { toast } from 'svelte-sonner'
 
 	type ChatMessageType = {
 		role: 'user' | 'assistant' | 'system' | 'function'
@@ -25,6 +26,15 @@
 		setTimeout(function () {
 			scrollToDiv.scrollIntoView({ behavior: 'smooth', block: 'end', inline: 'nearest' })
 		}, 100)
+	}
+
+	function sanitizeYouTubeUrl(url: string) {
+		// Check if the URL contains the seconds parameter
+		if (url.includes('&t=')) {
+			// Remove the seconds parameter for compatibility
+			url = url.split('&t=')[0]
+		}
+		return url
 	}
 
 	async function handleSubmit(hideMessage: boolean = false) {
@@ -72,10 +82,14 @@
 		query = ''
 		answer = ''
 		console.error(err)
+		toast.error('Error loading video')
 	}
 
 	async function handleTranscriptSubmit() {
 		try {
+			// sanitize the YouTube URL before using it
+			youtubeUrl = sanitizeYouTubeUrl(youtubeUrl)
+
 			const response = await fetch('/api/transcript', {
 				method: 'POST',
 				headers: { 'Content-Type': 'application/json' },
@@ -94,7 +108,7 @@
 			videoLoaded = true
 		} catch (error) {
 			console.error(error)
-			alert('Failed to fetch transcript')
+			toast.error('Failed to fetch transcript')
 		}
 	}
 </script>
@@ -125,6 +139,7 @@
 			<!-- Iframe for Video -->
 			{#if videoLoaded}
 				<iframe
+					title="Youtube Video"
 					class="w-full h-64 flex-grow"
 					src={`https://www.youtube.com/embed/${youtubeUrl.split('v=')[1]}`}
 					frameborder="0"

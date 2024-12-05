@@ -7,6 +7,8 @@ import { zodResponseFormat } from 'openai/helpers/zod'
 import { z } from 'zod'
 // This endpoint generates a bug ticket based on the provided ticket description.
 
+const viteEnvironment = import.meta.env.VITE_ENVIRONMENT
+
 const openai = new OpenAI({
 	apiKey: OPENAI_KEY
 })
@@ -36,7 +38,7 @@ export const POST: RequestHandler = async ({ request }) => {
 
 		// TODO: completions.parse() is in beta. Update when live.
 		const completion = await openai.beta.chat.completions.parse({
-			model: 'gpt-4o-2024-08-06',
+			model: viteEnvironment === 'dev' ? 'gpt-4o-2024-08-06' : 'gpt-4o-mini-2024-07-18',
 			messages: [
 				{
 					role: 'system',

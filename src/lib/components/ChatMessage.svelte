@@ -24,7 +24,7 @@
 	</div>
 	<div class="flex flex-col">
 		<div class="chat-header">
-			{type !== 'user' ? 'Assistant' : ''}
+			{type !== 'user' ? 'Assistant' : 'Me'}
 		</div>
 		<div
 			class={`chat-bubble max-w-sm ${type === 'user' ? 'bg-blue-500 text-white' : 'bg-green-500 text-white'} p-3 rounded-lg`}
