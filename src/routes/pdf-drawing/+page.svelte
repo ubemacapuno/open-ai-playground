@@ -10,8 +10,13 @@
 	import LoadingSpinner from '$lib/components/LoadingSpinner.svelte'
 	import { toast } from 'svelte-sonner'
 	import type { PdfData } from '../api/pdf-processor/pdf_processor_types'
+	import type { PageData } from './$types'
+	import CircleAlert from 'lucide-svelte/icons/circle-alert'
+	import * as Alert from '$lib/components/ui/alert/index.js'
 
-	const viteEnvironment = import.meta.env.VITE_ENVIRONMENT
+	export let data: PageData
+
+	$: ({ isProd } = data)
 
 	// PDF Vars
 	let fileInput: HTMLInputElement
@@ -106,24 +111,27 @@
 		$pdfData.operations.length > 0
 </script>
 
+{#if isProd}
+	<Alert.Root variant="caution" class="mt-2">
+		<CircleAlert class="h-4 w-4" />
+		<Alert.Title>The PDF drawing parser feature is currently unavailable in production.</Alert.Title
+		>
+		<Alert.Description>
+			pdf.js-extract does not currently work in production due to Vercel serverless environment
+			limitations. Please try this feature locally.
+		</Alert.Description>
+	</Alert.Root>
+{/if}
+
 <CallToAction />
 
 <div class="mx-auto flex flex-col items-center">
 	<div class="pt-4 pb-12">
-		<Button on:click={() => fileInput.click()} disabled={viteEnvironment !== 'dev'}
-			>Import PDF</Button
-		>
-		<Button variant="outline" on:click={importDemoPdf} disabled={viteEnvironment !== 'dev'}
-			>Import Demo PDF</Button
-		>
+		<Button on:click={() => fileInput.click()} disabled={isProd}>Import PDF</Button>
+		<Button variant="outline" on:click={importDemoPdf} disabled={isProd}>Import Demo PDF</Button>
 	</div>
 </div>
-{#if viteEnvironment !== 'dev'}
-	<h2 class="text-lg font-bold text-orange-700 dark:text-orange-400 text-center">
-		🚨 pdf.js-extract does not currently work in production due to Vercel serverless environment
-		limitations. Please try this feature locally. 🚨
-	</h2>
-{/if}
+
 <input on:change={onPdfFilesChange} multiple bind:this={fileInput} type="file" hidden {accept} />
 {#if isProcessing}
 	<div class="flex justify-center items-start h-screen py-12">
