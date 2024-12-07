@@ -6,12 +6,19 @@
 	import { Button } from '$lib/components/ui/button'
 	import { Card } from '$lib/components/ui/card'
 	import { toast } from 'svelte-sonner'
+	import type { PageData } from './$types'
+	import CircleAlert from 'lucide-svelte/icons/circle-alert'
+	import * as Alert from '$lib/components/ui/alert/index.js'
+
+	export let data: PageData
 
 	type ChatMessageType = {
 		role: 'user' | 'assistant' | 'system' | 'function'
 		content: string
 		hidden?: boolean
 	}
+
+	$: ({ isProd } = data)
 
 	let query: string = ''
 	let answer: string = ''
@@ -113,6 +120,26 @@
 	}
 </script>
 
+{#if isProd}
+	<Alert.Root variant="caution" class="mt-2">
+		<CircleAlert class="h-4 w-4" />
+		<Alert.Title
+			>This feature is currently unavailable in production due to YouTube's API restrictions on
+			cloud environments.</Alert.Title
+		>
+		<Alert.Description>
+			For demonstration purposes, please try this feature in a local development environment. Read
+			more about this issue on GitHub
+			<a
+				href="https://github.com/jdepoix/youtube-transcript-api/issues/303"
+				class="text-blue-500 underline hover:text-blue-700"
+			>
+				Here
+			</a>.
+		</Alert.Description>
+	</Alert.Root>
+{/if}
+
 <div class="grid grid-cols-1 md:grid-cols-3 gap-4 h-[calc(100vh-5rem)]">
 	<Card class="bg-neutral-focus mx-1 shadow-xl m-2 md:col-span-2 h-full">
 		<div class="flex w-full flex-col items-start gap-2 px-2 py-4 h-full">
@@ -131,7 +158,7 @@
 					placeholder="Enter YouTube URL..."
 					class="input-bordered w-full"
 				/>
-				<Button type="submit" class="btn btn-primary" disabled={!youtubeUrl.trim()}>
+				<Button type="submit" class="btn btn-primary" disabled={isProd || !youtubeUrl.trim()}>
 					Load Video
 				</Button>
 			</form>
@@ -151,44 +178,45 @@
 	</Card>
 
 	<!-- Card for Chat Messages -->
-	{#if videoLoaded}
-		<Card class="bg-neutral-focus mx-1 shadow-xl m-2 md:col-span-1 h-full">
-			<div class="flex flex-col gap-2 h-full">
-				<!-- show chat if transcript is loaded -->
-				{#if transcript}
-					<div class="bg-neutral flex h-full w-full flex-col gap-4 overflow-y-auto rounded-md p-4">
-						<div class="flex flex-col gap-2">
-							{#each chatMessages as message}
-								{#if !message.hidden}
-									<ChatMessage type={message.role} message={message.content} />
-								{/if}
-							{/each}
-							{#if answer}
-								<ChatMessage type="assistant" message={answer} />
-							{/if}
-							{#if isLoading}
-								<div class="loading loading-dots loading-md"></div>
-							{/if}
-						</div>
-						<div class="" bind:this={scrollToDiv} />
-					</div>
-
-					<form
-						class="bg-neutral-focus flex w-full gap-4 rounded-md p-4"
-						on:submit|preventDefault={() => handleSubmit()}
-					>
-						<Input
-							type="text"
-							bind:value={query}
-							placeholder="Type your message here..."
-							class="input-bordered w-full"
-						/>
-						<Button type="submit" class="btn btn-primary" disabled={isLoading || !query.trim()}>
-							Send
-						</Button>
-					</form>
-				{/if}
+	<Card class="bg-neutral-focus mx-1 shadow-xl m-2 md:col-span-1 h-full">
+		<div class="flex flex-col gap-2 px-2 py-4 h-full">
+			<div>
+				<h1 class="text-primary w-full flex-start text-2xl font-bold">Chat</h1>
 			</div>
-		</Card>
-	{/if}
+			<!-- show chat if transcript is loaded -->
+			{#if transcript}
+				<div class="bg-neutral flex h-full w-full flex-col gap-4 overflow-y-auto rounded-md p-4">
+					<div class="flex flex-col gap-2">
+						{#each chatMessages as message}
+							{#if !message.hidden}
+								<ChatMessage type={message.role} message={message.content} />
+							{/if}
+						{/each}
+						{#if answer}
+							<ChatMessage type="assistant" message={answer} />
+						{/if}
+						{#if isLoading}
+							<div class="loading loading-dots loading-md"></div>
+						{/if}
+					</div>
+					<div class="" bind:this={scrollToDiv} />
+				</div>
+
+				<form
+					class="bg-neutral-focus flex w-full gap-4 rounded-md p-4"
+					on:submit|preventDefault={() => handleSubmit()}
+				>
+					<Input
+						type="text"
+						bind:value={query}
+						placeholder="Type your message here..."
+						class="input-bordered w-full"
+					/>
+					<Button type="submit" class="btn btn-primary" disabled={isLoading || !query.trim()}>
+						Send
+					</Button>
+				</form>
+			{/if}
+		</div>
+	</Card>
 </div>

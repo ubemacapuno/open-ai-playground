@@ -5,9 +5,9 @@ import { getYouTubeVideoId, getYouTubeTranscript } from '$lib/utils/youtube'
 const viteEnvironment = import.meta.env.VITE_ENVIRONMENT
 
 export const POST: RequestHandler = async ({ request }) => {
-	// if (viteEnvironment !== 'dev') {
-	// 	return json({ error: 'Endpoint not available in production' }, { status: 403 })
-	// }
+	if (viteEnvironment !== 'dev') {
+		return json({ error: 'Endpoint not available in production' }, { status: 403 })
+	}
 
 	try {
 		const { url } = await request.json()

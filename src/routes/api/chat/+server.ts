@@ -42,9 +42,9 @@ function formatTimestamp(offset: number): string {
 
 export const POST: RequestHandler = async ({ request }) => {
 	// Safeguard check for environment
-	// if (viteEnvironment !== 'dev') {
-	// 	return json({ error: 'Endpoint not available in production' }, { status: 403 }) // TODO: Remove when ready for prod
-	// }
+	if (viteEnvironment !== 'dev') {
+		return json({ error: 'Endpoint not available in production' }, { status: 403 }) // TODO: Remove when ready for prod
+	}
 
 	try {
 		if (!OPENAI_KEY) {
