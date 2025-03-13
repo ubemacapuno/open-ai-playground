@@ -50,7 +50,7 @@
 			</Card>
 		</a>
 
-		<a href="/tube" class="flex" data-testid="bug-ticket-link">
+		<a href="/tube" class="flex" data-testid="video-assistant-link">
 			<Card class="p-6 flex flex-col justify-between w-full">
 				<div>
 					<h2 class="text-xl font-semibold mb-2 text-orange-700 dark:text-orange-400">

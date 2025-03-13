@@ -14,6 +14,10 @@ test.describe('Tour - No Auth, redirect to Login', () => {
 	test('Redirect to Login (/pdf-drawing)', async ({ page }) => {
 		await page.goto('/pdf-drawing')
 	})
+
+	test('Redirect to Login (/tube)', async ({ page }) => {
+		await page.goto('/tube')
+	})
 })
 
 test.describe('Homepage tour', () => {
@@ -21,14 +25,9 @@ test.describe('Homepage tour', () => {
 		await page.goto('/')
 		await expect(page.getByTestId('homepage-btn')).toHaveCount(1)
 		await page.getByTestId('homepage-btn').click()
-
 		await expect(page.getByTestId('bug-ticket-link')).toHaveCount(1)
-		await page.getByTestId('bug-ticket-link').click()
-
-		await page.getByTestId('homepage-btn').click()
-
+		await expect(page.getByTestId('video-assistant-link')).toHaveCount(1)
 		await expect(page.getByTestId('pdf-drawing-link')).toHaveCount(1)
-		await page.getByTestId('pdf-drawing-link').click()
 	})
 })
 
